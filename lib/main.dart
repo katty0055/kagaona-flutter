@@ -111,6 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             Text('Hola soy Katty'),
+            const Text('Hola soy Alejandra'),
             ElevatedButton(
               onPressed: () {
                 showDialog(
@@ -118,7 +119,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text('Advertencia'),
-                      content: const Text('Esta es una advertencia importante.'),
+                      content: const Text(
+                        'Esta es una advertencia importante.',
+                      ),
                       actions: <Widget>[
                         TextButton(
                           onPressed: () {
