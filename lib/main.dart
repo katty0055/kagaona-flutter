@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'login_screen.dart'; // Importa la nueva pantalla
+import 'views/login_screen.dart'; // Importa la nueva pantalla
 
 void main() {
   runApp(const MyApp());
