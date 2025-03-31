@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/api/service/auth_service.dart';
+import 'package:kgaona/views/welcome_screen.dart'; // Importa la pantalla de bienvenida
 
 class LoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
@@ -58,10 +59,11 @@ class LoginScreen extends StatelessWidget {
                     final success = await authService.login(username, password);
 
                     // Manejo del resultado del inicio de sesión
-                    if (success) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Inicio de sesión exitoso'),
+                     if (success) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WelcomeScreen(),
                         ),
                       );
                     } else {

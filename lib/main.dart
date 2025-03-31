@@ -68,6 +68,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+    void _decrementCounter() {
+    setState(() {
+      _counter--;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -76,6 +82,20 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+    String message;
+    Color messageColor;
+
+    // Determina el mensaje y el color según el valor del contador
+    if (_counter > 0) {
+      message = 'Contador en positivo';
+      messageColor = Colors.green;
+    } else if (_counter == 0) {
+      message = 'Contador en cero';
+      messageColor = Colors.black;
+    } else {
+      message = 'Contador en negativo';
+      messageColor = Colors.red;
+    }
     return Scaffold(
       appBar: AppBar(
         // TRY THIS: Try changing the color here to a specific color (to
@@ -136,6 +156,12 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               child: const Text('Mostrar Advertencia'),
             ),
+            const SizedBox(height: 16),
+            Text(
+              message,
+              style: TextStyle(fontSize: 18, color: messageColor),
+            ),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -148,10 +174,31 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end, // Alinea los botones al final
+        children: [
+          FloatingActionButton(
+            onPressed: _decrementCounter,
+            tooltip: 'Decrement',
+            child: const Icon(Icons.remove),
+          ),
+          const SizedBox(width: 16), // Espaciado entre los botones
+          FloatingActionButton(
+            onPressed: _incrementCounter,
+            tooltip: 'Increment',
+            child: const Icon(Icons.add),
+          ),
+          const SizedBox(width: 16), // Espaciado entre los botones
+          FloatingActionButton(
+            onPressed: () {
+              setState(() {
+                _counter = 0; // Reinicia el contador a 0
+              });
+            },
+            tooltip: 'Reset',
+            child: const Icon(Icons.refresh),
+          ),          
+        ],
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
