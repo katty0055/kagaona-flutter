@@ -19,18 +19,28 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               '¡Bienvenido!',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               'Has iniciado sesión exitosamente.',
               style: TextStyle(fontSize: 18),
             ),
             ElevatedButton(
               onPressed: _mostrarCotizaciones,
               child: Text("Cotizaciones"),
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: () {
+                // Aquí puedes agregar la lógica para listar cotizaciones
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Listando cotizaciones...')),
+                );
+              },
+              child: const Text('Listar Cotizaciones'),
             ),
           ],
         ),
