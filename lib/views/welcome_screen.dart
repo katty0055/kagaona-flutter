@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
 
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget {
+  const WelcomeScreen({super.key});
+  @override
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends State<WelcomeScreen> {
+  _mostrarCotizaciones() {
+    print("Cotizacion");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bienvenido'),
-      ),
+      appBar: AppBar(title: const Text('Bienvenido')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             Text(
               '¡Bienvenido!',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -19,6 +27,10 @@ class WelcomeScreen extends StatelessWidget {
             Text(
               'Has iniciado sesión exitosamente.',
               style: TextStyle(fontSize: 18),
+            ),
+            ElevatedButton(
+              onPressed: _mostrarCotizaciones,
+              child: Text("Cotizaciones"),
             ),
           ],
         ),
