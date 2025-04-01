@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class WelcomeScreen extends StatefulWidget {
+    const WelcomeScreen({super.key});
+
   @override
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
@@ -25,14 +27,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       ];
       isLoading = false;
     });
+    
   }
+   _mostrarCotizaciones() {
+    print("Cotizacion");
+
+}
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bienvenido'),
-      ),
+      appBar: AppBar(title: const Text('Bienvenido')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -56,6 +62,20 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               const CircularProgressIndicator()
             else
               ...quotes.map((quote) => Text(quote)).toList(),
+            ElevatedButton(
+              onPressed: _mostrarCotizaciones,
+              child: Text("Cotizaciones"),
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: () {
+                // Aquí puedes agregar la lógica para listar cotizaciones
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Listando cotizaciones...')),
+                );
+              },
+              child: const Text('Listar Cotizaciones'),
+            ),
           ],
         ),
       ),

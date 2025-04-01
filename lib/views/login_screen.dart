@@ -32,8 +32,8 @@ class LoginScreen extends StatelessWidget {
                   }
                   return null;
                 },
-            ),
-             const SizedBox(height: 16),
+              ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: passwordController,
                 decoration: const InputDecoration(
@@ -47,30 +47,46 @@ class LoginScreen extends StatelessWidget {
                   }
                   return null;
                 },
-            ),
-            const SizedBox(height: 16),
+              ),
+              const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     final username = usernameController.text.trim();
                     final password = passwordController.text.trim();
 
-                    // Llama al servicio de autenticación
-                    final success = await authService.login(username, password);
+                    // Muestra un indicador de carga mientras se realiza la autenticación
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) {
+                        return const Center(child: CircularProgressIndicator());
+                      },
+                    );
 
-                    // Manejo del resultado del inicio de sesión
-                     if (success) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => WelcomeScreen(),
-                        ),
-                      );
-                    } else {
+                    try {
+                      final success = await authService.login(username, password);
+
+                      Navigator.pop(context); // Cierra el indicador de carga
+
+                      if (success) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => WelcomeScreen(),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Inicio de sesión fallido'),
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      Navigator.pop(context); // Cierra el indicador de carga
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Inicio de sesión fallido'),
-                        ),
+                        SnackBar(content: Text('Error: $e')),
                       );
                     }
                   }
