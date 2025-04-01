@@ -54,6 +54,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             ),
             const SizedBox(height: 32),
             ElevatedButton(
+              onPressed: () {
+                // Acción para listar cotizaciones
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Listando cotizaciones...'),
+                  ),
+                );
+              },
+              child: const Text('Listar Cotizaciones PS'),
+            ),
+            ElevatedButton(
               onPressed: fetchQuotes,
               child: const Text('Listar Cotizaciones'),
             ),
