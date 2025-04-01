@@ -10,15 +10,27 @@ class WelcomeScreen extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Text(
+          children: [
+            const Text(
               '¡Bienvenido!',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               'Has iniciado sesión exitosamente.',
               style: TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: () {
+                // Acción para listar cotizaciones
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Listando cotizaciones...'),
+                  ),
+                );
+              },
+              child: const Text('Listar Cotizaciones'),
             ),
           ],
         ),
