@@ -10,9 +10,7 @@ class LoginScreen extends StatelessWidget {
     final TextEditingController passwordController = TextEditingController();
     final MockAuthService authService = MockAuthService();
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Inicio de Sesión'),
-      ),
+      appBar: AppBar(title: const Text('Inicio de Sesión')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -65,7 +63,10 @@ class LoginScreen extends StatelessWidget {
                     );
 
                     try {
-                      final success = await authService.login(username, password);
+                      final success = await authService.login(
+                        username,
+                        password,
+                      );
 
                       Navigator.pop(context); // Cierra el indicador de carga
 
@@ -85,9 +86,9 @@ class LoginScreen extends StatelessWidget {
                       }
                     } catch (e) {
                       Navigator.pop(context); // Cierra el indicador de carga
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Error: $e')),
-                      );
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text('Error: $e')));
                     }
                   }
                 },

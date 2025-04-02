@@ -40,7 +40,7 @@ class _TareasScreenState extends State<TareasScreen> {
   }
   //final List<Map<String, String>> tareas = []; // Lista de tareas
 
-  void _agregarTarea(String titulo, String detalle) {
+  /*void _agregarTarea(String titulo, String detalle) {
     setState(() {
       tareas.add({'titulo': titulo, 'detalle': detalle});
     });
@@ -51,6 +51,18 @@ class _TareasScreenState extends State<TareasScreen> {
       tareas[index] = {'titulo': titulo, 'detalle': detalle};
     });
   }
+*/
+  void _agregarTarea(String titulo, String detalle, DateTime fecha) {
+    setState(() {
+      tareas.add({'titulo': titulo, 'detalle': detalle, 'fecha': fecha});
+    });
+  }
+
+  void _editarTarea(int index, String titulo, String detalle, DateTime fecha) {
+    setState(() {
+      tareas[index] = {'titulo': titulo, 'detalle': detalle, 'fecha': fecha};
+    });
+  }
 
   void _mostrarModalAgregarTarea({int? index}) {
     final TextEditingController tituloController = TextEditingController(
@@ -59,7 +71,15 @@ class _TareasScreenState extends State<TareasScreen> {
     final TextEditingController detalleController = TextEditingController(
       text: index != null ? tareas[index]['detalle'] : '',
     );
-
+    final TextEditingController fechaController = TextEditingController(
+      text:
+          index != null
+              ? (tareas[index]['fecha'] as DateTime).toLocal().toString().split(
+                ' ',
+              )[0]
+              : '',
+    );
+    DateTime? fechaSeleccionada = index != null ? tareas[index]['fecha'] : null;
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -83,6 +103,31 @@ class _TareasScreenState extends State<TareasScreen> {
                   border: OutlineInputBorder(),
                 ),
               ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: fechaController,
+                readOnly: true,
+                decoration: const InputDecoration(
+                  labelText: 'Fecha',
+                  border: OutlineInputBorder(),
+                  hintText: 'Seleccionar Fecha',
+                ),
+                onTap: () async {
+                  DateTime? nuevaFecha = await showDatePicker(
+                    context: context,
+                    initialDate: fechaSeleccionada ?? DateTime.now(),
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                  );
+                  if (nuevaFecha != null) {
+                    setState(() {
+                      fechaSeleccionada = nuevaFecha;
+                      fechaController.text =
+                          nuevaFecha.toLocal().toString().split(' ')[0];
+                    });
+                  }
+                },
+              ),
             ],
           ),
           actions: [
@@ -99,9 +144,9 @@ class _TareasScreenState extends State<TareasScreen> {
 
                 if (titulo.isNotEmpty && detalle.isNotEmpty) {
                   if (index == null) {
-                    _agregarTarea(titulo, detalle);
+                    _agregarTarea(titulo, detalle, fechaSeleccionada!);
                   } else {
-                    _editarTarea(index, titulo, detalle);
+                    _editarTarea(index, titulo, detalle, fechaSeleccionada!);
                   }
                   Navigator.pop(context); // Cierra el modal y guarda la tarea
                 }
@@ -132,7 +177,24 @@ class _TareasScreenState extends State<TareasScreen> {
                   final tarea = tareas[index];
                   return ListTile(
                     title: Text(tarea['titulo']!),
-                    subtitle: Text(tarea['detalle']!),
+                    /*
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(tarea['detalle']),
+                        Text(
+                          tarea['fecha'] != null
+                              ? (tarea['fecha'] as DateTime)
+                                  .toLocal()
+                                  .toString()
+                                  .split(' ')[0]
+                              : 'Sin fecha',
+                          style: const TextStyle(
+                            color: Colors.grey,
+                          ), // Estilo para la fecha
+                        ),
+                      ],
+                    ),*/
                     onTap: () {
                       _mostrarModalAgregarTarea(
                         index: index,
