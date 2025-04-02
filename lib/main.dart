@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kgaona/views/tareas_screen.dart';
 import 'views/login_screen.dart'; // Importa la nueva pantalla
 
 void main() {
@@ -166,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                  MaterialPageRoute(builder: (context) => TareasScreen()),
                 );
               },
               child: const Text('Ir a Inicio de Sesión'),
