@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'views/login_screen.dart'; // Importa la nueva pantalla
+import 'views/tareas_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -170,6 +171,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
               child: const Text('Ir a Inicio de Sesión'),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TareasScreen()),
+                );
+              },
+              child: const Text('Ir a Tareas'),
             ),
           ],
         ),
