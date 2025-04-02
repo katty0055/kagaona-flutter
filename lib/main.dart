@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+
+import 'views/login_screen.dart'; // Importa la pantalla de login
+
+import 'package:kgaona/views/tareas_screen.dart';
 import 'views/login_screen.dart'; // Importa la nueva pantalla
-import 'views/tareas_screen.dart';
+import 'package:kgaona/views/welcome_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,29 +13,15 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.pinkAccent),
       ),
+
+      // home: LoginScreen(), // Establece LoginScreen como la pantalla inicial
       home: const MyHomePage(title: 'Flutter Demo Katteryne Home Page'),
     );
   }
@@ -69,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-    void _decrementCounter() {
+  void _decrementCounter() {
     setState(() {
       _counter--;
     });
@@ -158,10 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: const Text('Mostrar Advertencia'),
             ),
             const SizedBox(height: 16),
-            Text(
-              message,
-              style: TextStyle(fontSize: 18, color: messageColor),
-            ),
+            Text(message, style: TextStyle(fontSize: 18, color: messageColor)),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
@@ -172,16 +159,16 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               child: const Text('Ir a Inicio de Sesión'),
             ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TareasScreen()),
-                );
-              },
-              child: const Text('Ir a Tareas'),
-            ),
+            // const SizedBox(height: 16),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => TareasScreen()),
+            //     );
+            //   },
+            //   child: const Text('Ir a Tareas'),
+            // ),
           ],
         ),
       ),
@@ -208,7 +195,7 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             tooltip: 'Reset',
             child: const Icon(Icons.refresh),
-          ),          
+          ),
         ],
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
