@@ -11,6 +11,7 @@ class TareasScreen extends StatefulWidget {
 
 class _TareasScreenState extends State<TareasScreen> {
   final List<Map<String, dynamic>> tareas = [];
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   int _selectedIndex = 0; // Índice del elemento seleccionado en el navbar
 
@@ -85,6 +86,7 @@ class _TareasScreenState extends State<TareasScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(index == null ? 'Agregar Tarea' : 'Editar Tarea'),
+          key: _formKey,
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -137,10 +139,11 @@ class _TareasScreenState extends State<TareasScreen> {
               },
               child: const Text('Cancelar'),
             ),
-            ElevatedButton(
+           /* ElevatedButton(
               onPressed: () {
                 final titulo = tituloController.text.trim();
                 final detalle = detalleController.text.trim();
+                final fecha = fechaController.text.trim();
 
                 if (titulo.isNotEmpty && detalle.isNotEmpty) {
                   if (index == null) {
@@ -152,7 +155,45 @@ class _TareasScreenState extends State<TareasScreen> {
                 }
               },
               child: const Text('Guardar'),
-            ),
+            ),*/
+            // prueba alerta
+              ElevatedButton(
+            onPressed: () {
+              // Validación manual
+              final titulo = tituloController.text.trim();
+              final detalle = detalleController.text.trim();
+              final fecha = fechaController.text.trim();
+
+              if (titulo.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('El título no puede estar vacío')),
+                );
+                return;
+              }
+
+              if (detalle.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('El detalle no puede estar vacío')),
+                );
+                return;
+              }
+
+              if (fecha.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Debe seleccionar una fecha')),
+                );
+                return;
+              }
+
+              if (index == null) {
+                _agregarTarea(titulo, detalle, fechaSeleccionada!);
+              } else {
+                _editarTarea(index, titulo, detalle, fechaSeleccionada!);
+              }
+              Navigator.pop(context); // Cierra el modal y guarda la tarea
+            },
+            child: const Text('Guardar'),
+          ),
           ],
         );
       },
@@ -220,7 +261,7 @@ class _TareasScreenState extends State<TareasScreen> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Inicio"),
           BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Añadir Tarea'),
-          BottomNavigationBarItem(icon: Icon(Icons.close), label: "Salirr"),
+          BottomNavigationBarItem(icon: Icon(Icons.close), label: "Salir"),
         ],
       ),
     );
