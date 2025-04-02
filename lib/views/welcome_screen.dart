@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:kgaona/views/login_screen.dart';
+import 'package:kgaona/views/tareas_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
-    const WelcomeScreen({super.key});
+  const WelcomeScreen({super.key});
 
   @override
   _WelcomeScreenState createState() => _WelcomeScreenState();
@@ -27,13 +29,43 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       ];
       isLoading = false;
     });
-    
   }
-   _mostrarCotizaciones() {
+
+  _mostrarCotizaciones() {
     print("Cotizacion");
+  }
 
-}
+  int _selectedIndex = 0;
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    // Lógica para manejar la navegación según el índice seleccionado
+    switch (index) {
+      case 0: // Inicio
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+        );
+        break;
+      case 1: // Añadir Tarea
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const TareasScreen()),
+        );
+      
+
+        break;
+      case 2: // Salir
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+        );
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +89,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               onPressed: () {
                 // Acción para listar cotizaciones
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Listando cotizaciones...'),
-                  ),
+                  const SnackBar(content: Text('Listando cotizaciones...')),
                 );
               },
               child: const Text('Listar Cotizaciones PS'),
@@ -90,7 +120,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           ],
         ),
       ),
-      
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex, // Índice del elemento seleccionado
+        onTap: _onItemTapped, // Maneja el evento de selección
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Inicio"),
+          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Añadir Tarea'),
+          BottomNavigationBarItem(icon: Icon(Icons.close), label: "Salirr"),
+        ],
+      ),
     );
   }
 }
