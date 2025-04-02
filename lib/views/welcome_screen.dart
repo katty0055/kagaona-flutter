@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/views/tareasscreen.dart';
 import 'package:kgaona/views/login_screen.dart';
+import 'package:kgaona/views/base_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -70,6 +71,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 'Menú de Navegación',
                 style: TextStyle(color: Colors.white, fontSize: 24),
               ),
+            ),
+            ListTile(
+              leading: Icon(Icons.task),
+              title: Text('Inicio'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => WelcomeScreen()),
+                );
+              },
             ),
             ListTile(
               leading: Icon(Icons.task),

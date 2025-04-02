@@ -17,6 +17,13 @@ class _TareasScreenState extends State<TareasScreen> {
     final TextEditingController descripcionController = TextEditingController(
       text: tarea?['descripcion'] ?? '',
     );
+    // DateTime? fechaPlazo = tarea?['fechaPlazo'];
+    final TextEditingController fechaController = TextEditingController(
+      text:
+          tarea?['fechaPlazo'] != null
+              ? tarea!['fechaPlazo'].toLocal().toString().split(' ')[0]
+              : '',
+    );
     DateTime? fechaPlazo = tarea?['fechaPlazo'];
 
     showDialog(
@@ -57,14 +64,14 @@ class _TareasScreenState extends State<TareasScreen> {
                       return null;
                     },
                   ),
+
                   SizedBox(height: 10),
                   TextFormField(
+                    controller: fechaController,
                     readOnly: true,
                     decoration: InputDecoration(
                       labelText: 'Fecha Plazo',
-                      hintText:
-                          fechaPlazo?.toLocal().toString().split(' ')[0] ??
-                          'Seleccionar Fecha',
+                      hintText: 'Seleccionar Fecha',
                       border: OutlineInputBorder(),
                     ),
                     onTap: () async {
@@ -77,6 +84,10 @@ class _TareasScreenState extends State<TareasScreen> {
                       if (fechaSeleccionada != null) {
                         setState(() {
                           fechaPlazo = fechaSeleccionada;
+                          fechaController.text =
+                              fechaPlazo!.toLocal().toString().split(
+                                ' ',
+                              )[0]; // Actualiza el campo de texto
                         });
                       }
                     },
