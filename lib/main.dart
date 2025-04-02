@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/views/tareas_screen.dart';
 import 'views/login_screen.dart'; // Importa la nueva pantalla
-
+import 'package:kgaona/views/welcome_screen.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -69,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-    void _decrementCounter() {
+  void _decrementCounter() {
     setState(() {
       _counter--;
     });
@@ -158,10 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: const Text('Mostrar Advertencia'),
             ),
             const SizedBox(height: 16),
-            Text(
-              message,
-              style: TextStyle(fontSize: 18, color: messageColor),
-            ),
+            Text(message, style: TextStyle(fontSize: 18, color: messageColor)),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
@@ -198,7 +195,7 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             tooltip: 'Reset',
             child: const Icon(Icons.refresh),
-          ),          
+          ),
         ],
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
