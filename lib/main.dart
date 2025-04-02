@@ -164,7 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => TareasScreen()),
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
                 );
               },
               child: const Text('Ir a Inicio de Sesión'),
