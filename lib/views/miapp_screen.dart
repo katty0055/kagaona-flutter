@@ -1,8 +1,10 @@
 /*
- ¿Por qué usamos setState aquí? ¿Qué pasa si no lo usamos?
- Usamos el setState para avisar cuando se debe reconstruir el widget.
- Si no lo usamos no cambiara el valor del contador en la pantalla.
-*/ 
+¿Cómo controla el estado los cambios de color? ¿Qué hace Column en este layout?
+Con una lista de colores y el setState() dentro de la funcion cambiarColor()> Se le suma 1 al indice actual y 
+se obtiene el resto de la division con el tamaño de la lista de colores,el rersultado 
+es el nuevo indice del color a mostrar. 
+Column alinea a los widgets hijos uno detras de otro.
+*/
 
 import 'package:flutter/material.dart';
 
@@ -14,11 +16,20 @@ class MiAppScreen extends StatefulWidget {
 }
 
 class _MiAppScreenState extends State<MiAppScreen> {
-  int _contador = 0; // Variable para el contador
+  Color _colorActual = Colors.blue; // Color inicial del Container
+  final List<Color> _colores = [Colors.blue, Colors.red, Colors.green];
+  int _indiceColor = 0;
 
-  void _incrementarContador() {
+  void _cambiarColor() {
     setState(() {
-      _contador++; // Incrementa el contador
+      _indiceColor = (_indiceColor + 1) % _colores.length; // Cambia al siguiente color
+      _colorActual = _colores[_indiceColor];
+    });
+  }
+  
+  void _resetColor() {
+    setState(() {
+      _colorActual = Colors.white;
     });
   }
 
@@ -29,26 +40,28 @@ class _MiAppScreenState extends State<MiAppScreen> {
         title: const Text('Mi App'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Wrap(          
           children: [
             Container(
-              color: Colors.green, // Cambia el color del fondo
-              padding: const EdgeInsets.all(20),
+              width: 300,
+              height: 300,
+              color: _colorActual, // Aplica el color actual
+              alignment: Alignment.center,
               child: const Text(
-                'Hola, Flutter',
-                style: TextStyle(fontSize: 24),
+                '¡Cambio de color!',
+                style: TextStyle(fontSize: 18, color: Colors.white),
+                textAlign: TextAlign.center,
               ),
             ),
             const SizedBox(height: 16),
-            Text(
-              'Veces presionado: $_contador', // Muestra el valor del contador
-              style: const TextStyle(fontSize: 20, color: Colors.blue),
-            ),
-            const SizedBox(height: 30),
             ElevatedButton(
-              onPressed: _incrementarContador, // Incrementa el contador al presionar
-              child: const Text('Toca aqui'),
+              onPressed: _cambiarColor, // Cambia el color al presionar
+              child: const Text('Cambiar Color'),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _resetColor, // Cambia el color al presionar
+              child: const Text('Resetea Color'),
             ),
           ],
         ),
