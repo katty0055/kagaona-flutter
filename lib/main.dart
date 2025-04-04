@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'views/login_screen.dart'; // Importa la pantalla de login
-
-import 'package:kgaona/views/tareas_screen.dart';
-import 'views/login_screen.dart'; // Importa la nueva pantalla
-import 'package:kgaona/views/welcome_screen.dart';
+import 'package:kgaona/views/miapp_screen.dart';
+import 'views/login_screen.dart'; 
 
 void main() {
   runApp(const MyApp());
@@ -21,8 +17,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.pinkAccent),
       ),
 
-      // home: LoginScreen(), // Establece LoginScreen como la pantalla inicial
-      home: const MyHomePage(title: 'Flutter Demo Katteryne Home Page'),
+      // Establece como la pantalla inicial
+      //home: const MyHomePage(title: 'Flutter Demo Katteryne Home Page'),
+      home: const MiAppScreen(), // Cambia a la pantalla de bienvenida
     );
   }
 }
