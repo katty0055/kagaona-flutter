@@ -1,14 +1,26 @@
 /*
-¿Qué hace el Container en este código? ¿Cómo organiza Column los elementos?"
-El container esta dentro de la Columna, agrega estilo al texto, color verde al fondo,
-un texto de 24px y un padding de 20px. La columna organiza los elementos en una sola 
-columna, es decir los elementos aparecen en filas, uno debajo del otro.
+ ¿Por qué usamos setState aquí? ¿Qué pasa si no lo usamos?
+ Usamos el setState para avisar cuando se debe reconstruir el widget.
+ Si no lo usamos no cambiara el valor del contador en la pantalla.
 */ 
 
 import 'package:flutter/material.dart';
 
-class MiAppScreen extends StatelessWidget {
+class MiAppScreen extends StatefulWidget {
   const MiAppScreen({super.key});
+
+  @override
+  _MiAppScreenState createState() => _MiAppScreenState();
+}
+
+class _MiAppScreenState extends State<MiAppScreen> {
+  int _contador = 0; // Variable para el contador
+
+  void _incrementarContador() {
+    setState(() {
+      _contador++; // Incrementa el contador
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +33,7 @@ class MiAppScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              //cambia el color del fondo
-              color:Colors.green,
+              color: Colors.green, // Cambia el color del fondo
               padding: const EdgeInsets.all(20),
               child: const Text(
                 'Hola, Flutter',
@@ -30,13 +41,13 @@ class MiAppScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
+            Text(
+              'Veces presionado: $_contador', // Muestra el valor del contador
+              style: const TextStyle(fontSize: 20, color: Colors.blue),
+            ),
+            const SizedBox(height: 30),
             ElevatedButton(
-              onPressed: () {
-                // Acción al presionar el botón
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Botón presionado')),
-                );
-              },
+              onPressed: _incrementarContador, // Incrementa el contador al presionar
               child: const Text('Toca aqui'),
             ),
           ],
