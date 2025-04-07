@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kgaona/presentation/task_screen.dart';
 //import 'package:kgaona/views/miapp_screen.dart';
 import 'views/login_screen.dart'; 
 
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
 
       // Establece como la pantalla inicial
       home: const MyHomePage(title: 'Flutter Demo Katteryne Home Page'),
+      //home: TaskScreen(),
       //home: const MiAppScreen(), // Cambia a la pantalla de bienvenida
     );
   }
