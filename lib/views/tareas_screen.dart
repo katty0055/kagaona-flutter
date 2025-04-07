@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kgaona/api/service/tareas_service.dart';
 import 'package:kgaona/views/login_screen.dart';
 import 'package:kgaona/views/welcome_screen.dart';
 
@@ -10,10 +11,16 @@ class TareasScreen extends StatefulWidget {
 }
 
 class _TareasScreenState extends State<TareasScreen> {
-  final List<Map<String, dynamic>> tareas = [];
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+  final TareasService _tareasService = TareasService();
+  final ScrollController _scrollController = ScrollController();
+  final List<Map<String, dynamic>> _tareas = [];
+  bool _cargando = false;
+  bool _hayMasTareas = true;
+  int _paginaActual = 0;
+  final int _limitePorPagina = 10;
   int _selectedIndex = 0; // Índice del elemento seleccionado en el navbar
+  DateTime? fechaSeleccionada;
+  final TextEditingController fechaController = TextEditingController();
 
   void _onItemTapped(int index) {
     setState(() {
@@ -39,54 +46,71 @@ class _TareasScreenState extends State<TareasScreen> {
         break;
     }
   }
-  //final List<Map<String, String>> tareas = []; // Lista de tareas
 
-  /*void _agregarTarea(String titulo, String detalle) {
-    setState(() {
-      tareas.add({'titulo': titulo, 'detalle': detalle});
-    });
+  @override
+  void initState() {
+    super.initState();
+    _cargarTareas();
+    _scrollController.addListener(_detectarScrollFinal);
   }
 
-  void _editarTarea(int index, String titulo, String detalle) {
-    setState(() {
-      tareas[index] = {'titulo': titulo, 'detalle': detalle};
-    });
-  }
-*/
-  void _agregarTarea(String titulo, String detalle, DateTime fecha) {
-    setState(() {
-      tareas.add({'titulo': titulo, 'detalle': detalle, 'fecha': fecha});
-    });
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
-  void _editarTarea(int index, String titulo, String detalle, DateTime fecha) {
-    setState(() {
-      tareas[index] = {'titulo': titulo, 'detalle': detalle, 'fecha': fecha};
-    });
-  }
+  Future<void> _cargarTareas() async {
+    if (_cargando || !_hayMasTareas) return;
 
-  void _mostrarModalAgregarTarea({int? index}) {
-    final TextEditingController tituloController = TextEditingController(
-      text: index != null ? tareas[index]['titulo'] : '',
+    setState(() {
+      _cargando = true;
+    });
+
+    final nuevasTareas = await _tareasService.obtenerTareas(
+      inicio: _paginaActual * _limitePorPagina,
+      limite: _limitePorPagina,
     );
-    final TextEditingController detalleController = TextEditingController(
-      text: index != null ? tareas[index]['detalle'] : '',
-    );
-    final TextEditingController fechaController = TextEditingController(
-      text:
-          index != null
-              ? (tareas[index]['fecha'] as DateTime).toLocal().toString().split(
-                ' ',
-              )[0]
-              : '',
-    );
-    DateTime? fechaSeleccionada = index != null ? tareas[index]['fecha'] : null;
+
+    setState(() {
+      _tareas.addAll(nuevasTareas);
+      _cargando = false;
+      _hayMasTareas = nuevasTareas.length == _limitePorPagina;
+      if (_hayMasTareas) _paginaActual++;
+    });
+  }
+
+  void _detectarScrollFinal() {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent &&
+        !_cargando) {
+      _cargarTareas();
+    }
+  }
+
+  Future<void> _agregarTarea(String titulo, String detalle, DateTime fecha) async {
+    final nuevaTarea = {'titulo': titulo, 'detalle': detalle, 'fecha': fecha};
+    await _tareasService.agregarTarea(nuevaTarea);
+    setState(() {
+      _tareas.insert(0, nuevaTarea); // Agrega la nueva tarea al inicio
+    });
+  }
+
+  Future<void> _eliminarTarea(int index) async {
+    await _tareasService.eliminarTarea(index);
+    setState(() {
+      _tareas.removeAt(index);
+    });
+  }
+
+  void _mostrarModalAgregarTarea() {
+    final TextEditingController tituloController = TextEditingController();
+    final TextEditingController detalleController = TextEditingController();
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(index == null ? 'Agregar Tarea' : 'Editar Tarea'),
-          key: _formKey,
+          title: const Text('Agregar Tarea'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -108,7 +132,7 @@ class _TareasScreenState extends State<TareasScreen> {
               const SizedBox(height: 16),
               TextField(
                 controller: fechaController,
-                readOnly: true,
+                readOnly: true, // Hace que el campo no sea editable manualmente
                 decoration: const InputDecoration(
                   labelText: 'Fecha',
                   border: OutlineInputBorder(),
@@ -124,8 +148,7 @@ class _TareasScreenState extends State<TareasScreen> {
                   if (nuevaFecha != null) {
                     setState(() {
                       fechaSeleccionada = nuevaFecha;
-                      fechaController.text =
-                          nuevaFecha.toLocal().toString().split(' ')[0];
+                      fechaController.text = nuevaFecha.toLocal().toString().split(' ')[0];
                     });
                   }
                 },
@@ -135,65 +158,28 @@ class _TareasScreenState extends State<TareasScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context); // Cierra el modal sin guardar
+                Navigator.pop(context);
               },
               child: const Text('Cancelar'),
             ),
-           /* ElevatedButton(
+            ElevatedButton(
               onPressed: () {
                 final titulo = tituloController.text.trim();
                 final detalle = detalleController.text.trim();
                 final fecha = fechaController.text.trim();
 
-                if (titulo.isNotEmpty && detalle.isNotEmpty) {
-                  if (index == null) {
-                    _agregarTarea(titulo, detalle, fechaSeleccionada!);
-                  } else {
-                    _editarTarea(index, titulo, detalle, fechaSeleccionada!);
-                  }
-                  Navigator.pop(context); // Cierra el modal y guarda la tarea
+                if (titulo.isEmpty || detalle.isEmpty || fechaSeleccionada == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Todos los campos son obligatorios')),
+                  );
+                  return;
                 }
+
+                _agregarTarea(titulo, detalle, fechaSeleccionada!);
+                Navigator.pop(context);
               },
               child: const Text('Guardar'),
-            ),*/
-            // prueba alerta
-              ElevatedButton(
-            onPressed: () {
-              // Validación manual
-              final titulo = tituloController.text.trim();
-              final detalle = detalleController.text.trim();
-              final fecha = fechaController.text.trim();
-
-              if (titulo.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('El título no puede estar vacío')),
-                );
-                return;
-              }
-
-              if (detalle.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('El detalle no puede estar vacío')),
-                );
-                return;
-              }
-
-              if (fecha.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Debe seleccionar una fecha')),
-                );
-                return;
-              }
-
-              if (index == null) {
-                _agregarTarea(titulo, detalle, fechaSeleccionada!);
-              } else {
-                _editarTarea(index, titulo, detalle, fechaSeleccionada!);
-              }
-              Navigator.pop(context); // Cierra el modal y guarda la tarea
-            },
-            child: const Text('Guardar'),
-          ),
+            ),
           ],
         );
       },
@@ -204,54 +190,41 @@ class _TareasScreenState extends State<TareasScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Tareas')),
-      body:
-          tareas.isEmpty
-              ? const Center(
-                child: Text(
-                  'No hay tareas. Agrega una nueva tarea.',
-                  style: TextStyle(fontSize: 18),
-                ),
-              )
-              : ListView.builder(
-                itemCount: tareas.length,
-                itemBuilder: (context, index) {
-                  final tarea = tareas[index];
-                  return ListTile(
-                    title: Text(tarea['titulo']!),
-                    /*
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(tarea['detalle']),
-                        Text(
-                          tarea['fecha'] != null
-                              ? (tarea['fecha'] as DateTime)
-                                  .toLocal()
-                                  .toString()
-                                  .split(' ')[0]
-                              : 'Sin fecha',
-                          style: const TextStyle(
-                            color: Colors.grey,
-                          ), // Estilo para la fecha
-                        ),
-                      ],
-                    ),*/
-                    onTap: () {
-                      _mostrarModalAgregarTarea(
-                        index: index,
-                      ); // Editar tarea al tocar
-                    },
-                    trailing: IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: () {
-                        _mostrarModalAgregarTarea(index: index); // Editar tarea
-                      },
-                    ),
-                  );
-                },
+      body: ListView.builder(
+        controller: _scrollController,
+        itemCount: _tareas.length + (_cargando ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (index == _tareas.length) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: CircularProgressIndicator(),
               ),
+            );
+          }
+
+          final tarea = _tareas[index];
+          return Dismissible(
+            key: Key(tarea['titulo']),
+            direction: DismissDirection.endToStart,
+            background: Container(
+              color: Colors.red,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: const Icon(Icons.delete, color: Colors.white),
+            ),
+            onDismissed: (direction) {
+              _eliminarTarea(index);
+            },
+            child: ListTile(
+              title: Text(tarea['titulo']),
+            
+            ),
+          );
+        },
+      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _mostrarModalAgregarTarea(),
+        onPressed: _mostrarModalAgregarTarea,
         tooltip: 'Agregar Tarea',
         child: const Icon(Icons.add),
       ),

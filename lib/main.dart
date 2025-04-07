@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kgaona/views/miapp_screen.dart';
+//import 'package:kgaona/views/miapp_screen.dart';
 import 'views/login_screen.dart'; 
 
 void main() {
@@ -18,8 +18,8 @@ class MyApp extends StatelessWidget {
       ),
 
       // Establece como la pantalla inicial
-      //home: const MyHomePage(title: 'Flutter Demo Katteryne Home Page'),
-      home: const MiAppScreen(), // Cambia a la pantalla de bienvenida
+      home: const MyHomePage(title: 'Flutter Demo Katteryne Home Page'),
+      //home: const MiAppScreen(), // Cambia a la pantalla de bienvenida
     );
   }
 }
@@ -173,18 +173,21 @@ class _MyHomePageState extends State<MyHomePage> {
         mainAxisAlignment: MainAxisAlignment.end, // Alinea los botones al final
         children: [
           FloatingActionButton(
+            heroTag: 'decrement',
             onPressed: _decrementCounter,
             tooltip: 'Decrement',
             child: const Icon(Icons.remove),
           ),
           const SizedBox(width: 16), // Espaciado entre los botones
           FloatingActionButton(
+            heroTag: 'increment',
             onPressed: _incrementCounter,
             tooltip: 'Increment',
             child: const Icon(Icons.add),
           ),
           const SizedBox(width: 16), // Espaciado entre los botones
           FloatingActionButton(
+            heroTag: 'reset',
             onPressed: () {
               setState(() {
                 _counter = 0; // Reinicia el contador a 0
