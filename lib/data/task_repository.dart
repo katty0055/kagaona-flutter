@@ -7,6 +7,7 @@ class TaskRepository {
     Task(title: 'Tarea 3', type: 'normal'),
     Task(title: 'Tarea 4', type: 'urgente'),
     Task(title: 'Tarea 5', type: 'normal'),
+    Task(title: 'Tarea 6', type: 'normal'),
   ];
 
   List<Task> getTasks() {
@@ -15,9 +16,11 @@ class TaskRepository {
 
   void addTask(Task task) {
     _tasks.add(task);
+    print('Tarea añadida: ${task.title}');
   }
 
   void removeTask(int index) {
     _tasks.removeAt(index);
+     print('Tarea eliminada: ${index}');
   }
 }

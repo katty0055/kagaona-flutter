@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/api/service/tareas_service.dart';
+import 'package:kgaona/constants.dart';
 import 'package:kgaona/views/login_screen.dart';
 import 'package:kgaona/views/welcome_screen.dart';
+import '../domain/task.dart';
 
 class TareasScreen extends StatefulWidget {
   const TareasScreen({super.key});
@@ -13,7 +15,7 @@ class TareasScreen extends StatefulWidget {
 class _TareasScreenState extends State<TareasScreen> {
   final TareasService _tareasService = TareasService();
   final ScrollController _scrollController = ScrollController();
-  final List<Map<String, dynamic>> _tareas = [];
+  List<Task> _tareas = [];
   bool _cargando = false;
   bool _hayMasTareas = true;
   int _paginaActual = 0;
@@ -88,10 +90,10 @@ class _TareasScreenState extends State<TareasScreen> {
   }
 
   Future<void> _agregarTarea(String titulo, String detalle, DateTime fecha) async {
-    final nuevaTarea = {'titulo': titulo, 'detalle': detalle, 'fecha': fecha};
+    final nuevaTarea = Task(title: titulo, type: detalle);
     await _tareasService.agregarTarea(nuevaTarea);
     setState(() {
-      _tareas.insert(0, nuevaTarea); // Agrega la nueva tarea al inicio
+        _tareas.insert(0, nuevaTarea); // Agrega la nueva tarea al inicio
     });
   }
 
@@ -170,7 +172,7 @@ class _TareasScreenState extends State<TareasScreen> {
 
                 if (titulo.isEmpty || detalle.isEmpty || fechaSeleccionada == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Todos los campos son obligatorios')),
+                    const SnackBar(content: Text(EMPTY_LIST)),
                   );
                   return;
                 }
@@ -189,7 +191,7 @@ class _TareasScreenState extends State<TareasScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Tareas')),
+      appBar: AppBar(title: const Text(TITLE_APPBAR)),
       body: ListView.builder(
         controller: _scrollController,
         itemCount: _tareas.length + (_cargando ? 1 : 0),
@@ -205,7 +207,7 @@ class _TareasScreenState extends State<TareasScreen> {
 
           final tarea = _tareas[index];
           return Dismissible(
-            key: Key(tarea['titulo']),
+            key: Key(tarea.title),
             direction: DismissDirection.endToStart,
             background: Container(
               color: Colors.red,
@@ -217,8 +219,12 @@ class _TareasScreenState extends State<TareasScreen> {
               _eliminarTarea(index);
             },
             child: ListTile(
-              title: Text(tarea['titulo']),
-            
+              leading: Icon(
+                tarea.type == 'normal' ? Icons.task : Icons.warning,
+                color: tarea.type == 'normal' ? Colors.blue : Colors.red,
+              ),
+              title: Text(tarea.title),
+              subtitle: Text('$TASK_TYPE_LABEL ${tarea.type}'),           
             ),
           );
         },
