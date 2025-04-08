@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kgaona/constants.dart';
 import '../domain/task.dart';
 import '../components/task_card.dart'; // Importa el diseño del Card
 
@@ -20,6 +21,77 @@ Widget buildTaskCard(Task task, VoidCallback onEdit,  {String? subtitulo}) {
     trailing: IconButton(
       icon: const Icon(Icons.edit, color: Colors.blue),
       onPressed: onEdit, // Llama al callback para editar
+    ),
+  );
+}
+
+
+Widget construirTarjetaDeportiva(Task tarea, int indice) {
+  final String imageUrl = 'https://picsum.photos/200/300?random=$indice';
+  final String fechaLimite = tarea.fechaLimite != null
+      ? '${tarea.fechaLimite!.day}/${tarea.fechaLimite!.month}/${tarea.fechaLimite!.year}'
+      : 'Sin fecha límite';
+
+  return Card(
+    elevation: 8, // Borde sombreado
+    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10), // Borde redondeado
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Imagen aleatoria
+        ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+          child: Image.network(
+            imageUrl,
+            height: 150,
+            width: double.infinity,
+            fit: BoxFit.cover,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Título
+              Text(
+                tarea.title,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              // Pasos (máximo 3 líneas)
+              if (tarea.pasos != null && tarea.pasos!.isNotEmpty)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: tarea.pasos!
+                      .take(3) // Toma un máximo de 3 pasos
+                      .map((paso) => Text(
+                            paso,
+                            style: const TextStyle(fontSize: 14, color: Colors.black54),
+                          ))
+                      .toList(),
+                )
+              else
+                const Text(
+                  'No hay pasos disponibles',
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                ),
+              const SizedBox(height: 8),
+              // Fecha límite
+              Text(
+                '$FECHA_LIMITE $fechaLimite',
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+            ],
+          ),
+        ),
+      ],
     ),
   );
 }
