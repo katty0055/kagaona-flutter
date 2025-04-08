@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 
 class TaskCard extends StatelessWidget {
   final String title;
+  final String? subtitle; // Subtítulo opcional
   final Widget leadingIcon; // Ícono dinámico pasado desde afuera
-  final String type;
+  final String type;  
   final String? description;
   final DateTime? date;
   final Widget? trailing; // Botón o widget adicional (opcional)
-
+  
   const TaskCard({
     super.key,
     required this.title,
+    this.subtitle, // Acepta un subtítulo opcional
     required this.leadingIcon,
     required this.type,
     this.description,
@@ -36,14 +38,28 @@ class TaskCard extends StatelessWidget {
                 leadingIcon, // Ícono dinámico pasado como parámetro
                 const SizedBox(width: 16),
                 Expanded(
-                  child: Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      if (subtitle != null) // Muestra el subtítulo si está definido
+                        Text(
+                          subtitle!,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black54,
+                          ),
+                        ),
+                    ],
                   ),
                 ),
+
                 if (trailing != null) trailing!, // Muestra el botón si está definido
               ],
             ),

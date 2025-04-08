@@ -93,7 +93,7 @@ class _AddTaskModalState extends State<AddTaskModal> {
           onPressed: () {
             final titulo = tituloController.text.trim();
             final descripcion = descripcionController.text.trim();
-
+            // final type = 
             if (titulo.isEmpty || descripcion.isEmpty || fechaSeleccionada == null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Por favor, completa todos los campos')),

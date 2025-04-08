@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../domain/task.dart';
 import '../components/task_card.dart'; // Importa el diseño del Card
 
-Widget buildTaskCard(Task task, VoidCallback onEdit) {
+Widget buildTaskCard(Task task, VoidCallback onEdit,  {String? subtitulo}) {
   // Lógica para determinar el ícono dinámico
   final Widget leadingIcon = Icon(
     task.type == 'normal' ? Icons.task : Icons.warning,
@@ -12,6 +12,7 @@ Widget buildTaskCard(Task task, VoidCallback onEdit) {
 
   return TaskCard(
     title: task.title,
+    subtitle: subtitulo,
     leadingIcon: leadingIcon, // Pasa el ícono dinámico al Card
     type: task.type,
     description: task.description,

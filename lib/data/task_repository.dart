@@ -1,24 +1,70 @@
-import 'package:kgaona/api/service/servicio_tareas.dart';
-
 import '../domain/task.dart';
 
 class TaskRepository {
   final List<Task> _tasks = [
-    Task(title: 'Tarea 1', type: 'normal', description: 'Descripción de la tarea 1',
-     date: DateTime(2025, 4, 7),fechaLimite:DateTime.now().add(Duration(days: 1))),
-    Task(title: 'Tarea 2', type: 'urgente', description: 'Descripción de la tarea 2',
-     date: DateTime(2025, 4, 8), fechaLimite:DateTime.now().add(Duration(days: 2))),
-    Task(title: 'Tarea 3', type: 'normal', description: 'Descripción de la tarea 3',
-     date: DateTime(2025, 4, 9), fechaLimite:DateTime.now().add(Duration(days: 3))),
-    Task(title: 'Tarea 4', type: 'urgente', description: 'Descripción de la tarea 4',
-     date: DateTime(2025, 4, 10), fechaLimite:DateTime.now().add(Duration(days: 4))),
-    Task(title: 'Tarea 5', type: 'normal', description: 'Descripción de la tarea 5', 
-    date: DateTime(2025, 4, 11), fechaLimite:DateTime.now().add(Duration(days: 5))),
+    Task(
+      title: 'Tarea 1',
+      type: 'normal',
+      description: 'Descripción de la tarea 1',
+      date: DateTime(2025, 4, 14),
+      fechaLimite: DateTime.now().add(const Duration(days: 1)),
+      pasos: [
+      'Paso 1: Planificar antes del 15/04/2025', 
+      'Paso 2: Ejecutar antes del 15/04/2025',
+      'Paso 3: Revisar antes del 15/04/2025',
+      ],
+    ),
+    Task(
+      title: 'Tarea 2',
+      type: 'urgente',
+      description: 'Descripción de la tarea 2',
+      date: DateTime(2025, 4, 13),
+      fechaLimite: DateTime.now().add(const Duration(days: 2)),
+      pasos: [
+      'Paso 1: Planificar antes del 15/04/2025', 
+      'Paso 2: Ejecutar antes del 15/04/2025',
+      'Paso 3: Revisar antes del 15/04/2025',
+      ],
+    ),
+    Task(
+      title: 'Tarea 3',
+      type: 'normal',
+      description: 'Descripción de la tarea 3',
+      date: DateTime(2025, 4, 12),
+      fechaLimite: DateTime.now().add(const Duration(days: 3)),
+      pasos: [
+      'Paso 1: Planificar antes del 15/04/2025', 
+      'Paso 2: Ejecutar antes del 15/04/2025',
+      'Paso 3: Revisar antes del 15/04/2025',
+      ],
+    ),
+    Task(
+      title: 'Tarea 4',
+      type: 'uregente',
+      description: 'Descripción de la tarea 4',
+      date: DateTime(2025, 4, 11),
+      fechaLimite: DateTime.now().add(const Duration(days: 3)),
+      pasos: [
+      'Paso 1: Planificar antes del 15/04/2025', 
+      'Paso 2: Ejecutar antes del 15/04/2025',
+      'Paso 3: Revisar antes del 15/04/2025',
+      ],
+    ),
+    Task(
+      title: 'Tarea 5',
+      type: 'normal',
+      description: 'Descripción de la tarea 5',
+      date: DateTime(2025, 4, 10),
+      fechaLimite: DateTime.now().add(const Duration(days: 3)),
+      pasos: [
+      'Paso 1: Planificar antes del 15/04/2025', 
+      'Paso 2: Ejecutar antes del 15/04/2025',
+      'Paso 3: Revisar antes del 15/04/2025',
+      ],
+    ),
   ];
-  final ServicioTareas _servicioTareas = ServicioTareas();
 
   List<Task> getTasks() {
-    // Genera tareas adicionales si no hay suficientes
     while (_tasks.length < 100) {
       final tipo = _tasks.length % 2 == 0 ? 'normal' : 'urgente';
       _tasks.add(Task(
@@ -26,36 +72,23 @@ class TaskRepository {
         type: tipo,
         description: 'Descripción de la tarea ${_tasks.length + 1}',
         date: DateTime.now(),
+        fechaLimite: DateTime.now().add(Duration(days: _tasks.length % 5 + 1)),
       ));
     }
     return _tasks;
   }
 
-  Future<void> addTask(Task task) async {
-    // Alterna entre 'normal' y 'urgente' basado en la cantidad actual de tareas
-    final tipo = _tasks.length % 2 == 0 ? 'normal' : 'urgente';
-
-    // Genera una fecha límite para la tarea (3 días después de la fecha actual)
-    final fechaLimite = DateTime.now().add(const Duration(days: 3));
-
-    // Obtiene los pasos desde el servicio
-    final pasos = await _servicioTareas.obtenerPasos(task.title);
-
-    // Crea una nueva tarea con el tipo alternado
-    final nuevaTarea = Task(
-      title: task.title,
-      type: tipo,
-      description: task.description,
-      date: task.date,
-      fechaLimite: fechaLimite,
-      pasos: pasos,
-    );
-
-    _tasks.add(nuevaTarea);
+  void addTask(Task task) {
+    _tasks.add(task);
   }
 
   void removeTask(int index) {
     _tasks.removeAt(index);
-    print('Tarea eliminada: ${index}');
+  }
+
+  void updateTask(int index, Task updatedTask) {
+    if (index >= 0 && index < _tasks.length) {
+      _tasks[index] = updatedTask;
+    }
   }
 }
