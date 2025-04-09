@@ -170,16 +170,20 @@ class _TareasScreenState extends State<TareasScreen> {
                 _eliminarTarea(index);
               },
               // Usa la nueva tarjeta deportiva,
-              //child: construirTarjetaDeportiva(tarea, index), 
-              child: buildTaskCard(
-                tarea,
-                () {
-                  _mostrarModalEditarTarea(tarea, index);
-                },
-                subtitulo: tarea.pasos != null && tarea.pasos!.isNotEmpty
-                  ? '$PASOS_TITULO: ${tarea.pasos![0]}' // Muestra PASOS_TITULO seguido del primer paso
-                  : '$PASOS_TITULO: No hay pasos disponibles',
-              ),
+              child: construirTarjetaDeportiva(
+                tarea, 
+                index,
+                () => _mostrarModalEditarTarea(tarea, index), // Pasa la función de edición
+                ), 
+              // child: buildTaskCard(
+              //   tarea,
+              //   () {
+              //     _mostrarModalEditarTarea(tarea, index);
+              //   },
+              //   subtitulo: tarea.pasos != null && tarea.pasos!.isNotEmpty
+              //     ? '$PASOS_TITULO: ${tarea.pasos![0]}' // Muestra PASOS_TITULO seguido del primer paso
+              //     : '$PASOS_TITULO: No hay pasos disponibles',
+              // ),
             ),
           );
         },

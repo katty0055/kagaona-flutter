@@ -89,9 +89,9 @@ class TareasService {
 
     // Genera pasos personalizados basados en el título de la tarea y la fecha límite
     return [
-      'Paso 1: Planificar antes del $fechaFormateada',
-      'Paso 2: Ejecutar antes del $fechaFormateada',
-      'Paso 3: Revisar antes del $fechaFormateada',
+      'Paso 1: Planificar $tituloTarea antes del $fechaFormateada',
+      'Paso 2: Ejecutar $tituloTarea antes del $fechaFormateada',
+      'Paso 3: Revisar $tituloTarea antes del $fechaFormateada',
     ];
   }
 }

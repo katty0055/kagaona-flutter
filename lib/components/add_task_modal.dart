@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kgaona/api/service/tareas_service.dart';
 import '../domain/task.dart';
 
 class AddTaskModal extends StatefulWidget {
@@ -16,6 +17,7 @@ class _AddTaskModalState extends State<AddTaskModal> {
   late TextEditingController descripcionController;
   late TextEditingController fechaController;
   DateTime? fechaSeleccionada;
+  final TareasService _tareasService = TareasService(); // Instancia del servicio
 
   @override
   void initState() {
@@ -90,7 +92,7 @@ class _AddTaskModalState extends State<AddTaskModal> {
           child: const Text('Cancelar'),
         ),
         ElevatedButton(
-          onPressed: () {
+          onPressed: () async {
             final titulo = tituloController.text.trim();
             final descripcion = descripcionController.text.trim();
             // final type = 
@@ -101,11 +103,18 @@ class _AddTaskModalState extends State<AddTaskModal> {
               return;
             }
 
+            // Llama al servicio para obtener los pasos
+            final pasos = await _tareasService.obtenerPasos(titulo, fechaSeleccionada);
+
             // Crear la tarea sin el campo 'type'
             final nuevaTarea = Task(
               title: titulo,
               description: descripcion,
               date: fechaSeleccionada,
+              fechaLimite: DateTime.now().add(const Duration(days: 3)),
+              // Mantiene el type si está editando
+              type: widget.taskToEdit!.type,
+              pasos: pasos, // Asigna los pasos generados
             );
 
             widget.onTaskAdded(nuevaTarea); // Llama al callback para agregar la tarea
