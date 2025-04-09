@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'package:kgaona/data/assistant_repository.dart';
+
 import '../../data/task_repository.dart';
 import '../../domain/task.dart';
 
 class TareasService {
   final TaskRepository _taskRepository = TaskRepository();
+  final AssistantRepository _assistantRepository = AssistantRepository(); // Instancia del nuevo repositorio
 
   Future<List<Task>> obtenerTareas({int inicio = 0, int limite = 10}) async {
     // Simula un retraso para imitar una llamada a una API
@@ -14,7 +17,7 @@ class TareasService {
 
     final tareasConPasos = await Future.wait(tareas.map((tarea) async {
     if (tarea.pasos == null || tarea.pasos!.isEmpty) {
-      final pasos = await obtenerPasos(tarea.title, tarea.fechaLimite);
+      final pasos = await _assistantRepository.generarPasos(tarea.title, tarea.fechaLimite);
       return Task(
         title: tarea.title,
         type: tarea.type,
@@ -30,12 +33,12 @@ class TareasService {
     return tareasConPasos;
   }
 
-  Future<void> agregarTarea(Task tarea) async {
+  Future<Task> agregarTarea(Task tarea) async {
     // Simula un retraso para imitar una llamada a una API
     await Future.delayed(const Duration(milliseconds: 500));
 
     // Genera pasos para la tarea
-    final pasos = await obtenerPasos(tarea.title, tarea.fechaLimite);
+    final pasos = await generarPasos(tarea.title, tarea.fechaLimite);
 
     // Crea una nueva tarea con los pasos generados
     final nuevaTarea = Task(
@@ -49,6 +52,8 @@ class TareasService {
 
     // Agrega la nueva tarea al repositorio
     _taskRepository.addTask(nuevaTarea);
+
+    return nuevaTarea;
   }
 
   Future<void> eliminarTarea(int index) async {
@@ -57,12 +62,12 @@ class TareasService {
     _taskRepository.removeTask(index);
   }
 
-  Future<void> actualizarTarea(int index, Task tareaActualizada) async {
+  Future<Task> actualizarTarea(int index, Task tareaActualizada) async {
     // Simula un retraso para imitar una llamada a una API
     await Future.delayed(const Duration(milliseconds: 500));
 
     // Genera pasos actualizados para la tarea
-    final pasos = await obtenerPasos(tareaActualizada.title, tareaActualizada.fechaLimite);
+    final pasos = await generarPasos(tareaActualizada.title, tareaActualizada.fechaLimite);
 
     // Crea una tarea actualizada con los pasos generados
     final tareaConPasos = Task(
@@ -76,22 +81,14 @@ class TareasService {
 
     // Actualiza la tarea en el repositorio
     _taskRepository.updateTask(index, tareaConPasos);
-  }
 
-  Future<List<String>> obtenerPasos(String tituloTarea, DateTime? fechaLimite) async {
-    // Simula un retraso para imitar una consulta a un asistente de IA
-    await Future.delayed(const Duration(milliseconds: 500));
-    
-    // Convierte la fecha límite a una cadena que solo muestra la fecha
-    final String fechaFormateada = fechaLimite != null
-      ? fechaLimite.toIso8601String().split('T')[0] // Obtiene solo la parte de la fecha
-      : 'sin fecha límite';
+    return tareaConPasos;
+  } 
 
-    // Genera pasos personalizados basados en el título de la tarea y la fecha límite
-    return [
-      'Paso 1: Planificar $tituloTarea antes del $fechaFormateada',
-      'Paso 2: Ejecutar $tituloTarea antes del $fechaFormateada',
-      'Paso 3: Revisar $tituloTarea antes del $fechaFormateada',
-    ];
+  Future<List<String>> generarPasos(String titulo, DateTime? fechaLimite) async {
+    List<String> pasos = [];
+    pasos = await _assistantRepository.generarPasos(titulo, fechaLimite);
+    print('Pasos generados para "$titulo": $pasos');
+    return pasos;
   }
 }
