@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/api/service/tareas_service.dart';
+import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/constants.dart';
 import 'package:kgaona/views/login_screen.dart';
 import 'package:kgaona/views/task_details_screen.dart';
@@ -96,9 +97,9 @@ class _TareasScreenState extends State<TareasScreen> {
       context: context,
       builder: (context) => AddTaskModal(
         onTaskAdded: (Task nuevaTarea) async {
-          await _tareasService.agregarTarea(nuevaTarea); // El servicio define el tipo
+          Task tareaActualizada = await _tareasService.agregarTarea(nuevaTarea); // El servicio define el tipo
           setState(() {
-            _tareas.insert(0, nuevaTarea); // Agrega la nueva tarea al inicio de la lista
+            _tareas.insert(0, tareaActualizada); // Agrega la nueva tarea al inicio de la lista
           });
         },
       ),
@@ -112,11 +113,14 @@ class _TareasScreenState extends State<TareasScreen> {
     });
   }
 
-  void _mostrarDetallesTarea(Task tarea, int indice) {
+  void _mostrarDetallesTarea(int indice) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => TaskDetailsScreen(tarea: tarea, indice: indice), // Navega a la nueva pantalla
+        builder: (context) => TaskDetailsScreen(
+          tareas: _tareas, 
+          indice: indice
+        ), // Navega a la nueva pantalla
       ),
     );
   }
@@ -127,9 +131,9 @@ class _TareasScreenState extends State<TareasScreen> {
       builder: (context) => AddTaskModal(
         taskToEdit: tarea,
         onTaskAdded: (Task tareaEditada) async {
-          await _tareasService.actualizarTarea(index, tareaEditada);
+          Task tareaActualizada = await _tareasService.actualizarTarea(index, tareaEditada);
           setState(() {
-            _tareas[index] = tareaEditada; // Actualiza la tarea en la lista persistente
+            _tareas[index] = tareaActualizada; // Actualiza la tarea en la lista persistente
           });
         },
       ),
@@ -140,6 +144,7 @@ class _TareasScreenState extends State<TareasScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text(TITLE_APPBAR)),
+      drawer: const SideMenu(),
       backgroundColor: Colors.grey[200],
       body: ListView.builder(
         controller: _scrollController,
@@ -156,7 +161,7 @@ class _TareasScreenState extends State<TareasScreen> {
 
           final tarea = _tareas[index];
           return GestureDetector(
-            onTap: () => _mostrarDetallesTarea(tarea, index), // Muestra los detalles al tocar la tarjeta
+            onTap: () => _mostrarDetallesTarea(index), // Muestra los detalles al tocar la tarjeta
             child:Dismissible(
               key: Key(tarea.title),
               direction: DismissDirection.endToStart,

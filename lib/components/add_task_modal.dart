@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kgaona/api/service/tareas_service.dart';
 import '../domain/task.dart';
 
 class AddTaskModal extends StatefulWidget {
@@ -17,8 +16,8 @@ class _AddTaskModalState extends State<AddTaskModal> {
   late TextEditingController descripcionController;
   late TextEditingController fechaController;
   DateTime? fechaSeleccionada;
-  final TareasService _tareasService = TareasService(); // Instancia del servicio
-
+  late List<String> pasos; //Lista para los pasos
+  
   @override
   void initState() {
     super.initState();
@@ -31,6 +30,9 @@ class _AddTaskModalState extends State<AddTaskModal> {
           ? '${fechaSeleccionada!.day}/${fechaSeleccionada!.month}/${fechaSeleccionada!.year}'
           : '',
     );
+
+    // Inicializa la lista de pasos
+    pasos = widget.taskToEdit?.pasos ?? [];
   }
 
   @override
@@ -95,16 +97,15 @@ class _AddTaskModalState extends State<AddTaskModal> {
           onPressed: () async {
             final titulo = tituloController.text.trim();
             final descripcion = descripcionController.text.trim();
-            // final type = 
+                         
             if (titulo.isEmpty || descripcion.isEmpty || fechaSeleccionada == null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Por favor, completa todos los campos')),
               );
               return;
             }
-
-            // Llama al servicio para obtener los pasos
-            final pasos = await _tareasService.obtenerPasos(titulo, fechaSeleccionada);
+            // // Llama al servicio para obtener los pasos
+            // final pasos = await _tareasService.generarPasos(titulo, fechaSeleccionada);
 
             // Crear la tarea sin el campo 'type'
             final nuevaTarea = Task(
@@ -113,8 +114,8 @@ class _AddTaskModalState extends State<AddTaskModal> {
               date: fechaSeleccionada,
               fechaLimite: DateTime.now().add(const Duration(days: 3)),
               // Mantiene el type si está editando
-              type: widget.taskToEdit!.type,
-              pasos: pasos, // Asigna los pasos generados
+              type: widget.taskToEdit?.type ?? 'normal',
+              pasos: pasos, 
             );
 
             widget.onTaskAdded(nuevaTarea); // Llama al callback para agregar la tarea
