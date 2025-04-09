@@ -32,6 +32,12 @@ Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
        ? '${tarea.fechaLimite!.day}/${tarea.fechaLimite!.month}/${tarea.fechaLimite!.year}'
        : 'Sin fecha límite';
  
+    final Widget leadingIcon = Icon(
+      tarea.type == 'normal' ? Icons.task : Icons.warning,
+      color: tarea.type == 'normal' ? Colors.blue : Colors.red,
+      size: 32,
+    );
+
    return Card(
      elevation: 8, // Borde sombreado
      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -55,17 +61,23 @@ Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
            child: Column(
              crossAxisAlignment: CrossAxisAlignment.start,
              children: [
-               // Título
-               Text(
-                 tarea.title,
-                 style: const TextStyle(
-                   fontSize: 20,
-                   fontWeight: FontWeight.bold,
-                 ),
-               ),
-               const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Título
+                    Text(
+                      tarea.title,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    leadingIcon, // Ícono dinámico
+                  ],
+                ),
+                const SizedBox(height: 8),
                // Pasos (máximo 3 líneas)
-               if (tarea.pasos != null && tarea.pasos!.isNotEmpty)
+                if (tarea.pasos != null && tarea.pasos!.isNotEmpty)
                  Column(
                    crossAxisAlignment: CrossAxisAlignment.start,
                    children: tarea.pasos!
@@ -83,20 +95,12 @@ Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
                  ),
                const SizedBox(height: 8),                           
                Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
                     '$FECHA_LIMITE $fechaLimite',
                     style: const TextStyle(fontSize: 14, color: Colors.grey),
                   ),
-                  //Use para visualizar el tipo de tarea y corregir el problema de editar
-                  // Text(
-                  //   tarea.type,
-                  //   style: const TextStyle(
-                  //     fontSize: 20,
-                  //     fontWeight: FontWeight.bold,
-                  //   ),
-                  // ), 
                   IconButton(
                     onPressed: onEdit, // Llama a la función de edición
                     icon: const Icon(Icons.edit, size: 16),
