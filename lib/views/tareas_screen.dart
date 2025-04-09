@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kgaona/api/service/tareas_service.dart';
 import 'package:kgaona/constants.dart';
 import 'package:kgaona/views/login_screen.dart';
+import 'package:kgaona/views/task_details_screen.dart';
 import 'package:kgaona/views/welcome_screen.dart';
 import '../domain/task.dart';
 import 'package:kgaona/helpers/task_card_helper.dart';
@@ -111,6 +112,15 @@ class _TareasScreenState extends State<TareasScreen> {
     });
   }
 
+  void _mostrarDetallesTarea(Task tarea, int indice) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TaskDetailsScreen(tarea: tarea, indice: indice), // Navega a la nueva pantalla
+      ),
+    );
+  }
+
   void _mostrarModalEditarTarea(Task tarea, int index) {
     showDialog(
       context: context,
@@ -145,23 +155,35 @@ class _TareasScreenState extends State<TareasScreen> {
           }
 
           final tarea = _tareas[index];
-          return Dismissible(
-            key: Key(tarea.title),
-            direction: DismissDirection.endToStart,
-            background: Container(
-              color: Colors.red,
-              alignment: Alignment.centerRight,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: const Icon(Icons.delete, color: Colors.white),
-            ),
-            onDismissed: (direction) {
-              _eliminarTarea(index);
-            },
-            child: buildTaskCard(
-              tarea,
-              () {
-                _mostrarModalEditarTarea(tarea, index);
+          return GestureDetector(
+            onTap: () => _mostrarDetallesTarea(tarea, index), // Muestra los detalles al tocar la tarjeta
+            child:Dismissible(
+              key: Key(tarea.title),
+              direction: DismissDirection.endToStart,
+              background: Container(
+                color: Colors.red,
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: const Icon(Icons.delete, color: Colors.white),
+              ),
+              onDismissed: (direction) {
+                _eliminarTarea(index);
               },
+              // Usa la nueva tarjeta deportiva,
+              child: construirTarjetaDeportiva(
+                tarea, 
+                index,
+                () => _mostrarModalEditarTarea(tarea, index), // Pasa la función de edición
+                ), 
+              // child: buildTaskCard(
+              //   tarea,
+              //   () {
+              //     _mostrarModalEditarTarea(tarea, index);
+              //   },
+              //   subtitulo: tarea.pasos != null && tarea.pasos!.isNotEmpty
+              //     ? '$PASOS_TITULO: ${tarea.pasos![0]}' // Muestra PASOS_TITULO seguido del primer paso
+              //     : '$PASOS_TITULO: No hay pasos disponibles',
+              // ),
             ),
           );
         },
