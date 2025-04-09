@@ -41,7 +41,6 @@ Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
      child: Column(
        crossAxisAlignment: CrossAxisAlignment.start,
        children: [
-         // Imagen aleatoria
          ClipRRect(
            borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
            child: Image.network(
