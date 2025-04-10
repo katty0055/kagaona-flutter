@@ -21,6 +21,7 @@ class TaskDetailsScreen extends StatelessWidget {
       // appBar: AppBar(
       //   title: Text(tarea.title),
       // ),
+      backgroundColor: Colors.white,
       body: GestureDetector(
         onHorizontalDragEnd: (details) {
           if (details.primaryVelocity != null) {
