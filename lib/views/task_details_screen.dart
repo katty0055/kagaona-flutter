@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/constants.dart';
 import 'package:kgaona/helpers/task_card_helper.dart';
-import '../domain/task.dart';
+import 'package:kgaona/domain/task.dart';
 
 class TaskDetailsScreen extends StatelessWidget {
   final List<Task> tareas; 
   final int indice;
 
-  const TaskDetailsScreen({Key? key, required this.tareas, required this.indice}) : super(key: key);
+  const TaskDetailsScreen({super.key, required this.tareas, required this.indice});
 
   @override
   Widget build(BuildContext context) {

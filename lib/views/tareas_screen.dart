@@ -5,9 +5,9 @@ import 'package:kgaona/constants.dart';
 import 'package:kgaona/views/login_screen.dart';
 import 'package:kgaona/views/task_details_screen.dart';
 import 'package:kgaona/views/welcome_screen.dart';
-import '../domain/task.dart';
+import 'package:kgaona/domain/task.dart';
 import 'package:kgaona/helpers/task_card_helper.dart';
-import '../components/add_task_modal.dart'; // Importa el modal reutilizable
+import 'package:kgaona/components/add_task_modal.dart'; // Importa el modal reutilizable
 
 class TareasScreen extends StatefulWidget {
   const TareasScreen({super.key});

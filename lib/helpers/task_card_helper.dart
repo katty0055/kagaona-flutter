@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/constants.dart';
-import '../domain/task.dart';
-import '../components/task_card.dart'; // Importa el diseño del Card
+import 'package:kgaona/domain/task.dart';
+import 'package:kgaona/components/task_card.dart'; // Importa el diseño del Card
 
 class CommonWidgetsHelper {
   /// Construye un título en negrita con tamaño 20
