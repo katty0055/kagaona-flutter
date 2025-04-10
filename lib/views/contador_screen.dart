@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
 import 'package:kgaona/components/side_menu.dart';
-import 'package:kgaona/views/login_screen.dart';
 
 class ContadorScreen extends StatefulWidget {
   const ContadorScreen({super.key, required this.title});
@@ -13,6 +13,7 @@ class ContadorScreen extends StatefulWidget {
 
 class _ContadorScreenState extends State<ContadorScreen> {
   int _counter = 0;
+  final int _selectedIndex = 0;
 
   void _incrementCounter() {
     setState(() {
@@ -57,76 +58,46 @@ class _ContadorScreenState extends State<ContadorScreen> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            const Text('Hola soy Katty'),
-            const Text('Hola soy Alejandra'),
-            ElevatedButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Advertencia'),
-                      content: const Text(
-                        'Esta es una advertencia importante.',
-                      ),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text('Cerrar'),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              child: const Text('Mostrar Advertencia'),
-            ),
             const SizedBox(height: 16),
             Text(message, style: TextStyle(fontSize: 18, color: messageColor)),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                );
-              },
-              child: const Text('Ir a Inicio de Sesión'),
-            ),
           ],
         ),
       ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            heroTag: 'decrement',
-            onPressed: _decrementCounter,
-            tooltip: 'Decrement',
-            child: const Icon(Icons.remove),
-          ),
-          const SizedBox(width: 16),
-          FloatingActionButton(
-            heroTag: 'increment',
-            onPressed: _incrementCounter,
-            tooltip: 'Increment',
-            child: const Icon(Icons.add),
-          ),
-          const SizedBox(width: 16),
-          FloatingActionButton(
-            heroTag: 'reset',
-            onPressed: () {
-              setState(() {
-                _counter = 0;
-              });
-            },
-            tooltip: 'Reset',
-            child: const Icon(Icons.refresh),
-          ),
-        ],
-      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 16.0),
+        child:Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FloatingActionButton(
+              heroTag: 'decrement',
+              onPressed: _decrementCounter,
+              tooltip: 'Decrement',
+              child: const Icon(Icons.remove),
+            ),
+            const SizedBox(width: 16),
+            FloatingActionButton(
+              heroTag: 'increment',
+              onPressed: _incrementCounter,
+              tooltip: 'Increment',
+              child: const Icon(Icons.add),
+            ),
+            const SizedBox(width: 16),
+            FloatingActionButton(
+              heroTag: 'reset',
+              onPressed: () {
+                setState(() {
+                  _counter = 0;
+                });
+              },
+              tooltip: 'Reset',
+              child: const Icon(Icons.refresh),
+            ),
+          ],
+        ),
+      ),          
+      bottomNavigationBar:  CustomBottomNavigationBar(selectedIndex: _selectedIndex),
     );
   }
 }
