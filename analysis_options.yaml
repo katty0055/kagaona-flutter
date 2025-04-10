@@ -24,6 +24,8 @@ linter:
     prefer_const_constructors: true  
     avoid_print: true 
     unnecessary_brace_in_string_interps: true  
+    always_declare_return_types: true
+    always_use_package_imports: true
     # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
 
 # Additional information about this file can be found at

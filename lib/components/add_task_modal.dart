@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../domain/task.dart';
+import 'package:kgaona/domain/task.dart';
 
 class AddTaskModal extends StatefulWidget {
   final Function(Task) onTaskAdded;
