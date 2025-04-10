@@ -24,7 +24,7 @@ class _TareasScreenState extends State<TareasScreen> {
   int _paginaActual = 0;
   final int _limitePorPagina = 5;
   int _selectedIndex = 0; // Índice del elemento seleccionado en el navbar
-  List<Task> _tareas = []; // Lista persistente de tareas
+  final List<Task> _tareas = []; // Lista persistente de tareas
 
   void _onItemTapped(int index) {
     setState(() {
@@ -143,7 +143,9 @@ class _TareasScreenState extends State<TareasScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(TITULO_APPBAR)),
+      appBar: AppBar(
+        title: Text('$TITULO_APPBAR - Total: ${_tareas.length}')
+      ),
       drawer: const SideMenu(),
       backgroundColor: Colors.grey[200],
       body: ListView.builder(

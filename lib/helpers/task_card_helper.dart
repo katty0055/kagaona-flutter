@@ -36,7 +36,7 @@ class CommonWidgetsHelper {
       style: const TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.bold,
-        color: Colors.black,
+        color: Colors.grey,
       ),
     );
   }

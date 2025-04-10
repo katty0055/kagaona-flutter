@@ -63,49 +63,51 @@ class TaskDetailsScreen extends StatelessWidget {
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical:138.0, horizontal: 8.0), // Espacio arriba y abajo
-          child: Card(
-            elevation: 3, // Borde sombreado
-            color: Colors.white, // Color de fondo blanco
-            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            shape: CommonWidgetsHelper.buildRoundedBorder(),
-            child: Padding(
-              padding: const EdgeInsets.all(20.0), // Agrega un padding de 10 alrededor del Card
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Imagen aleatoria
-                  ClipRRect(
-                    borderRadius: CommonWidgetsHelper.buildTopRoundedBorder(), 
-                    child: Image.network(
-                      imageUrl,
-                      height: 200,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
+          child: Center(
+            child: Card(
+              elevation: 8, // Borde sombreado
+              color: Colors.white, // Color de fondo blanco
+              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              shape: CommonWidgetsHelper.buildRoundedBorder(),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0), // Agrega un padding de 10 alrededor del Card
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Imagen aleatoria
+                    ClipRRect(
+                      borderRadius: CommonWidgetsHelper.buildTopRoundedBorder(), 
+                      child: Image.network(
+                        imageUrl,
+                        height: 200,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                  CommonWidgetsHelper.buildSpacing(),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Título
-                     CommonWidgetsHelper.buildBoldTitle(tarea.title),
-                      CommonWidgetsHelper.buildSpacing(), // Espacio entre el título y la descripción
-                      // Pasos (máximo 3 líneas)
-                      if (tarea.pasos != null && tarea.pasos!.isNotEmpty)
-                        CommonWidgetsHelper.buildInfoLines(
-                        tarea.pasos![0],
-                        tarea.pasos!.length > 1 ? tarea.pasos![1] : null,
-                        tarea.pasos!.length > 2 ? tarea.pasos![2] : null,
-                      )
-                      else
-                        CommonWidgetsHelper.buildNoStepsText(),
-                      CommonWidgetsHelper.buildSpacing(),
-                      // Fecha límite
-                      CommonWidgetsHelper.buildBoldFooter('$FECHA_LIMITE $fechaLimite'),                      
-                    ],
-                  ),
-                ],
-              ),            
+                    CommonWidgetsHelper.buildSpacing(),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Título
+                      CommonWidgetsHelper.buildBoldTitle(tarea.title),
+                        CommonWidgetsHelper.buildSpacing(), // Espacio entre el título y la descripción
+                        // Pasos (máximo 3 líneas)
+                        if (tarea.pasos != null && tarea.pasos!.isNotEmpty)
+                          CommonWidgetsHelper.buildInfoLines(
+                          tarea.pasos![0],
+                          tarea.pasos!.length > 1 ? tarea.pasos![1] : null,
+                          tarea.pasos!.length > 2 ? tarea.pasos![2] : null,
+                        )
+                        else
+                          CommonWidgetsHelper.buildNoStepsText(),
+                        CommonWidgetsHelper.buildSpacing(),
+                        // Fecha límite
+                        CommonWidgetsHelper.buildBoldFooter('$FECHA_LIMITE $fechaLimite'),                      
+                      ],
+                    ),
+                  ],
+                ),            
+              ),
             ),
           ),
         ),

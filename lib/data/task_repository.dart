@@ -9,9 +9,9 @@ class TaskRepository {
       date: DateTime(2025, 4, 9),
       fechaLimite: DateTime.now().add(const Duration(days: 1)),
       pasos: [
-      'Paso 1: Planificar Tarea 1 antes del 15/04/2025', 
-      'Paso 2: Ejecutar Tarea 1 antes del 15/04/2025',
-      // 'Paso 3: Revisar Tarea 1 antes del 15/04/2025',
+      'Paso 1: Planificar Tarea 1 antes del 10/04/2025', 
+      'Paso 2: Ejecutar Tarea 1 antes del 10/04/2025',
+      // 'Paso 3: Revisar Tarea 1 antes del 10/04/2025',
       ],
     ),
     Task(
@@ -21,9 +21,9 @@ class TaskRepository {
       date: DateTime(2025, 4, 9),
       fechaLimite: DateTime.now().add(const Duration(days: 2)),
       pasos: [
-      'Paso 1: Planificar Tarea 2 antes del 15/04/2025', 
-      'Paso 2: Ejecutar Tarea 2 antes del 15/04/2025',
-      // 'Paso 3: Revisar Tarea 2 antes del 15/04/2025',
+      'Paso 1: Planificar Tarea 2 antes del 11/04/2025', 
+      'Paso 2: Ejecutar Tarea 2 antes del 11/04/2025',
+      // 'Paso 3: Revisar Tarea 2 antes del 11/04/2025',
       ],
     ),
     Task(
@@ -33,9 +33,9 @@ class TaskRepository {
       date: DateTime(2025, 4, 9),
       fechaLimite: DateTime.now().add(const Duration(days: 3)),
       pasos: [
-      'Paso 1: Planificar Tarea 3 antes del 15/04/2025', 
-      'Paso 2: Ejecutar Tarea 3 antes del 15/04/2025',
-      // 'Paso 3: Revisar Tarea 3 antes del 15/04/2025',
+      'Paso 1: Planificar Tarea 3 antes del 12/04/2025', 
+      'Paso 2: Ejecutar Tarea 3 antes del 12/04/2025',
+      // 'Paso 3: Revisar Tarea 3 antes del 12/04/2025',
       ],
     ),
     Task(
@@ -45,9 +45,9 @@ class TaskRepository {
       date: DateTime(2025, 4, 9),
       fechaLimite: DateTime.now().add(const Duration(days: 4)),
       pasos: [
-      'Paso 1: Planificar Tarea 4 antes del 15/04/2025', 
-      'Paso 2: Ejecutar Tarea 4 antes del 15/04/2025',
-      // 'Paso 3: Revisar Tarea 4 antes del 15/04/2025',
+      'Paso 1: Planificar Tarea 4 antes del 13/04/2025', 
+      'Paso 2: Ejecutar Tarea 4 antes del 13/04/2025',
+      // 'Paso 3: Revisar Tarea 4 antes del 13/04/2025',
       ],
     ),
     Task(
@@ -57,9 +57,9 @@ class TaskRepository {
       date: DateTime(2025, 4, 9),
       fechaLimite: DateTime.now().add(const Duration(days: 5)),
       pasos: [
-      'Paso 1: Planificar Tarea 5 antes del 15/04/2025', 
-      'Paso 2: Ejecutar Tarea 5 antes del 15/04/2025',
-      // 'Paso 3: Revisar Tarea 5 antes del 15/04/2025',
+      'Paso 1: Planificar Tarea 5 antes del 14/04/2025', 
+      'Paso 2: Ejecutar Tarea 5 antes del 14/04/2025',
+      // 'Paso 3: Revisar Tarea 5 antes del 14/04/2025',
       ],
     ),
   ];
