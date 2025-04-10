@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/constants.dart';
+import 'package:kgaona/helpers/task_card_helper.dart';
 import '../domain/task.dart';
 
 class TaskDetailsScreen extends StatelessWidget {
@@ -54,7 +55,7 @@ class TaskDetailsScreen extends StatelessWidget {
                 );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('No hay tareas después de esta tarea')),
+                  SnackBar(content: CommonWidgetsHelper.buildNoStepsText(),),
                 );
               }
             }
@@ -66,9 +67,7 @@ class TaskDetailsScreen extends StatelessWidget {
             elevation: 3, // Borde sombreado
             color: Colors.white, // Color de fondo blanco
             margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8), // Borde redondeado
-            ),
+            shape: CommonWidgetsHelper.buildRoundedBorder(),
             child: Padding(
               padding: const EdgeInsets.all(20.0), // Agrega un padding de 10 alrededor del Card
               child: Column(
@@ -76,7 +75,7 @@ class TaskDetailsScreen extends StatelessWidget {
                 children: [
                   // Imagen aleatoria
                   ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+                    borderRadius: CommonWidgetsHelper.buildTopRoundedBorder(), 
                     child: Image.network(
                       imageUrl,
                       height: 200,
@@ -84,46 +83,25 @@ class TaskDetailsScreen extends StatelessWidget {
                       fit: BoxFit.cover,
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  CommonWidgetsHelper.buildSpacing(),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Título
-                      Text(
-                        tarea.title,
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
+                     CommonWidgetsHelper.buildBoldTitle(tarea.title),
+                      CommonWidgetsHelper.buildSpacing(), // Espacio entre el título y la descripción
                       // Pasos (máximo 3 líneas)
                       if (tarea.pasos != null && tarea.pasos!.isNotEmpty)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: tarea.pasos!
-                              .take(3) // Toma un máximo de 3 pasos
-                              .map((paso) => Text(
-                                    paso,
-                                    style: const TextStyle(fontSize: 18, color: Colors.black, fontFamily: 'Roboto',),
-                                  ))
-                              .toList(),
-                        )
+                        CommonWidgetsHelper.buildInfoLines(
+                        tarea.pasos![0],
+                        tarea.pasos!.length > 1 ? tarea.pasos![1] : null,
+                        tarea.pasos!.length > 2 ? tarea.pasos![2] : null,
+                      )
                       else
-                        const Text(
-                          'No hay pasos disponibles',
-                          style: TextStyle(fontSize: 16, color: Colors.black54),
-                        ),
-                      const SizedBox(height: 7),
+                        CommonWidgetsHelper.buildNoStepsText(),
+                      CommonWidgetsHelper.buildSpacing(),
                       // Fecha límite
-                      Text(
-                        '$FECHA_LIMITE $fechaLimite',
-                        style: const TextStyle(
-                          fontSize: 18, 
-                          // color: Colors.grey,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      CommonWidgetsHelper.buildBoldFooter('$FECHA_LIMITE $fechaLimite'),                      
                     ],
                   ),
                 ],

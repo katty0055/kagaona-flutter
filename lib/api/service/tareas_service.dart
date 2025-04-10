@@ -8,7 +8,7 @@ class TareasService {
   final TaskRepository _taskRepository = TaskRepository();
   final AssistantRepository _assistantRepository = AssistantRepository(); // Instancia del nuevo repositorio
 
-  Future<List<Task>> obtenerTareas({int inicio = 0, int limite = 10}) async {
+  Future<List<Task>> obtenerTareas({int inicio = 0, int limite = 4}) async {
     // Simula un retraso para imitar una llamada a una API
     await Future.delayed(const Duration(milliseconds: 500));
 
@@ -37,8 +37,12 @@ class TareasService {
     // Simula un retraso para imitar una llamada a una API
     await Future.delayed(const Duration(milliseconds: 500));
 
+    //las nuevas tareas tengan fechas límite de 1 día desde hoy.
+    final fechaNueva = tarea.fechaLimite!.add(const Duration(days: 1));
+
+
     // Genera pasos para la tarea
-    final pasos = await generarPasos(tarea.title, tarea.fechaLimite);
+    final pasos = await generarPasos(tarea.title, fechaNueva);
 
     // Crea una nueva tarea con los pasos generados
     final nuevaTarea = Task(
@@ -46,7 +50,7 @@ class TareasService {
       type: tarea.type,
       description: tarea.description,
       date: tarea.date,
-      fechaLimite: tarea.fechaLimite ?? DateTime.now().add(const Duration(days: 3)),
+      fechaLimite: fechaNueva,
       pasos: pasos,
     );
 
@@ -87,6 +91,7 @@ class TareasService {
 
   Future<List<String>> generarPasos(String titulo, DateTime? fechaLimite) async {
     List<String> pasos = [];
+
     pasos = await _assistantRepository.generarPasos(titulo, fechaLimite);
     print('Pasos generados para "$titulo": $pasos');
      // Retorna solo los dos primeros pasos

@@ -22,7 +22,7 @@ class _TareasScreenState extends State<TareasScreen> {
   bool _cargando = false;
   bool _hayMasTareas = true;
   int _paginaActual = 0;
-  final int _limitePorPagina = 10;
+  final int _limitePorPagina = 5;
   int _selectedIndex = 0; // Índice del elemento seleccionado en el navbar
   List<Task> _tareas = []; // Lista persistente de tareas
 
@@ -173,9 +173,12 @@ class _TareasScreenState extends State<TareasScreen> {
               ),
               onDismissed: (direction) {
                 _eliminarTarea(index);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text(TAREA_ELIMINADA)),
+                );                
               },
               // Usa la nueva tarjeta deportiva,
-              child: construirTarjetaDeportiva(
+                child: construirTarjetaDeportiva(
                 tarea, 
                 index,
                 () => _mostrarModalEditarTarea(tarea, index), // Pasa la función de edición
