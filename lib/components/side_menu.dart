@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kgaona/views/mi_app_screen.dart';
 import 'package:kgaona/views/welcome_screen.dart';
 import 'package:kgaona/views/tareas_screen.dart';
 import 'package:kgaona/views/login_screen.dart';
@@ -44,6 +45,16 @@ class SideMenu extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const TareasScreen()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.apps), // Ícono para la nueva opción
+            title: const Text('Mi App'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const MiAppScreen()), // Navega a MiAppScreen
               );
             },
           ),

@@ -42,7 +42,8 @@ class _MiAppScreenState extends State<MiAppScreen> {
         title: const Text('Mi App'),
       ),
       body: Center(
-        child: Wrap(          
+        child: Column(          
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
               width: 300,
@@ -56,14 +57,22 @@ class _MiAppScreenState extends State<MiAppScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _cambiarColor, // Cambia el color al presionar
-              child: const Text('Cambiar Color'),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _resetColor, // Cambia el color al presionar
-              child: const Text('Resetea Color'),
+            SizedBox(
+              width: 300,
+              child:Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween, // Espacio entre los botones
+                children: [
+                  ElevatedButton(
+                    onPressed: _cambiarColor, // Cambia el color al presionar
+                    child: const Text('Cambiar Color'),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _resetColor, // Cambia el color al presionar
+                    child: const Text('Resetea Color'),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
