@@ -6,7 +6,7 @@ class MockAuthService {
     }
 
     // Simula un retraso de red
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
 
     // Retorna true para simular un inicio de sesión exitoso
     return true;

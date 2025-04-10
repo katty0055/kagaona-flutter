@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:kgaona/data/assistant_repository.dart';
-
 import '../../data/task_repository.dart';
 import '../../domain/task.dart';
 
@@ -93,10 +92,8 @@ class TareasService {
     List<String> pasos = [];
 
     pasos = await _assistantRepository.generarPasos(titulo, fechaLimite);
-    print('Pasos generados para "$titulo": $pasos');
      // Retorna solo los dos primeros pasos
     pasos = pasos.sublist(0, pasos.length > 2 ? 2 : pasos.length);
-    print('Pasos retornados "$titulo": $pasos');
     return pasos;
   }
 }
