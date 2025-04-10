@@ -143,7 +143,7 @@ class _TareasScreenState extends State<TareasScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(TITLE_APPBAR)),
+      appBar: AppBar(title: const Text(TITULO_APPBAR)),
       drawer: const SideMenu(),
       backgroundColor: Colors.grey[200],
       body: ListView.builder(

@@ -17,7 +17,7 @@ class TareasService {
 
     final tareasConPasos = await Future.wait(tareas.map((tarea) async {
     if (tarea.pasos == null || tarea.pasos!.isEmpty) {
-      final pasos = await _assistantRepository.generarPasos(tarea.title, tarea.fechaLimite);
+      final pasos = await generarPasos(tarea.title, tarea.fechaLimite);
       return Task(
         title: tarea.title,
         type: tarea.type,
@@ -89,6 +89,9 @@ class TareasService {
     List<String> pasos = [];
     pasos = await _assistantRepository.generarPasos(titulo, fechaLimite);
     print('Pasos generados para "$titulo": $pasos');
+     // Retorna solo los dos primeros pasos
+    pasos = pasos.sublist(0, pasos.length > 2 ? 2 : pasos.length);
+    print('Pasos retornados "$titulo": $pasos');
     return pasos;
   }
 }
