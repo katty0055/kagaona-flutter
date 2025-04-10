@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 //import 'package:kgaona/views/miapp_screen.dart';
-import 'views/login_screen.dart'; 
+import 'package:kgaona/views/login_screen.dart'; 
 
 void main() {
   runApp(const MyApp());
@@ -120,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            Text('Hola soy Katty'),
+            const Text('Hola soy Katty'),
             const Text('Hola soy Alejandra'),
             ElevatedButton(
               onPressed: () {

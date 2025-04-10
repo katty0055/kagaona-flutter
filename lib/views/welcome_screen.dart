@@ -125,10 +125,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             if (isLoading)
               const CircularProgressIndicator()
             else
-              ...quotes.map((quote) => Text(quote)).toList(),
+              ...quotes.map((quote) => Text(quote)),
             ElevatedButton(
               onPressed: _mostrarCotizaciones,
-              child: Text("Cotizaciones"),
+              child: const Text("Cotizaciones"),
             ),
             const SizedBox(height: 32),
             ElevatedButton(

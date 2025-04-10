@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../domain/task.dart';
+import 'package:kgaona/domain/task.dart';
 
 class AddTaskModal extends StatefulWidget {
   final Function(Task) onTaskAdded;
@@ -112,7 +112,7 @@ class _AddTaskModalState extends State<AddTaskModal> {
               title: titulo,
               description: descripcion,
               date: fechaSeleccionada,
-              fechaLimite: DateTime.now().add(const Duration(days: 3)),
+              fechaLimite: DateTime.now(),
               // Mantiene el type si está editando
               type: widget.taskToEdit?.type ?? 'normal',
               pasos: pasos, 

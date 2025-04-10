@@ -5,9 +5,9 @@ import 'package:kgaona/constants.dart';
 import 'package:kgaona/views/login_screen.dart';
 import 'package:kgaona/views/task_details_screen.dart';
 import 'package:kgaona/views/welcome_screen.dart';
-import '../domain/task.dart';
+import 'package:kgaona/domain/task.dart';
 import 'package:kgaona/helpers/task_card_helper.dart';
-import '../components/add_task_modal.dart'; // Importa el modal reutilizable
+import 'package:kgaona/components/add_task_modal.dart'; // Importa el modal reutilizable
 
 class TareasScreen extends StatefulWidget {
   const TareasScreen({super.key});
@@ -22,9 +22,9 @@ class _TareasScreenState extends State<TareasScreen> {
   bool _cargando = false;
   bool _hayMasTareas = true;
   int _paginaActual = 0;
-  final int _limitePorPagina = 10;
+  final int _limitePorPagina = 5;
   int _selectedIndex = 0; // Índice del elemento seleccionado en el navbar
-  List<Task> _tareas = []; // Lista persistente de tareas
+  final List<Task> _tareas = []; // Lista persistente de tareas
 
   void _onItemTapped(int index) {
     setState(() {
@@ -143,7 +143,9 @@ class _TareasScreenState extends State<TareasScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(TITLE_APPBAR)),
+      appBar: AppBar(
+        title: Text('$TITULO_APPBAR - Total: ${_tareas.length}')
+      ),
       drawer: const SideMenu(),
       backgroundColor: Colors.grey[200],
       body: ListView.builder(
@@ -173,9 +175,12 @@ class _TareasScreenState extends State<TareasScreen> {
               ),
               onDismissed: (direction) {
                 _eliminarTarea(index);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text(TAREA_ELIMINADA)),
+                );                
               },
               // Usa la nueva tarjeta deportiva,
-              child: construirTarjetaDeportiva(
+                child: construirTarjetaDeportiva(
                 tarea, 
                 index,
                 () => _mostrarModalEditarTarea(tarea, index), // Pasa la función de edición
