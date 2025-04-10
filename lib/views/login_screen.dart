@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/api/service/auth_service.dart';
-import 'package:kgaona/views/welcome_screen.dart'; // Importa la pantalla de bienvenida
+import 'package:kgaona/views/welcome_screen.dart'; 
 
 class LoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
