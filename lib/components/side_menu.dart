@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kgaona/views/contador_screen.dart';
 import 'package:kgaona/views/mi_app_screen.dart';
 import 'package:kgaona/views/welcome_screen.dart';
 import 'package:kgaona/views/tareas_screen.dart';
@@ -55,6 +56,18 @@ class SideMenu extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const MiAppScreen()), // Navega a MiAppScreen
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.numbers), // Ícono para el contador
+            title: const Text('Contador'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ContadorScreen(title: 'Contador'),
+                ),
               );
             },
           ),
