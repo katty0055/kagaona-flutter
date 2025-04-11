@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kgaona/helpers/dialog_helper.dart';
 import 'package:kgaona/views/welcome_screen.dart';
 import 'package:kgaona/views/tareas_screen.dart';
-import 'package:kgaona/views/login_screen.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
   final int selectedIndex;
@@ -26,10 +26,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
         );
         break;
       case 2: // Salir
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => LoginScreen()),
-        );
+        showLogoutDialog(context); // Llama al diálogo reutilizable
         break;
     }
   }
@@ -41,7 +38,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
       onTap: (index) => _onItemTapped(context, index),
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home), label: "Inicio"),
-        BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Añadir Tarea'),
+        BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Tarea'),
         BottomNavigationBarItem(icon: Icon(Icons.close), label: "Salir"),
       ],
     );
