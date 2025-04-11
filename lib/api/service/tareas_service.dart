@@ -27,8 +27,20 @@ class TareasService {
     // Obtiene las tareas adicionales del repositorio
     final tareas = _taskRepository.getTasks().skip(inicio).take(limite).toList();
 
+     // Itera sobre cada tarea y reemplaza la fecha límite
+    final tareasConFechaActualizada = tareas.map((tarea) {
+      return Task(
+        title: tarea.title,
+        type: tarea.type,
+        description: tarea.description,
+        date: tarea.date,
+        fechaLimite: DateTime.now().add(const Duration(days: 1)), // Reemplaza la fecha límite con el día actual + 1
+        pasos: tarea.pasos,
+      );
+    }).toList();
+
     // Genera pasos para las tareas
-    return _addStepsToTasks(tareas);
+    return _addStepsToTasks(tareasConFechaActualizada);
   }
 
   // Método privado para agregar pasos a las tareas
@@ -53,11 +65,8 @@ class TareasService {
     // Simula un retraso para imitar una llamada a una API
     await Future.delayed(const Duration(milliseconds: 500));
 
-    // Las nuevas tareas tienen fechas límite de 1 día desde hoy
-    final fechaNueva = tarea.fechaLimite!.add(const Duration(days: 1));
-
     // Genera pasos para la tarea
-    final pasos = await generarPasos(tarea.title, fechaNueva);
+    final pasos = await generarPasos(tarea.title, tarea.fechaLimite);
 
     // Crea una nueva tarea con los pasos generados
     final nuevaTarea = Task(
@@ -65,7 +74,7 @@ class TareasService {
       type: tarea.type,
       description: tarea.description,
       date: tarea.date,
-      fechaLimite: fechaNueva,
+      fechaLimite: tarea.fechaLimite,
       pasos: pasos,
     );
 
