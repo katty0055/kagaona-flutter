@@ -126,15 +126,13 @@ class AddTaskModalState extends State<AddTaskModal> {
               );
               return;
             }
-            // // Llama al servicio para obtener los pasos
-            // final pasos = await _tareasService.generarPasos(titulo, fechaSeleccionada);
 
             // Crear la tarea sin el campo 'type'
             final nuevaTarea = Task(
               title: titulo,
               description: descripcion,
               date: fechaSeleccionada,
-              fechaLimite: DateTime.now(),
+              fechaLimite: widget.taskToEdit?.fechaLimite ?? DateTime.now(),
               // Mantiene el type si está editando
               type: tipoSeleccionado,
               pasos: pasos, 
