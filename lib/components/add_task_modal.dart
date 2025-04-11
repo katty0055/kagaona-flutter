@@ -17,6 +17,7 @@ class _AddTaskModalState extends State<AddTaskModal> {
   late TextEditingController fechaController;
   DateTime? fechaSeleccionada;
   late List<String> pasos; //Lista para los pasos
+  late String tipoSeleccionado; 
   
   @override
   void initState() {
@@ -33,6 +34,10 @@ class _AddTaskModalState extends State<AddTaskModal> {
 
     // Inicializa la lista de pasos
     pasos = widget.taskToEdit?.pasos ?? [];
+
+    // Inicializa el tipo de tarea
+    tipoSeleccionado = widget.taskToEdit?.type ?? 'normal';
+
   }
 
   @override
@@ -83,6 +88,23 @@ class _AddTaskModalState extends State<AddTaskModal> {
                 }
               },
             ),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<String>(
+              value: tipoSeleccionado,
+              decoration: const InputDecoration(
+                labelText: 'Tipo de Tarea',
+                border: OutlineInputBorder(),
+              ),
+              items: const [
+                DropdownMenuItem(value: 'normal', child: Text('Normal')),
+                DropdownMenuItem(value: 'urgente', child: Text('Urgente')),
+              ],
+              onChanged: (String? nuevoValor) {
+                setState(() {
+                  tipoSeleccionado = nuevoValor!;
+                });
+              },
+            ),
           ],
         ),
       ),
@@ -114,7 +136,7 @@ class _AddTaskModalState extends State<AddTaskModal> {
               date: fechaSeleccionada,
               fechaLimite: DateTime.now(),
               // Mantiene el type si está editando
-              type: widget.taskToEdit?.type ?? 'normal',
+              type: tipoSeleccionado,
               pasos: pasos, 
             );
 

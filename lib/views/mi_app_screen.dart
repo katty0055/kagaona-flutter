@@ -7,6 +7,8 @@ Column alinea a los widgets hijos uno detras de otro.
 */
 
 import 'package:flutter/material.dart';
+import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
+import 'package:kgaona/components/side_menu.dart';
 
 class MiAppScreen extends StatefulWidget {
   const MiAppScreen({super.key});
@@ -19,6 +21,7 @@ class _MiAppScreenState extends State<MiAppScreen> {
   Color _colorActual = Colors.blue; // Color inicial del Container
   final List<Color> _colores = [Colors.blue, Colors.red, Colors.green];
   int _indiceColor = 0;
+  final int _selectedIndex = 0;
 
   void _cambiarColor() {
     setState(() {
@@ -39,8 +42,10 @@ class _MiAppScreenState extends State<MiAppScreen> {
       appBar: AppBar(
         title: const Text('Mi App'),
       ),
+      drawer: const SideMenu(),
       body: Center(
-        child: Wrap(          
+        child: Column(          
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
               width: 300,
@@ -54,18 +59,27 @@ class _MiAppScreenState extends State<MiAppScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _cambiarColor, // Cambia el color al presionar
-              child: const Text('Cambiar Color'),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _resetColor, // Cambia el color al presionar
-              child: const Text('Resetea Color'),
+            SizedBox(
+              width: 300,
+              child:Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween, // Espacio entre los botones
+                children: [
+                  ElevatedButton(
+                    onPressed: _cambiarColor, // Cambia el color al presionar
+                    child: const Text('Cambiar Color'),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _resetColor, // Cambia el color al presionar
+                    child: const Text('Resetea Color'),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
       ),
+       bottomNavigationBar:  CustomBottomNavigationBar(selectedIndex: _selectedIndex),
     );
   }
 }

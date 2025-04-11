@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/api/service/tareas_service.dart';
+import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
 import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/constants.dart';
-import 'package:kgaona/views/login_screen.dart';
 import 'package:kgaona/views/task_details_screen.dart';
-import 'package:kgaona/views/welcome_screen.dart';
 import 'package:kgaona/domain/task.dart';
 import 'package:kgaona/helpers/task_card_helper.dart';
 import 'package:kgaona/components/add_task_modal.dart'; // Importa el modal reutilizable
@@ -23,31 +22,8 @@ class _TareasScreenState extends State<TareasScreen> {
   bool _hayMasTareas = true;
   int _paginaActual = 0;
   final int _limitePorPagina = 5;
-  int _selectedIndex = 0; // Índice del elemento seleccionado en el navbar
+  final int _selectedIndex = 0; // Índice del elemento seleccionado en el navbar
   final List<Task> _tareas = []; // Lista persistente de tareas
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    switch (index) {
-      case 0: // Inicio
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const WelcomeScreen()),
-        );
-        break;
-      case 1: // Añadir Tarea
-        break;
-      case 2: // Salir
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => LoginScreen()),
-        );
-        break;
-    }
-  }
 
   @override
   void initState() {
@@ -203,15 +179,7 @@ class _TareasScreenState extends State<TareasScreen> {
         tooltip: 'Agregar Tarea',
         child: const Icon(Icons.add),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Inicio"),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Tarea'),
-          BottomNavigationBarItem(icon: Icon(Icons.close), label: "Salir"),
-        ],
-      ),
+      bottomNavigationBar:  CustomBottomNavigationBar(selectedIndex: _selectedIndex),
     );
   }
 }
