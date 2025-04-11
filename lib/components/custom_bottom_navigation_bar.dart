@@ -7,9 +7,9 @@ class CustomBottomNavigationBar extends StatelessWidget {
   final int selectedIndex;
 
   const CustomBottomNavigationBar({
-    Key? key,
+    super.key,
     required this.selectedIndex,
-  }) : super(key: key);
+  });
 
   void _onItemTapped(BuildContext context, int index) {
     switch (index) {

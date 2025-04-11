@@ -8,14 +8,16 @@ class AddTaskModal extends StatefulWidget {
   const AddTaskModal({super.key, required this.onTaskAdded, this.taskToEdit});
 
   @override
-  _AddTaskModalState createState() => _AddTaskModalState();
+  AddTaskModalState createState() => AddTaskModalState();
 }
 
-class _AddTaskModalState extends State<AddTaskModal> {
+class AddTaskModalState extends State<AddTaskModal> {
   late TextEditingController tituloController;
   late TextEditingController descripcionController;
   late TextEditingController fechaController;
+  late TextEditingController fechaLimiteController;
   DateTime? fechaSeleccionada;
+  DateTime? fechaLimiteSeleccionada;
   late List<String> pasos; //Lista para los pasos
   late String tipoSeleccionado; 
   
@@ -29,6 +31,13 @@ class _AddTaskModalState extends State<AddTaskModal> {
     fechaController = TextEditingController(
       text: fechaSeleccionada != null
           ? '${fechaSeleccionada!.day}/${fechaSeleccionada!.month}/${fechaSeleccionada!.year}'
+          : '',
+    );
+
+    fechaLimiteSeleccionada = widget.taskToEdit?.fechaLimite;
+    fechaLimiteController = TextEditingController(
+      text: fechaLimiteSeleccionada != null
+          ? '${fechaLimiteSeleccionada!.day}/${fechaLimiteSeleccionada!.month}/${fechaLimiteSeleccionada!.year}'
           : '',
     );
 
@@ -89,6 +98,31 @@ class _AddTaskModalState extends State<AddTaskModal> {
               },
             ),
             const SizedBox(height: 16),
+            TextField(
+              controller: fechaLimiteController,
+              readOnly: true,
+              decoration: const InputDecoration(
+                labelText: 'Fecha Límite',
+                border: OutlineInputBorder(),
+                hintText: 'Seleccionar Fecha Límite',
+              ),
+              onTap: () async {
+                DateTime? nuevaFechaLimite = await showDatePicker(
+                  context: context,
+                  initialDate: fechaLimiteSeleccionada ?? DateTime.now(),
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2100),
+                );
+                if (nuevaFechaLimite != null) {
+                  setState(() {
+                    fechaLimiteSeleccionada = nuevaFechaLimite;
+                    fechaLimiteController.text =
+                        '${nuevaFechaLimite.day}/${nuevaFechaLimite.month}/${nuevaFechaLimite.year}';
+                  });
+                }
+              },
+            ),
+            const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               value: tipoSeleccionado,
               decoration: const InputDecoration(
@@ -126,15 +160,13 @@ class _AddTaskModalState extends State<AddTaskModal> {
               );
               return;
             }
-            // // Llama al servicio para obtener los pasos
-            // final pasos = await _tareasService.generarPasos(titulo, fechaSeleccionada);
 
             // Crear la tarea sin el campo 'type'
             final nuevaTarea = Task(
               title: titulo,
               description: descripcion,
               date: fechaSeleccionada,
-              fechaLimite: DateTime.now(),
+              fechaLimite: fechaLimiteSeleccionada,
               // Mantiene el type si está editando
               type: tipoSeleccionado,
               pasos: pasos, 

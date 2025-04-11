@@ -4,13 +4,16 @@ import 'package:kgaona/views/welcome_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
+
+  LoginScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController usernameController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
     final MockAuthService authService = MockAuthService();
     return Scaffold(
-      appBar: AppBar(title: const Text('Inicio de Sesión')),
+      // appBar: AppBar(title: const Text('Inicio de Sesión')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -18,6 +21,10 @@ class LoginScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const Text(
+                  'Inicio de Sesión',
+                  style: TextStyle(color: Colors.black, fontSize: 22),
+                ),
               TextFormField(
                 controller: usernameController,
                 decoration: const InputDecoration(
@@ -68,6 +75,7 @@ class LoginScreen extends StatelessWidget {
                         password,
                       );
 
+                      if (!context.mounted) return; // Verifica si el widget sigue montado antes de usar el contexto
                       Navigator.pop(context); // Cierra el indicador de carga
 
                       if (success) {
@@ -85,6 +93,7 @@ class LoginScreen extends StatelessWidget {
                         );
                       }
                     } catch (e) {
+                      if (!context.mounted) return; // Verifica si el widget sigue montado
                       Navigator.pop(context); // Cierra el indicador de carga
                       ScaffoldMessenger.of(
                         context,

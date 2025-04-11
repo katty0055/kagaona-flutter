@@ -5,7 +5,8 @@ class AssistantRepository {
 
     // Convierte la fecha límite a una cadena que solo muestra la fecha
     final String fechaFormateada = fechaLimite != null
-        ? fechaLimite.toIso8601String().split('T')[0] // Obtiene solo la parte de la fecha
+        //? fechaLimite.toIso8601String().split('T')[0] // Obtiene solo la parte de la fecha
+        ? '${fechaLimite.day.toString().padLeft(2, '0')}/${fechaLimite.month.toString().padLeft(2, '0')}/${fechaLimite.year}'
         : 'sin fecha límite';
 
     // Genera pasos personalizados basados en el título de la tarea y la fecha límite

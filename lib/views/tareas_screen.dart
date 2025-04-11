@@ -12,24 +12,24 @@ class TareasScreen extends StatefulWidget {
   const TareasScreen({super.key});
 
   @override
-  _TareasScreenState createState() => _TareasScreenState();
+  TareasScreenState createState() => TareasScreenState();
 }
 
-class _TareasScreenState extends State<TareasScreen> {
+class TareasScreenState extends State<TareasScreen> {
   final TareasService _tareasService = TareasService();
   final ScrollController _scrollController = ScrollController();
   bool _cargando = false;
-  bool _hayMasTareas = true;
-  int _paginaActual = 0;
+  // bool _hayMasTareas = true;
+  // int _paginaActual = 0;
   final int _limitePorPagina = 5;
   final int _selectedIndex = 0; // Índice del elemento seleccionado en el navbar
-  final List<Task> _tareas = []; // Lista persistente de tareas
+  List<Task> _tareas = []; // Lista persistente de tareas
 
   @override
   void initState() {
     super.initState();
-    _cargarTareas(); // Carga inicial de tareas
-    _scrollController.addListener(_detectarScrollFinal);
+    _cargarTareasIniciales(); // Carga inicial de tareas
+    _scrollController.addListener(_cargarMasTareas);
   }
 
   @override
@@ -38,35 +38,61 @@ class _TareasScreenState extends State<TareasScreen> {
     super.dispose();
   }
 
-  Future<void> _cargarTareas() async {
-    if (_cargando || !_hayMasTareas) return;
+  Future<void> _cargarTareasIniciales() async {
+    // if (_cargando || !_hayMasTareas) return;
 
     setState(() {
       _cargando = true;
     });
 
-    // Llama al servicio para obtener nuevas tareas
-    final nuevasTareas = await _tareasService.obtenerTareas(
-      inicio: _paginaActual * _limitePorPagina,
-      limite: _limitePorPagina,
-    );
+    final tareas = await _tareasService.getTasksWithSteps(limite: _limitePorPagina);
 
     setState(() {
-      if (nuevasTareas.isNotEmpty) {
-        _tareas.addAll(nuevasTareas); // Agrega las nuevas tareas a la lista existente
-        _paginaActual++; // Incrementa la página actual para la siguiente carga
-      }
+      _tareas = tareas;
       _cargando = false;
-      _hayMasTareas = nuevasTareas.length == _limitePorPagina; // Verifica si hay más tareas
     });
+
+    // Llama al servicio para obtener nuevas tareas
+    // final nuevasTareas = await _tareasService.obtenerTareas(
+    //   inicio: _paginaActual * _limitePorPagina,
+    //   limite: _limitePorPagina,
+    // );
+
+    // setState(() {
+    //   if (nuevasTareas.isNotEmpty) {
+    //     _tareas.addAll(nuevasTareas); // Agrega las nuevas tareas a la lista existente
+    //     _paginaActual++; // Incrementa la página actual para la siguiente carga
+    //   }
+    //   _cargando = false;
+    //   _hayMasTareas = nuevasTareas.length == _limitePorPagina; // Verifica si hay más tareas
+    // });
   }
 
-  void _detectarScrollFinal() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent &&
-        !_cargando) {
-      _cargarTareas();
+   Future<void> _cargarMasTareas() async {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !_cargando) {
+      setState(() {
+        _cargando = true;
+      });
+
+      final nuevasTareas = await _tareasService.getMoreTasksWithSteps(
+        inicio: _tareas.length,
+        limite: _limitePorPagina,
+      );
+
+      setState(() {
+        _tareas.addAll(nuevasTareas);
+        _cargando = false;
+      });
     }
   }
+
+
+  // void _detectarScrollFinal() {
+  //   if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent &&
+  //       !_cargando) {
+  //     _cargarTareas();
+  //   }
+  // }
 
   void _mostrarModalAgregarTarea() {
     showDialog(
@@ -120,11 +146,18 @@ class _TareasScreenState extends State<TareasScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('$TITULO_APPBAR - Total: ${_tareas.length}')
+        title: Text('$tituloAppbar - Total: ${_tareas.length}')
       ),
       drawer: const SideMenu(),
       backgroundColor: Colors.grey[200],
-      body: ListView.builder(
+      body: _tareas.isEmpty && !_cargando // Verifica si no hay tareas y no se está cargando
+        ? const Center(
+            child: Text(
+              listaVacia,
+              style: TextStyle(fontSize: 18, color: Colors.black54),
+            ),
+          )
+        : ListView.builder(
         controller: _scrollController,
         itemCount: _tareas.length + (_cargando ? 1 : 0),
         itemBuilder: (context, index) {
@@ -152,7 +185,7 @@ class _TareasScreenState extends State<TareasScreen> {
               onDismissed: (direction) {
                 _eliminarTarea(index);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text(TAREA_ELIMINADA)),
+                  const SnackBar(content: Text(tareaEliminada)),
                 );                
               },
               // Usa la nueva tarjeta deportiva,
