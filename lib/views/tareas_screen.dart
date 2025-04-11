@@ -12,10 +12,10 @@ class TareasScreen extends StatefulWidget {
   const TareasScreen({super.key});
 
   @override
-  _TareasScreenState createState() => _TareasScreenState();
+  TareasScreenState createState() => TareasScreenState();
 }
 
-class _TareasScreenState extends State<TareasScreen> {
+class TareasScreenState extends State<TareasScreen> {
   final TareasService _tareasService = TareasService();
   final ScrollController _scrollController = ScrollController();
   bool _cargando = false;

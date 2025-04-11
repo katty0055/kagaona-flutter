@@ -14,10 +14,10 @@ class MiAppScreen extends StatefulWidget {
   const MiAppScreen({super.key});
 
   @override
-  _MiAppScreenState createState() => _MiAppScreenState();
+  MiAppScreenState createState() => MiAppScreenState();
 }
 
-class _MiAppScreenState extends State<MiAppScreen> {
+class MiAppScreenState extends State<MiAppScreen> {
   Color _colorActual = Colors.blue; // Color inicial del Container
   final List<Color> _colores = [Colors.blue, Colors.red, Colors.green];
   int _indiceColor = 0;

@@ -8,10 +8,10 @@ class AddTaskModal extends StatefulWidget {
   const AddTaskModal({super.key, required this.onTaskAdded, this.taskToEdit});
 
   @override
-  _AddTaskModalState createState() => _AddTaskModalState();
+  AddTaskModalState createState() => AddTaskModalState();
 }
 
-class _AddTaskModalState extends State<AddTaskModal> {
+class AddTaskModalState extends State<AddTaskModal> {
   late TextEditingController tituloController;
   late TextEditingController descripcionController;
   late TextEditingController fechaController;

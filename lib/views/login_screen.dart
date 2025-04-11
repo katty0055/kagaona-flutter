@@ -75,6 +75,7 @@ class LoginScreen extends StatelessWidget {
                         password,
                       );
 
+                     // if (!mounted) return; // Verifica si el widget sigue montado antes de usar el contexto
                       Navigator.pop(context); // Cierra el indicador de carga
 
                       if (success) {
@@ -92,6 +93,7 @@ class LoginScreen extends StatelessWidget {
                         );
                       }
                     } catch (e) {
+                     // if (!mounted) return; // Verifica si el widget sigue montado
                       Navigator.pop(context); // Cierra el indicador de carga
                       ScaffoldMessenger.of(
                         context,
