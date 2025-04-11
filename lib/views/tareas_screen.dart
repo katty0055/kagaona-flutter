@@ -120,11 +120,18 @@ class _TareasScreenState extends State<TareasScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('$TITULO_APPBAR - Total: ${_tareas.length}')
+        title: Text('$tituloAppbar - Total: ${_tareas.length}')
       ),
       drawer: const SideMenu(),
       backgroundColor: Colors.grey[200],
-      body: ListView.builder(
+      body: _tareas.isEmpty && !_cargando // Verifica si no hay tareas y no se está cargando
+        ? const Center(
+            child: Text(
+              listaVacia,
+              style: TextStyle(fontSize: 18, color: Colors.black54),
+            ),
+          )
+        : ListView.builder(
         controller: _scrollController,
         itemCount: _tareas.length + (_cargando ? 1 : 0),
         itemBuilder: (context, index) {
@@ -152,7 +159,7 @@ class _TareasScreenState extends State<TareasScreen> {
               onDismissed: (direction) {
                 _eliminarTarea(index);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text(TAREA_ELIMINADA)),
+                  const SnackBar(content: Text(tareaEliminada)),
                 );                
               },
               // Usa la nueva tarjeta deportiva,

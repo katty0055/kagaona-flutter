@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kgaona/constants.dart';
 import 'package:kgaona/helpers/task_card_helper.dart';
 import 'package:kgaona/domain/task.dart';
 
@@ -105,7 +104,7 @@ class TaskDetailsScreen extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween, // Alinea el botón a la derecha
                               children: [
-                                CommonWidgetsHelper.buildBoldFooter('$FECHA_LIMITE $fechaLimite'),
+                                CommonWidgetsHelper.buildBoldFooter('$fechaLimite $fechaLimite'),
                                 ElevatedButton.icon(
                                   onPressed: () => Navigator.pop(context),
                                   icon: const Icon(Icons.arrow_back, size: 16),
