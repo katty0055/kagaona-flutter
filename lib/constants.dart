@@ -11,3 +11,4 @@ const String titleApp = 'Juego de Preguntas';
 const String welcomeMessage = '¡Bienvenido al Juego de Preguntas!';
 const String startGame = 'Iniciar Juego';
 const String finalScore = 'Puntuación Final: ';
+const String playAgain = 'Jugar de Nuevo';

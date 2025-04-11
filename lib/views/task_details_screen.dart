@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/helpers/task_card_helper.dart';
 import 'package:kgaona/domain/task.dart';
+import 'package:kgaona/constants.dart';
 
 class TaskDetailsScreen extends StatelessWidget {
   final List<Task> tareas;
@@ -12,7 +13,7 @@ class TaskDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final Task tarea = tareas[indice];
     final String imageUrl = 'https://picsum.photos/200/300?random=$indice';
-    final String fechaLimite = tarea.fechaLimite != null
+    final String fechaLimiteDato = tarea.fechaLimite != null
         ? '${tarea.fechaLimite!.day}/${tarea.fechaLimite!.month}/${tarea.fechaLimite!.year}'
         : 'Sin fecha límite';
 
@@ -104,7 +105,7 @@ class TaskDetailsScreen extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween, // Alinea el botón a la derecha
                               children: [
-                                CommonWidgetsHelper.buildBoldFooter('$fechaLimite $fechaLimite'),
+                                CommonWidgetsHelper.buildBoldFooter('$fechaLimite $fechaLimiteDato'),
                                 ElevatedButton.icon(
                                   onPressed: () => Navigator.pop(context),
                                   icon: const Icon(Icons.arrow_back, size: 16),
