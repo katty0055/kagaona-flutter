@@ -46,8 +46,28 @@ class GameScreenState extends State<GameScreen> {
       }
     });
 
+    // Define el mensaje del SnackBar
+    final snackBarMessage = isCorrectAnswer == true
+        ? const SnackBar(
+            content: Text('¡Correcto!'),
+            backgroundColor: Colors.green,
+          )
+        : const SnackBar(
+            content: Text('Incorrecto'),
+            backgroundColor: Colors.red,
+          );
+
+    // Muestra el SnackBar
+    ScaffoldMessenger.of(context).showSnackBar(snackBarMessage);
+
+
     // Retraso para mostrar el color antes de avanzar
     Future.delayed(const Duration(seconds: 1), () {
+      if (!mounted) return; // Verifica si el widget sigue montado
+
+      // Oculta el SnackBar antes de avanzar
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
       if (currentQuestionIndex < questionsList.length - 1) {
         setState(() {
           currentQuestionIndex++; // Avanza a la siguiente pregunta
@@ -55,14 +75,12 @@ class GameScreenState extends State<GameScreen> {
           isCorrectAnswer = null; // Reinicia el estado de la respuesta
         });
       } else {
-        if (context.mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ResultScreen(userScore: userScore),
-            ),
-          );
-        }
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ResultScreen(finalScoreGame: userScore, totalQuestions: questionsList.length,),
+          ),
+        );
       }
     });
   }

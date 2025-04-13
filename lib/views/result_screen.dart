@@ -1,13 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:kgaona/constants.dart';
 import 'package:kgaona/views/start_screen.dart';
 
 class ResultScreen extends StatelessWidget {
-  final int userScore;
+  final int finalScoreGame;
+  final int totalQuestions;
 
-  const ResultScreen({super.key, required this.userScore});
+  const ResultScreen({super.key, required this.finalScoreGame, required this.totalQuestions});
 
   @override
   Widget build(BuildContext context) {
+
+    const double spacingHeight = 16;
+
+    // Variable para mostrar el puntaje final
+    final String scoreText = '$finalScore: $finalScoreGame/$totalQuestions';
+
+    // Mensaje de retroalimentación
+    final String feedbackMessage = finalScoreGame > (totalQuestions / 2)
+        ? '¡Buen trabajo!'
+        : '¡Sigue practicando!';
+
+    // Estilo del texto del puntaje
+    const TextStyle scoreTextStyle = TextStyle(
+      fontSize: 24,
+      fontWeight: FontWeight.bold,
+      color: Colors.black,
+    );
+
+    // Estilo del mensaje de retroalimentación
+    const TextStyle feedbackTextStyle = TextStyle(
+      fontSize: 18,
+      color: Colors.grey,
+    );
+
+    // Determina el color del botón
+    final Color buttonColor = finalScoreGame > (totalQuestions / 2)
+        ? Colors.blue // Azul si el puntaje es mayor a la mitad
+        : Colors.green; // Verde en caso contrario
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Resultados'),
@@ -30,16 +61,19 @@ class ResultScreen extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               Text(
-                'Tu puntaje: $userScore',
-                style: const TextStyle(
-                  fontSize: 20,
-                  color: Colors.black,
-                ),
+                scoreText,
+                style: scoreTextStyle,
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: spacingHeight),
+              Text(
+                feedbackMessage,
+                style: feedbackTextStyle,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
                   Navigator.pushAndRemoveUntil(
@@ -49,12 +83,12 @@ class ResultScreen extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: buttonColor,// Usa la variable buttonColor
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
                 child: const Text(
-                  'Volver al Inicio',
+                  playAgain,
                   style: TextStyle(fontSize: 16),
                 ),
               ),
