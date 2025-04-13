@@ -115,7 +115,7 @@ class GameScreenState extends State<GameScreen> {
                 ),
                 Text(
                   questionCounterText,
-                  style: const TextStyle(fontSize: 16, color: Colors.black54),
+                  style: const TextStyle(fontSize: 16, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20),
