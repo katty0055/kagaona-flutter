@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/constants.dart';
 import 'package:kgaona/domain/task.dart';
-import 'package:kgaona/components/task_card.dart'; // Importa el diseño del Card
 
 class CommonWidgetsHelper {
   /// Construye un título en negrita con tamaño 20
@@ -77,34 +76,32 @@ class CommonWidgetsHelper {
 }
 
 
-Widget buildTaskCard(Task task, VoidCallback onEdit,  {String? subtitulo}) {
-  // Lógica para determinar el ícono dinámico
-  return TaskCard(
-    title: task.title,
-    subtitle: subtitulo,
-    leadingIcon: CommonWidgetsHelper.buildLeadingIcon(task.type), // Pasa el ícono dinámico al Card
-    type: task.type,
-    description: task.description,
-    date: task.date,
-    trailing: IconButton(
-      icon: const Icon(Icons.edit, color: Colors.blue),
-      onPressed: onEdit, // Llama al callback para editar
-    ),
-  );
-}
+// Widget buildTaskCard(Task task, VoidCallback onEdit,  {String? subtitulo}) {
+//   // Lógica para determinar el ícono dinámico
+//   return TaskCard(
+//     title: task.title,
+//     subtitle: subtitulo,
+//     leadingIcon: CommonWidgetsHelper.buildLeadingIcon(task.type), // Pasa el ícono dinámico al Card
+//     type: task.type,
+//     description: task.description,
+//     date: task.date,
+//     trailing: IconButton(
+//       icon: const Icon(Icons.edit, color: Colors.blue),
+//       onPressed: onEdit, // Llama al callback para editar
+//     ),
+//   );
+// }
 
 
 Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
-   return 
-     ListTile(
-      title: Row(
-        children: [
-          CommonWidgetsHelper.buildLeadingIcon(tarea.type), // Ícono dinámico
-          Expanded(
-            child: CommonWidgetsHelper.buildBoldTitle(tarea.title), // Título en negrita
-          ),
-        ],
-      ),
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), // Espaciado entre tarjetas
+    child:ListTile(
+    contentPadding: const EdgeInsets.all(16.0), // Padding interno del ListTile
+    tileColor: Colors.white, // Fondo blanco para el ListTile
+    shape: CommonWidgetsHelper.buildRoundedBorder(),
+    leading: CommonWidgetsHelper.buildLeadingIcon(tarea.type), // Ícono dinámico
+    title: CommonWidgetsHelper.buildBoldTitle(tarea.title), // Título en negrita
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -124,6 +121,7 @@ Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
         style: ElevatedButton.styleFrom(                     
           foregroundColor: Colors.grey, // Color del texto
         ),
-      ),        
+      ),
+    ),        
   );
 }

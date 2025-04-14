@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kgaona/components/task_card.dart';
 import 'package:kgaona/helpers/task_card_helper.dart';
 import 'package:kgaona/domain/task.dart';
-import 'package:kgaona/constants.dart';
 
 class TaskDetailsScreen extends StatelessWidget {
   final List<Task> tareas;
@@ -65,71 +65,15 @@ class TaskDetailsScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
               child: Center(
-                child: Card(
-                  elevation: 8, // Borde sombreado
-                  color: Colors.white, // Color de fondo blanco
-                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  shape: CommonWidgetsHelper.buildRoundedBorder(),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0), // Agrega un padding de 10 alrededor del Card
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Imagen aleatoria
-                        ClipRRect(
-                          borderRadius: CommonWidgetsHelper.buildTopRoundedBorder(),
-                          child: Image.network(
-                            imageUrl,
-                            height: 200,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        CommonWidgetsHelper.buildSpacing(),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Título
-                            CommonWidgetsHelper.buildBoldTitle(tarea.title),
-                            CommonWidgetsHelper.buildSpacing(), // Espacio entre el título y la descripción
-                            // Pasos (máximo 3 líneas)
-                            if (tarea.pasos != null && tarea.pasos!.isNotEmpty)
-                              CommonWidgetsHelper.buildInfoLines(
-                                tarea.pasos![0],
-                                tarea.pasos!.length > 1 ? tarea.pasos![1] : null,
-                                tarea.pasos!.length > 2 ? tarea.pasos![2] : null,
-                              )
-                            else
-                              CommonWidgetsHelper.buildNoStepsText(),
-                            CommonWidgetsHelper.buildSpacing(),                            
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween, // Alinea el botón a la derecha
-                              children: [
-                                CommonWidgetsHelper.buildBoldFooter('$fechaLimite $fechaLimiteDato'),
-                                ElevatedButton.icon(
-                                  onPressed: () => Navigator.pop(context),
-                                  icon: const Icon(Icons.arrow_back, size: 16),
-                                  label: const Text('Volver'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blueAccent,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+                child: TaskCard(
+              tarea: tarea,
+              imageUrl: imageUrl,
+              fechaLimiteDato: fechaLimiteDato,
+              onBackPressed: () => Navigator.pop(context),
             ),
           ),
+        ),
+      ),
     );
   }
 }
