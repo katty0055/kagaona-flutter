@@ -9,10 +9,10 @@ class QuoteScreen extends StatefulWidget {
   const QuoteScreen({super.key});
 
   @override
-  _QuoteScreenState createState() => _QuoteScreenState();
+  QuoteScreenState createState() => QuoteScreenState();
 }
 
-class _QuoteScreenState extends State<QuoteScreen> {
+class QuoteScreenState extends State<QuoteScreen> {
   final QuoteService _quoteService = QuoteService();
   final ScrollController _scrollController = ScrollController();
 
@@ -48,9 +48,11 @@ class _QuoteScreenState extends State<QuoteScreen> {
         _hasMore = allQuotes.isNotEmpty;
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(Constants.errorMessage)),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text(Constants.errorMessage)),
+        );
+      }
     } finally {
       setState(() {
         _isLoading = false;
@@ -71,9 +73,11 @@ class _QuoteScreenState extends State<QuoteScreen> {
         _hasMore = newQuotes.isNotEmpty;
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(Constants.errorMessage)),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text(Constants.errorMessage)),
+        );
+      }     
     } finally {
       setState(() {
         _isLoading = false;
