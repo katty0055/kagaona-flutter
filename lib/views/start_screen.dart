@@ -13,7 +13,7 @@ class StartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(titleApp), 
+        title: const Text(Constants.titleApp), 
         centerTitle: true,
       ),
       drawer: const SideMenu(),
@@ -22,7 +22,7 @@ class StartScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              welcomeMessage, 
+              Constants.welcomeMessage, 
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
@@ -37,7 +37,7 @@ class StartScreen extends StatelessWidget {
                style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue, 
               ),
-              child: const Text(startGame), // Texto del botón definido en constants.dart
+              child: const Text(Constants.startGame), // Texto del botón definido en constants.dart
             ),
           ],
         ),

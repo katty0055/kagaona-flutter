@@ -105,11 +105,11 @@ Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('$tipoTarea ${tarea.type}'), // Muestra el tipo de tarea
+          Text('$Constants.tipoTarea ${tarea.type}'), // Muestra el tipo de tarea
           CommonWidgetsHelper.buildSpacing(),
           if (tarea.pasos != null && tarea.pasos!.isNotEmpty)
               CommonWidgetsHelper.buildInfoLines(
-                '$pasosTitulo ${tarea.pasos![0]}',
+                '$Constants.pasosTitulo ${tarea.pasos![0]}',
               ) // Muestra el primer paso
           else
             CommonWidgetsHelper.buildNoStepsText(), // Mensaje si no hay pasos
