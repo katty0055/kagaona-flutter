@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/api/service/quote_service.dart';
+import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/domain/quote.dart';
 import 'package:kgaona/constants.dart';
+import 'package:intl/intl.dart'; // Importa el paquete intl
 
 class QuoteScreen extends StatefulWidget {
   const QuoteScreen({super.key});
@@ -19,15 +21,41 @@ class _QuoteScreenState extends State<QuoteScreen> {
   bool _isLoading = false;
   bool _hasMore = true;
 
+  static const double spacingHeight = 10; // Espaciado entre Cards
+
   @override
   void initState() {
     super.initState();
-    _loadQuotes();
+    _loadInitialQuotes(); // Carga las cotizaciones iniciales
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent && !_isLoading && _hasMore) {
         _loadQuotes();
       }
     });
+  }
+
+  Future<void> _loadInitialQuotes() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Carga todas las cotizaciones disponibles
+      final allQuotes = await _quoteService.getAllQuotes();
+      setState(() {
+        _quotes = allQuotes;
+        _pageNumber = 1; // Configura la paginación para el scroll infinito
+        _hasMore = allQuotes.isNotEmpty;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(Constants.errorMessage)),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _loadQuotes() async {
@@ -36,7 +64,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
     });
 
     try {
-      final newQuotes = await _quoteService.getPaginatedQuotes(pageNumber: _pageNumber, pageSize: Constants.pageSize);
+      final newQuotes = await _quoteService.getPaginatedQuotes(pageNumber: _pageNumber, pageSize: 5);
       setState(() {
         _quotes.addAll(newQuotes);
         _pageNumber++;
@@ -67,6 +95,8 @@ class _QuoteScreenState extends State<QuoteScreen> {
         centerTitle: true,
         backgroundColor: Colors.blue,
       ),
+      drawer: const SideMenu(),
+      backgroundColor: Colors.grey[200], // Fondo gris claro
       body: _quotes.isEmpty && _isLoading
           ? const Center(
               child: Text(Constants.loadingMessage),
@@ -82,32 +112,40 @@ class _QuoteScreenState extends State<QuoteScreen> {
                 }
 
                 final quote = _quotes[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          quote.companyName,
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 8.0),
-                        Text('Precio: \$${quote.stockPrice.toStringAsFixed(2)}'),
-                        Text(
-                          'Cambio: ${quote.changePercentage.toStringAsFixed(2)}%',
-                          style: TextStyle(
-                            color: quote.changePercentage >= 0 ? Colors.green : Colors.red,
+                return Column(
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                quote.companyName,
+                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 8.0),
+                              Text('Precio: \$${quote.stockPrice.toStringAsFixed(2)}'),
+                              Text(
+                                'Cambio: ${quote.changePercentage.toStringAsFixed(2)}%',
+                                style: TextStyle(
+                                  color: quote.changePercentage >= 0 ? Colors.green : Colors.red,
+                                ),
+                              ),
+                              Text(
+                                'Última actualización: ${_formatDate(quote.lastUpdated)}',
+                                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                              ),
+                            ],
                           ),
                         ),
-                        Text(
-                          'Última actualización: ${_formatDate(quote.lastUpdated)}',
-                          style: const TextStyle(fontSize: 12, color: Colors.grey),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: spacingHeight), // Espaciado entre Cards
+                  ],
                 );
               },
             ),
@@ -115,6 +153,6 @@ class _QuoteScreenState extends State<QuoteScreen> {
   }
 
   String _formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+    return DateFormat(Constants.dateFormat).format(date);
   }
 }

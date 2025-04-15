@@ -18,4 +18,5 @@ class Constants {
   static const String emptyList = 'No hay cotizaciones';
   static const String errorMessage = 'Error al cargar cotizaciones';
   static const int pageSize = 10;
+  static const String dateFormat = 'dd/MM/yyyy HH:mm'; 
 }
