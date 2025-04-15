@@ -146,14 +146,14 @@ class TareasScreenState extends State<TareasScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('$tituloAppbar - Total: ${_tareas.length}')
+        title: Text('$Constants.tituloAppbar - Total: ${_tareas.length}')
       ),
       drawer: const SideMenu(),
       backgroundColor: Colors.grey[200],
       body: _tareas.isEmpty && !_cargando // Verifica si no hay tareas y no se está cargando
         ? const Center(
             child: Text(
-              listaVacia,
+              Constants.listaVacia,
               style: TextStyle(fontSize: 18, color: Colors.black54),
             ),
           )
@@ -185,7 +185,7 @@ class TareasScreenState extends State<TareasScreen> {
               onDismissed: (direction) {
                 _eliminarTarea(index);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text(tareaEliminada)),
+                  const SnackBar(content: Text(Constants.tareaEliminada)),
                 );                
               },
               // Usa la nueva tarjeta deportiva,

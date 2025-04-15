@@ -147,7 +147,7 @@ class TaskCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween, // Alinea el botón a la derecha
                   children: [
-                    CommonWidgetsHelper.buildBoldFooter('$fechaLimite $fechaLimiteDato'),
+                    CommonWidgetsHelper.buildBoldFooter('$Constants.fechaLimite $fechaLimiteDato'),
                     ElevatedButton.icon(
                       onPressed: onBackPressed,
                       icon: const Icon(Icons.arrow_back, size: 16),
