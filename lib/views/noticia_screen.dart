@@ -143,26 +143,46 @@ class NoticiaScreenState extends State<NoticiaScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Card(
         shape: CommonWidgetsHelper.buildRoundedBorder(),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CommonWidgetsHelper.buildBoldTitle(noticia.titulo), // Título en negrita
-              CommonWidgetsHelper.buildSpacing(),
-              CommonWidgetsHelper.buildInfoLines(noticia.descripcion), // Descripción (máximo 3 líneas)
-              CommonWidgetsHelper.buildSpacing(),
-              Text(
-                'Fuente: ${noticia.fuente}',
-                style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 14),
-              ), // Fuente en cursiva
-              CommonWidgetsHelper.buildSpacing(),
-              Text(
-                'Publicado el: ${_formatDate(noticia.publicadaEl)}',
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
-              ), // Fecha en formato dd/MM/yyyy HH:mm
-            ],
-          ),
+        child: Row(
+          children: [
+            // Imagen aleatoria de Picsum
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(8.0),
+                bottomLeft: Radius.circular(8.0),
+              ),
+              child: Image.network(
+                'https://picsum.photos/100/100?random=${noticia.hashCode}', // Imagen aleatoria basada en el hash de la noticia
+                height: 100,
+                width: 100,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(width: 16.0), // Espaciado entre la imagen y el contenido
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CommonWidgetsHelper.buildBoldTitle(noticia.titulo), // Título en negrita
+                    CommonWidgetsHelper.buildSpacing(),
+                    CommonWidgetsHelper.buildInfoLines(noticia.descripcion), // Descripción (máximo 3 líneas)
+                    CommonWidgetsHelper.buildSpacing(),
+                    Text(
+                      'Fuente: ${noticia.fuente}',
+                      style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 14),
+                    ), // Fuente en cursiva
+                    CommonWidgetsHelper.buildSpacing(),
+                    Text(
+                      'Publicado el: ${_formatDate(noticia.publicadaEl)}',
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ), // Fecha en formato dd/MM/yyyy HH:mm
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
