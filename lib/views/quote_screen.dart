@@ -157,6 +157,6 @@ class QuoteScreenState extends State<QuoteScreen> {
   }
 
   String _formatDate(DateTime date) {
-    return DateFormat(Constants.dateFormat).format(date);
+    return DateFormat(Constants.formatoFecha).format(date);
   }
 }
