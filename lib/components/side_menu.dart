@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kgaona/helpers/dialog_helper.dart';
 import 'package:kgaona/views/contador_screen.dart';
 import 'package:kgaona/views/mi_app_screen.dart';
+import 'package:kgaona/views/noticia_screen.dart';
 import 'package:kgaona/views/quote_screen.dart';
 import 'package:kgaona/views/start_screen.dart';
 import 'package:kgaona/views/welcome_screen.dart';
@@ -58,6 +59,16 @@ class SideMenu extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const TareasScreen()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.newspaper), // Ícono para la nueva opción
+            title: const Text('Noticias'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const NoticiaScreen()), // Navega a MiAppScreen
               );
             },
           ),
