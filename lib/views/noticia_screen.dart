@@ -19,7 +19,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
   final int _selectedIndex = 0;
 
   List<Noticia> _noticias = [];
-  int _numeroPagina = 1;
+  int _numeroPagina = 0;
   bool _isLoading = false;
   bool _hasMore = true;
   bool _hasError = false;
@@ -45,7 +45,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
       final noticias = await _noticiaService.obtenerNoticiasIniciales();
       setState(() {
         _noticias = noticias;
-        _numeroPagina = 1;
+        _numeroPagina = 0;
         _hasMore = noticias.isNotEmpty;
       });
     } catch (e) {
@@ -110,7 +110,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
         centerTitle: true,
       ),
       drawer: const SideMenu(),
-      backgroundColor: Colors.grey[200], // Fondo de pantalla
+      backgroundColor: Colors.white, // Fondo de pantalla
       body: _isLoading && _noticias.isEmpty
           ? const Center(child: Text(Constants.mensajeCargando)) // mensajeCargando
           : _hasError
@@ -126,12 +126,13 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                         }
 
                         final noticia = _noticias[index];
-                        return Column(
-                          children: [
-                            _buildNoticiaCard(noticia),
-                            const SizedBox(height: Constants.espaciadoAlto), // Separación entre Cards
-                          ],
-                        );
+                        return 
+                        // Column(
+                        //   children: [
+                            _buildNoticiaCard(noticia);
+                            //const SizedBox(height: Constants.espaciadoAlto), // Separación entre Cards
+                         // ],
+                       // );
                       },
                     ),
       bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: _selectedIndex),
@@ -139,54 +140,125 @@ class NoticiaScreenState extends State<NoticiaScreen> {
   }
 
   Widget _buildNoticiaCard(Noticia noticia) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Card(
-        shape: CommonWidgetsHelper.buildRoundedBorder(),
-        child: Row(
-          children: [
-            // Imagen aleatoria de Picsum
-            ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(8.0),
-                bottomLeft: Radius.circular(8.0),
-              ),
-              child: Image.network(
-                'https://picsum.photos/100/100?random=${noticia.hashCode}', // Imagen aleatoria basada en el hash de la noticia
-                height: 100,
-                width: 100,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(width: 16.0), // Espaciado entre la imagen y el contenido
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
+  return Column(
+    children: [
+      Card(
+        margin: EdgeInsets.zero,
+        color: Colors.white, // Fondo blanco del Card
+        shape: null, // Sin bordes redondeados
+        elevation: 0.0,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 12.0), // Padding general para el contenido
+          child: Column(
+            children: [
+              // Primera fila: Texto y la imagen
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0), // Padding horizontal de 16
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CommonWidgetsHelper.buildBoldTitle(noticia.titulo), // Título en negrita
-                    CommonWidgetsHelper.buildSpacing(),
-                    CommonWidgetsHelper.buildInfoLines(noticia.descripcion), // Descripción (máximo 3 líneas)
-                    CommonWidgetsHelper.buildSpacing(),
-                    Text(
-                      'Fuente: ${noticia.fuente}',
-                      style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 14),
-                    ), // Fuente en cursiva
-                    CommonWidgetsHelper.buildSpacing(),
-                    Text(
-                      'Publicado el: ${_formatDate(noticia.publicadaEl)}',
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
-                    ), // Fecha en formato dd/MM/yyyy HH:mm
+                    // Columna para el texto (2/3 del ancho)
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            noticia.titulo,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 2.0),
+                          Text(
+                            noticia.descripcion,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 8.0),
+                          Text(
+                            'Fuente: ${noticia.fuente}',
+                            style: const TextStyle(
+                              fontStyle: FontStyle.italic,
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(height: 4.0),
+                          Text(
+                            'Publicado el: ${_formatDate(noticia.publicadaEl)}',
+                            style: const TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 30),
+                    // Imagen (1/3 del ancho)
+                    //Padding(
+                     // padding: const EdgeInsets.only(right: 16.0), // Padding derecho para la imagen
+                      //child:
+                       ClipRRect(
+                        borderRadius: BorderRadius.circular(16.0),
+                        child: Image.network(
+                          'https://picsum.photos/100/100?random=${noticia.hashCode}',
+                          height: 80, // Altura de la imagen
+                          width: 105,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    //),
                   ],
                 ),
               ),
-            ),
-          ],
+              //const SizedBox(height: 8.0), // Espaciado entre la fila de contenido y los botones
+              // Segunda fila: Botones alineados al final
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end, // Alinea los botones al final
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.favorite_border),
+                    onPressed: () {
+                      // Acción para marcar como favorito
+                      print('Favorito presionado');
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.share),
+                    onPressed: () {
+                      // Acción para compartir
+                      print('Compartir presionado');
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.more_vert),
+                    onPressed: () {
+                      // Acción para mostrar más opciones
+                      print('Más opciones presionado');
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-    );
-  }
+      const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 32.0), // Padding horizontal de 16
+      child: Divider(),
+    ),
+    ],
+  );
+}
+
 
    String _formatDate(DateTime date) {
     return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
