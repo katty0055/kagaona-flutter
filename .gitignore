@@ -268,3 +268,6 @@ fabric.properties
 #sonar-scanner
 sonar-project.properties
 .scannerwork/
+
+#vscode
+.vscode/
