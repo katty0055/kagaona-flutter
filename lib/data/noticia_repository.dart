@@ -28,8 +28,6 @@ class NoticiaRepository {
    await Future.delayed(const Duration(seconds: 2)); // Simula el retraso de una API
 
     final startId = _noticias.length + 1 + (pageNumber - 1) * pageSize;
-    //final startId = _noticias.length + 1 + ((pageNumber - 1) * pageSize);
-    //final startId = _noticias.length + 1 ;
     
     final nuevasNoticias = List.generate(
       pageSize,
