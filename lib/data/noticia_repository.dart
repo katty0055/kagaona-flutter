@@ -20,16 +20,16 @@ class NoticiaRepository {
   // Simula la obtención de noticias iniciales
   Future<List<Noticia>> fetchNoticias() async {
     await Future.delayed(const Duration(seconds: 2)); // Simula el retraso de una API
-    return _noticias;
+    return  List<Noticia>.from(_noticias); // Devuelve una copia de la lista de noticias para evitar su manipulacion directa en la vista
   }
 
   // Genera nuevas noticias aleatorias para scroll infinito
   Future<List<Noticia>> fetchMoreNoticias(int pageNumber, int pageSize) async {
    await Future.delayed(const Duration(seconds: 2)); // Simula el retraso de una API
 
-    //final startId = _noticias.length + 1 + (pageNumber - 1) * pageSize;
+    final startId = _noticias.length + 1 + (pageNumber - 1) * pageSize;
     //final startId = _noticias.length + 1 + ((pageNumber - 1) * pageSize);
-    final startId = _noticias.length + 1 ;
+    //final startId = _noticias.length + 1 ;
     
     final nuevasNoticias = List.generate(
       pageSize,
@@ -40,8 +40,6 @@ class NoticiaRepository {
         publicadaEl: DateTime.now().subtract(Duration(days: _random.nextInt(30))), // Fecha aleatoria en los últimos 30 días
       ),
     );
-
-    _noticias.addAll(nuevasNoticias); // Agrega las nuevas noticias a la lista existente
     return nuevasNoticias;
   }
 }
