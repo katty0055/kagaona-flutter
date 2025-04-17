@@ -1,3 +1,4 @@
+import 'package:kgaona/constants.dart';
 import 'package:kgaona/data/noticia_repository.dart';
 import 'package:kgaona/domain/noticia.dart';
 
@@ -19,7 +20,7 @@ class NoticiaService {
   // Método para obtener noticias paginadas (scroll infinito)
   Future<List<Noticia>> obtenerNoticiasPaginadas({
     required int numeroPagina,
-    int tamanoPagina = 10, // Tamaño de página predeterminado
+    int tamanoPagina = Constants.pageSize, // Tamaño de página predeterminado
   }) async {
     // Validaciones de paginación
     if (numeroPagina < 1) {

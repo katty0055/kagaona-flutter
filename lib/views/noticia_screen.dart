@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/api/service/noticia_service.dart';
 import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
+import 'package:kgaona/components/noticia_card.dart';
 import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/domain/noticia.dart';
-import 'package:kgaona/helpers/task_card_helper.dart';
 import 'package:kgaona/constants.dart';
 
 class NoticiaScreen extends StatefulWidget {
@@ -19,7 +19,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
   final int _selectedIndex = 0;
 
   List<Noticia> _noticias = [];
-  int _numeroPagina = 1;
+  int _numeroPagina = 0;
   bool _isLoading = false;
   bool _hasMore = true;
   bool _hasError = false;
@@ -45,7 +45,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
       final noticias = await _noticiaService.obtenerNoticiasIniciales();
       setState(() {
         _noticias = noticias;
-        _numeroPagina = 1;
+        _numeroPagina;
         _hasMore = noticias.isNotEmpty;
       });
     } catch (e) {
@@ -61,6 +61,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
       if (mounted) {
         setState(() {
           _isLoading = false;
+          _numeroPagina++;
         });
       }
     }
@@ -73,9 +74,10 @@ class NoticiaScreenState extends State<NoticiaScreen> {
 
     try {
       final nuevasNoticias = await _noticiaService.obtenerNoticiasPaginadas(
-        numeroPagina: _numeroPagina + 1,
+        numeroPagina: _numeroPagina,
         tamanoPagina: Constants.pageSize,
       );
+
       setState(() {
         _noticias.addAll(nuevasNoticias);
         _numeroPagina++;
@@ -110,7 +112,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
         centerTitle: true,
       ),
       drawer: const SideMenu(),
-      backgroundColor: Colors.grey[200], // Fondo de pantalla
+      backgroundColor: Colors.white, // Fondo de pantalla
       body: _isLoading && _noticias.isEmpty
           ? const Center(child: Text(Constants.mensajeCargando)) // mensajeCargando
           : _hasError
@@ -126,69 +128,10 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                         }
 
                         final noticia = _noticias[index];
-                        return Column(
-                          children: [
-                            _buildNoticiaCard(noticia),
-                            const SizedBox(height: Constants.espaciadoAlto), // Separación entre Cards
-                          ],
-                        );
+                        return NoticiaCard(noticia:noticia);
                       },
                     ),
       bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: _selectedIndex),
     );
-  }
-
-  Widget _buildNoticiaCard(Noticia noticia) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Card(
-        shape: CommonWidgetsHelper.buildRoundedBorder(),
-        child: Row(
-          children: [
-            // Imagen aleatoria de Picsum
-            ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(8.0),
-                bottomLeft: Radius.circular(8.0),
-              ),
-              child: Image.network(
-                'https://picsum.photos/100/100?random=${noticia.hashCode}', // Imagen aleatoria basada en el hash de la noticia
-                height: 100,
-                width: 100,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(width: 16.0), // Espaciado entre la imagen y el contenido
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CommonWidgetsHelper.buildBoldTitle(noticia.titulo), // Título en negrita
-                    CommonWidgetsHelper.buildSpacing(),
-                    CommonWidgetsHelper.buildInfoLines(noticia.descripcion), // Descripción (máximo 3 líneas)
-                    CommonWidgetsHelper.buildSpacing(),
-                    Text(
-                      'Fuente: ${noticia.fuente}',
-                      style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 14),
-                    ), // Fuente en cursiva
-                    CommonWidgetsHelper.buildSpacing(),
-                    Text(
-                      'Publicado el: ${_formatDate(noticia.publicadaEl)}',
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
-                    ), // Fecha en formato dd/MM/yyyy HH:mm
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-   String _formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 }
