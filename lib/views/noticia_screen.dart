@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:kgaona/api/service/noticia_service.dart';
 import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
-import 'package:kgaona/components/noticia_card.dart';
 import 'package:kgaona/components/side_menu.dart';
-import 'package:kgaona/domain/noticia.dart';
 import 'package:kgaona/constants.dart';
+import 'package:kgaona/domain/noticia.dart';
+import 'package:kgaona/helpers/noticia_helper.dart';
 
 class NoticiaScreen extends StatefulWidget {
   const NoticiaScreen({super.key});
-
   @override
   NoticiaScreenState createState() => NoticiaScreenState();
 }
@@ -19,84 +19,97 @@ class NoticiaScreenState extends State<NoticiaScreen> {
   final int _selectedIndex = 0;
 
   List<Noticia> _noticias = [];
-  int _numeroPagina = 0;
+  int _numeroPagina = 1;
   bool _isLoading = false;
+  bool _hasError = false; // Cambiado de _errorMessage a _hasError
+  String? _errorMessage; // Mantener para mensajes específicos
   bool _hasMore = true;
-  bool _hasError = false;
+  DateTime? _lastUpdated; // Nueva variable para almacenar la última actualización
+  bool _mostrarIndicadorCarga = true; // Nueva variable para controlar el indicador
 
   @override
   void initState() {
     super.initState();
-    _loadInitialNoticias();
+    _loadNoticias(cargaInicial: true);
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent && !_isLoading && _hasMore) {
-        _loadMoreNoticias();
+      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent &&
+          !_isLoading &&
+          _hasMore) {
+        _loadNoticias();
       }
     });
   }
 
-  Future<void> _loadInitialNoticias() async {
+  Future<void> _loadNoticias({bool cargaInicial = false}) async {
     setState(() {
       _isLoading = true;
-      _hasError = false;
+      if (cargaInicial) {
+        _hasError = false;
+        _errorMessage = null;
+      }
     });
 
     try {
-      final noticias = await _noticiaService.obtenerNoticiasIniciales();
-      setState(() {
-        _noticias = noticias;
-        _numeroPagina;
-        _hasMore = noticias.isNotEmpty;
-      });
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _hasError = true;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text(Constants.errorMessage)),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _numeroPagina++;
-        });
-      }
-    }
-  }
-
-  Future<void> _loadMoreNoticias() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final nuevasNoticias = await _noticiaService.obtenerNoticiasPaginadas(
+      final nuevasNoticias = await _noticiaService.obtenerNoticias(
         numeroPagina: _numeroPagina,
         tamanoPagina: Constants.pageSize,
+        cargaInicial: cargaInicial,
       );
 
       setState(() {
-        _noticias.addAll(nuevasNoticias);
+        if (cargaInicial) {
+          _noticias = nuevasNoticias;
+        } else {
+          _noticias.addAll(nuevasNoticias);
+        }
         _numeroPagina++;
-        _hasMore = nuevasNoticias.isNotEmpty;
+        _hasMore = nuevasNoticias.length == Constants.pageSize;
+        _lastUpdated = DateTime.now(); // Actualizar la fecha y hora
+        _isLoading = false;
+        _hasError = false;
+        _errorMessage = null;
       });
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text(Constants.errorMessage)),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      setState(() {
+        _isLoading = false;
+        _hasError = true;
+        _errorMessage = e.toString();
+      });
     }
   }
+
+  Future<void> _reiniciar() async {
+  // Primero, establece las variables de estado iniciales
+  setState(() {
+    // Resetear todas las variables a su estado inicial
+    _noticias = []; // Vaciar la lista
+    _numeroPagina = 1; // Resetear a primera página
+    _mostrarIndicadorCarga = false; // Ocultar indicador de carga al scrollear
+    _hasError = false;
+    _errorMessage = null;
+  });
+  
+  // Luego, reutiliza el método loadNoticias existente
+  await _loadNoticias(cargaInicial: true);
+  
+  // Hacer scroll al inicio de la lista
+  if (_scrollController.hasClients) {
+    _scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
+  
+  // Restaurar el indicador de carga después de un tiempo
+  Future.delayed(const Duration(seconds: 5), () {
+    if (mounted) {
+      setState(() {
+        _mostrarIndicadorCarga = true;
+      });
+    }
+  });
+}
 
   @override
   void dispose() {
@@ -106,31 +119,93 @@ class NoticiaScreenState extends State<NoticiaScreen> {
 
   @override
   Widget build(BuildContext context) {
+        // Podemos mostrar la última actualización en la UI
+    String lastUpdatedText = _lastUpdated != null 
+        ? 'Última actualización: ${DateFormat(Constants.formatoFecha).format(_lastUpdated!)}'
+        : 'No actualizado aún';
+        
     return Scaffold(
       appBar: AppBar(
-        title: const Text(Constants.tituloApp),
+        title: const Text(ConstantesNoticias.tituloApp),
         centerTitle: true,
       ),
       drawer: const SideMenu(),
-      backgroundColor: Colors.white, // Fondo de pantalla
-      body: _isLoading && _noticias.isEmpty
-          ? const Center(child: Text(Constants.mensajeCargando)) // mensajeCargando
-          : _hasError
-              ? const Center(child: Text(Constants.mensajeError)) // mensajeError
-              : _noticias.isEmpty
-                  ? const Center(child: Text(Constants.listaVacia)) // listaVacia
-                  : ListView.builder(
-                      controller: _scrollController,
-                      itemCount: _noticias.length + (_hasMore ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        if (index == _noticias.length) {
-                          return const Center(child: CircularProgressIndicator()); // Indicador de carga
-                        }
-
-                        final noticia = _noticias[index];
-                        return NoticiaCard(noticia:noticia);
-                      },
-                    ),
+      backgroundColor: Colors.white,
+      body: Column(
+        children: [
+          // Mostrar la última fecha de actualización
+          if (_lastUpdated != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+              child: Text(
+                lastUpdatedText,
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          TextButton(
+            onPressed: () => mostrarModalAgregarNoticia(
+              context: context,
+              noticiaService: _noticiaService,
+              onReinciar: _reiniciar, // Usar el método modificado
+            ),
+            style: TextButton.styleFrom(
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero,
+              ),
+              backgroundColor: Theme.of(context).primaryColor,
+              minimumSize: const Size(double.infinity, 48),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.add, color: Colors.white),
+                SizedBox(width: 8),
+                Text('Agregar Noticia', style: TextStyle(color: Colors.white)),
+              ],
+            ),
+          ),
+          Expanded(
+            child: construirCuerpoNoticias(
+              isLoading: _isLoading,
+              errorMessage: _errorMessage,
+              hasError: _hasError, // Nuevo parámetro
+              noticias: _noticias,
+              hasMore: _hasMore,
+              scrollController: _scrollController,
+              context: context,
+              noticiaService: _noticiaService,
+              mostrarIndicadorCarga: _mostrarIndicadorCarga, // Pasar el control del indicador
+              onEdit: (noticia, index) => mostrarModalEditarNoticia(
+                context: context,
+                noticiaService: _noticiaService,
+                noticia: noticia,
+                onNoticiaEditada: (noticiaEditada) {
+                  setState(() {
+                    _noticias[index] = noticiaEditada;
+                  });
+                },
+              ),
+              // Nuevo callback para eliminar
+              onDelete: (noticia, index) {
+                eliminarNoticia(
+                  context: context,
+                  noticiaService: _noticiaService,
+                  noticia: noticia,
+                  onNoticiaEliminada: () {
+                    setState(() {
+                      _noticias.removeAt(index);
+                      _lastUpdated = DateTime.now(); // Actualizar después de eliminar
+                    });
+                  },
+                );
+              },
+              onRetry: () => _loadNoticias(cargaInicial: true),
+            ),
+          ),          
+        ],
+      ),
       bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: _selectedIndex),
     );
   }

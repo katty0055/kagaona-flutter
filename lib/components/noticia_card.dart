@@ -5,8 +5,9 @@ import 'package:intl/intl.dart';
 
 class NoticiaCard extends StatelessWidget {
   final Noticia noticia;
+  final VoidCallback onEdit; // Callback para editar la noticia
 
-  const NoticiaCard({super.key, required this.noticia});
+  const NoticiaCard({super.key, required this.noticia, required this.onEdit});
 
   @override
   Widget build(BuildContext context) {
@@ -72,8 +73,10 @@ class NoticiaCard extends StatelessWidget {
                     const SizedBox(width: 30),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(16.0),
-                      child: Image.network(
-                        'https://picsum.photos/100/100?random=${noticia.hashCode}',
+                      child:  Image.network(
+                        noticia.imagenUrl.isNotEmpty
+                            ? noticia.imagenUrl
+                            : 'https://via.placeholder.com/100', // Imagen por defecto si no hay URL
                         height: 80, // Altura de la imagen
                         width: 100,
                         fit: BoxFit.cover,
@@ -114,6 +117,7 @@ class NoticiaCard extends StatelessWidget {
                     icon: const Icon(Icons.more_vert),
                     onPressed: () {
                       // Acción para mostrar más opciones
+                      onEdit();
                     },
                   ),
                 ],
