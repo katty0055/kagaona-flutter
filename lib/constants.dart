@@ -1,8 +1,10 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class Constants {
   //const String TITLE_APPBAR = 'Lista de Tareas';
   static const String tituloAppbar = 'Lista de Tareas';
   //const String EMPTY_LIST = 'No hay tareas';
-  //static const String listaVacia = 'No hay tareas';
+  static const String listaVacia = 'No hay tareas';
   //const String TASK_TYPE_LABEL = 'Tipo: ';
   static const String tipoTarea = 'Tipo: ';
   static const String pasosTitulo = 'Pasos para completar:';
@@ -18,11 +20,20 @@ class Constants {
   static const String emptyList = 'No hay cotizaciones';
   static const String errorMessage = 'Error al cargar cotizaciones';
   static const int pageSize = 10;
-  //static const String dateFormat = 'dd/MM/yyyy HH:mm'; 
+  static const String formatoFecha = 'dd/MM/yyyy HH:mm'; 
+  static const double espaciadoAlto = 10;
+}
+
+class ConstantesNoticias {
+  static String get apiKey => dotenv.env['API_KEY'] ?? '';
+  static String get baseUrl => dotenv.env['BASE_URL'] ?? '';
+  static String get extensionUrl => dotenv.env['EXTENSION_URL'] ?? '';
+  static String get newsUrl => '$baseUrl/$apiKey/$extensionUrl';
+  static String get defaultQuery => dotenv.env['DEFAULT_QUERY'] ?? 'tecnología';
+  static String get sortBy => dotenv.env['SORT_BY'] ?? 'publishedAt';
+  static String get language => dotenv.env['LANGUAGE'] ?? 'es';
   static const String tituloApp = 'Noticias Técnicas';
   static const String mensajeCargando = 'Cargando noticias...';
   static const String listaVacia = 'No hay noticias disponibles';
   static const String mensajeError = 'Error al cargar noticias';
-  static const String formatoFecha = 'dd/MM/yyyy HH:mm'; 
-  static const double espaciadoAlto = 10;
 }
