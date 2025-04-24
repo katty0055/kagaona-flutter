@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:kgaona/domain/noticia.dart';
 
 class FormularioAgregarNoticia extends StatefulWidget {
@@ -16,6 +17,8 @@ class _FormularioAgregarNoticiaState extends State<FormularioAgregarNoticia> {
   late TextEditingController _descripcionController;
   late TextEditingController _fuenteController;
   late TextEditingController _imagenUrlController;
+  late TextEditingController _fechaController; // Nuevo controlador para la fecha
+  DateTime _fechaSeleccionada = DateTime.now();
 
   @override
   void initState() {
@@ -24,6 +27,12 @@ class _FormularioAgregarNoticiaState extends State<FormularioAgregarNoticia> {
     _descripcionController = TextEditingController(text: widget.noticia?.descripcion ?? '');
     _fuenteController = TextEditingController(text: widget.noticia?.fuente ?? '');
     _imagenUrlController = TextEditingController(text: widget.noticia?.imagenUrl ?? '');
+  
+    // Inicializar fecha con la de la noticia o la actual
+    _fechaSeleccionada = widget.noticia?.publicadaEl ?? DateTime.now();
+    _fechaController = TextEditingController(
+      text: DateFormat('dd/MM/yyyy').format(_fechaSeleccionada)
+    );
   }
 
   @override
@@ -32,7 +41,47 @@ class _FormularioAgregarNoticiaState extends State<FormularioAgregarNoticia> {
     _descripcionController.dispose();
     _fuenteController.dispose();
     _imagenUrlController.dispose();
+    _fechaController.dispose(); // Limpiar el nuevo controlador
     super.dispose();
+  }
+
+  // Método para mostrar el selector de fecha
+  Future<void> _seleccionarFecha() async {
+    // Asegurarse de que el contexto está disponible
+    if (!context.mounted) return;
+    
+    try {
+      final DateTime? fechaSeleccionada = await showDatePicker(
+        context: context,
+        initialDate: _fechaSeleccionada,
+        firstDate: DateTime(2000),
+        lastDate: DateTime.now().add(const Duration(days: 1)), // Permitir hasta hoy
+        builder: (context, child) {
+          return Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: ColorScheme.light(
+                primary: Theme.of(context).primaryColor,
+                onPrimary: Colors.white,
+                onSurface: Colors.black,
+              ),
+            ),
+            child: child!,
+          );
+        },
+      );
+
+      if (fechaSeleccionada != null) {
+        setState(() {
+          _fechaSeleccionada = fechaSeleccionada;
+          _fechaController.text = DateFormat('dd/MM/yyyy').format(fechaSeleccionada);
+        });
+      }
+    } catch (e) {
+      // En caso de error, mostrar un mensaje
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error al mostrar el selector de fecha: $e")),
+      );
+    }
   }
 
   void _guardarNoticia() {
@@ -42,7 +91,7 @@ class _FormularioAgregarNoticiaState extends State<FormularioAgregarNoticia> {
         titulo: _tituloController.text,
         descripcion: _descripcionController.text,
         fuente: _fuenteController.text,
-        publicadaEl: widget.noticia?.publicadaEl ?? DateTime.now(),
+        publicadaEl:_fechaSeleccionada,
         imagenUrl: _imagenUrlController.text.isNotEmpty
             ? _imagenUrlController.text
             : "https://picsum.photos/200/300", // Imagen por defecto
@@ -96,6 +145,22 @@ class _FormularioAgregarNoticiaState extends State<FormularioAgregarNoticia> {
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'La URL de la imagen no puede estar vacía';
+                }
+                return null;
+              },
+            ),
+            // Campo de fecha con selector
+            TextFormField(
+              controller: _fechaController,
+              decoration: const InputDecoration(
+                labelText: 'Fecha de publicación',
+                suffixIcon: Icon(Icons.calendar_today),
+              ),
+              readOnly: true, // El usuario no puede editar el texto directamente
+              onTap: _seleccionarFecha, // Mostrar el selector de fecha al tocar
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'La fecha no puede estar vacía';
                 }
                 return null;
               },

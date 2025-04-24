@@ -114,7 +114,7 @@ class NoticiaCard extends StatelessWidget {
                     },
                   ),
                   IconButton(
-                    icon: const Icon(Icons.more_vert),
+                    icon: const Icon(Icons.edit),
                     onPressed: () {
                       // Acción para mostrar más opciones
                       onEdit();
