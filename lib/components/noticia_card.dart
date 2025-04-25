@@ -6,8 +6,9 @@ import 'package:intl/intl.dart';
 class NoticiaCard extends StatelessWidget {
   final Noticia noticia;
   final VoidCallback onEdit; // Callback para editar la noticia
+  final String categoriaNombre; // Nuevo parámetro para mostrar el nombre de la categoría
 
-  const NoticiaCard({super.key, required this.noticia, required this.onEdit});
+  const NoticiaCard({super.key, required this.noticia, required this.onEdit, required this.categoriaNombre});
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +21,20 @@ class NoticiaCard extends StatelessWidget {
         elevation: 0.0,
           child: Column(
             children: [
+              Row(
+                  children: [
+                    Icon(Icons.category, size: 14, color: Colors.grey[600]),
+                    const SizedBox(width: 4),
+                    Text(
+                      categoriaNombre,
+                      style: TextStyle(
+                        color: Colors.grey[600], 
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               // Primera fila: Texto y la imagen   
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),          
@@ -97,7 +112,7 @@ class NoticiaCard extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
+              ),              
               Row(
                 mainAxisAlignment: MainAxisAlignment.end, // Alinea los botones al final
                 children: [

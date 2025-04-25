@@ -25,10 +25,6 @@ class Constants {
 }
 
 class ConstantesNoticias {
-  static String get apiKey => dotenv.env['API_KEY'] ?? '';
-  static String get baseUrl => dotenv.env['BASE_URL'] ?? '';
-  static String get extensionUrl => dotenv.env['EXTENSION_URL'] ?? '';
-  static String get newsUrl => '$baseUrl/$apiKey/$extensionUrl';
   static String get defaultQuery => dotenv.env['DEFAULT_QUERY'] ?? 'tecnología';
   static String get sortBy => dotenv.env['SORT_BY'] ?? 'publishedAt';
   static String get language => dotenv.env['LANGUAGE'] ?? 'es';
@@ -36,4 +32,21 @@ class ConstantesNoticias {
   static const String mensajeCargando = 'Cargando noticias...';
   static const String listaVacia = 'No hay noticias disponibles';
   static const String mensajeError = 'Error al cargar noticias';
+
+}
+
+class ApiConstants {
+  static String get apiKey => dotenv.env['API_KEY'] ?? '';
+  static String get baseUrl => dotenv.env['BASE_URL'] ?? '';
+  static String categoriaUrl = '$baseUrl/$apiKey/categorias';
+  static String newsUrl = '$baseUrl/$apiKey/noticias';
+}
+
+class ConstantesCategoria{
+  static const String errorNocategoria = 'Categoría no encontrada';
+  static const String defaultcategoriaId = 'sin_categoria';
+  static const int timeoutSeconds = 10;
+  static const String errorTimeout = 'Tiempo de espera agotado';
+  static const String mensajeError = 'Error al cargar categorías';
+
 }
