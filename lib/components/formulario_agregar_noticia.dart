@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kgaona/constants.dart';
+import 'package:kgaona/domain/categoria.dart';
 import 'package:kgaona/domain/noticia.dart';
 
 class FormularioAgregarNoticia extends StatefulWidget {
   final Noticia? noticia; // Noticia existente para edición (null para creación)
+  final List<Category> categorias; // Lista de categorías disponibles
 
-  const FormularioAgregarNoticia({super.key, this.noticia});
+  const FormularioAgregarNoticia({super.key, this.noticia, required this.categorias});
 
   @override
   State<FormularioAgregarNoticia> createState() => _FormularioAgregarNoticiaState();
@@ -17,8 +20,9 @@ class _FormularioAgregarNoticiaState extends State<FormularioAgregarNoticia> {
   late TextEditingController _descripcionController;
   late TextEditingController _fuenteController;
   late TextEditingController _imagenUrlController;
-  late TextEditingController _fechaController; // Nuevo controlador para la fecha
+  late TextEditingController _fechaController;
   DateTime _fechaSeleccionada = DateTime.now();
+  String _selectedCategoriaId = ConstantesCategoria.defaultcategoriaId;
 
   @override
   void initState() {
@@ -27,12 +31,11 @@ class _FormularioAgregarNoticiaState extends State<FormularioAgregarNoticia> {
     _descripcionController = TextEditingController(text: widget.noticia?.descripcion ?? '');
     _fuenteController = TextEditingController(text: widget.noticia?.fuente ?? '');
     _imagenUrlController = TextEditingController(text: widget.noticia?.imagenUrl ?? '');
-  
-    // Inicializar fecha con la de la noticia o la actual
     _fechaSeleccionada = widget.noticia?.publicadaEl ?? DateTime.now();
     _fechaController = TextEditingController(
       text: DateFormat('dd/MM/yyyy').format(_fechaSeleccionada)
     );
+    _selectedCategoriaId = widget.noticia?.categoriaId ?? ConstantesCategoria.defaultcategoriaId;
   }
 
   @override
@@ -41,13 +44,11 @@ class _FormularioAgregarNoticiaState extends State<FormularioAgregarNoticia> {
     _descripcionController.dispose();
     _fuenteController.dispose();
     _imagenUrlController.dispose();
-    _fechaController.dispose(); // Limpiar el nuevo controlador
+    _fechaController.dispose();
     super.dispose();
   }
 
-  // Método para mostrar el selector de fecha
   Future<void> _seleccionarFecha() async {
-    // Asegurarse de que el contexto está disponible
     if (!context.mounted) return;
     
     try {
@@ -55,7 +56,7 @@ class _FormularioAgregarNoticiaState extends State<FormularioAgregarNoticia> {
         context: context,
         initialDate: _fechaSeleccionada,
         firstDate: DateTime(2000),
-        lastDate: DateTime.now().add(const Duration(days: 1)), // Permitir hasta hoy
+        lastDate: DateTime.now().add(const Duration(days: 1)),
         builder: (context, child) {
           return Theme(
             data: Theme.of(context).copyWith(
@@ -77,98 +78,175 @@ class _FormularioAgregarNoticiaState extends State<FormularioAgregarNoticia> {
         });
       }
     } catch (e) {
-      // En caso de error, mostrar un mensaje
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error al mostrar el selector de fecha: $e")),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error al seleccionar fecha: $e")),
+        );
+      }
     }
   }
 
   void _guardarNoticia() {
     if (_formKey.currentState!.validate()) {
       final noticia = Noticia(
-        id: widget.noticia?.id, // Solo se usa para edición
+        id: widget.noticia?.id,
         titulo: _tituloController.text,
         descripcion: _descripcionController.text,
         fuente: _fuenteController.text,
-        publicadaEl:_fechaSeleccionada,
-        imagenUrl: _imagenUrlController.text.isNotEmpty
-            ? _imagenUrlController.text
-            : "https://picsum.photos/200/300", // Imagen por defecto
+        publicadaEl: _fechaSeleccionada,
+        imagenUrl: _imagenUrlController.text.isEmpty 
+            ? "https://picsum.photos/200/300" 
+            : _imagenUrlController.text,
+        categoriaId: _selectedCategoriaId,
       );
-      Navigator.of(context).pop(noticia); // Devuelve la noticia al helper
+      Navigator.of(context).pop(noticia);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
+    return SingleChildScrollView(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+        left: 16,
+        right: 16,
+        top: 16,
+      ),
       child: Form(
         key: _formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Text(
+              widget.noticia == null ? 'Agregar Noticia' : 'Editar Noticia',
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
             TextFormField(
               controller: _tituloController,
-              decoration: const InputDecoration(labelText: 'Título'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'El título no puede estar vacío';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _descripcionController,
-              decoration: const InputDecoration(labelText: 'Descripción'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'La descripción no puede estar vacía';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _fuenteController,
-              decoration: const InputDecoration(labelText: 'Fuente'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'La fuente no puede estar vacía';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _imagenUrlController,
-              decoration: const InputDecoration(labelText: 'URL de la Imagen'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'La URL de la imagen no puede estar vacía';
-                }
-                return null;
-              },
-            ),
-            // Campo de fecha con selector
-            TextFormField(
-              controller: _fechaController,
               decoration: const InputDecoration(
-                labelText: 'Fecha de publicación',
-                suffixIcon: Icon(Icons.calendar_today),
+                labelText: 'Título',
+                border: OutlineInputBorder(),
               ),
-              readOnly: true, // El usuario no puede editar el texto directamente
-              onTap: _seleccionarFecha, // Mostrar el selector de fecha al tocar
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'La fecha no puede estar vacía';
+                  return 'Por favor ingrese un título';
                 }
                 return null;
               },
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _guardarNoticia,
-              child: Text(widget.noticia == null ? 'Crear Noticia' : 'Guardar Cambios'),
+            TextFormField(
+              controller: _descripcionController,
+              decoration: const InputDecoration(
+                labelText: 'Descripción',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 3,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingrese una descripción';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _fuenteController,
+              decoration: const InputDecoration(
+                labelText: 'Fuente',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingrese una fuente';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _imagenUrlController,
+              decoration: const InputDecoration(
+                labelText: 'URL de la imagen',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingrese la URL de una imagen';
+                }
+                // Podríamos validar que es una URL válida
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            // Campo de fecha
+            TextFormField(
+              controller: _fechaController,
+              decoration: const InputDecoration(
+                labelText: 'Fecha de publicación',
+                border: OutlineInputBorder(),
+                suffixIcon: Icon(Icons.calendar_today),
+              ),
+              readOnly: true,
+              onTap: _seleccionarFecha,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'La fecha es requerida';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            // Selector de categoría
+            DropdownButtonFormField<String>(
+              decoration: const InputDecoration(
+                labelText: 'Categoría',
+                border: OutlineInputBorder(),
+              ),
+              value: _selectedCategoriaId,
+              items: [
+                // Opción por defecto
+                const DropdownMenuItem<String>(
+                  value: ConstantesCategoria.defaultcategoriaId,
+                  child: Text('Sin categoría'),
+                ),
+                // Opciones de categorías cargadas
+                ...widget.categorias.map((categoria) {
+                  return DropdownMenuItem<String>(
+                    value: categoria.id ?? '',
+                    child: Text(categoria.nombre),
+                  );
+                }),
+              ],
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    _selectedCategoriaId = value;
+                  });
+                }
+              },
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Cancelar'),
+                ),
+                ElevatedButton(
+                  onPressed: _guardarNoticia,
+                  child: Text(
+                    widget.noticia == null ? 'Agregar' : 'Guardar',
+                  ),
+                ),
+              ],
             ),
           ],
         ),

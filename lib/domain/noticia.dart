@@ -1,11 +1,13 @@
+import 'package:kgaona/constants.dart';
+
 class Noticia {
   final String? id; // Campo opcional para manejar creación y edición
   final String titulo;
   final String descripcion;
   final String fuente;
   final DateTime publicadaEl;
-  final String imagenUrl; // Nuevo campo para la URL de la imagen
-
+  final String imagenUrl; // Campo para la URL de la imagen
+  final String categoriaId; // Nuevo campo para el ID de la categoría
 
   Noticia({
     this.id, // El id es opcional
@@ -13,7 +15,8 @@ class Noticia {
     required this.descripcion,
     required this.fuente,
     required this.publicadaEl,
-    required this.imagenUrl, // Campo requerido
+    required this.imagenUrl,
+    required this.categoriaId, // Campo requerido para la categoría
   });
 
   // Método para convertir un JSON en una instancia de Noticia
@@ -25,6 +28,7 @@ class Noticia {
       fuente: json['fuente'] ?? 'Fuente desconocida',
       publicadaEl: DateTime.tryParse(json['publicadaEl'] ?? '') ?? DateTime.now(),
       imagenUrl: json['imagenUrl'] ?? 'https://via.placeholder.com/150',
+      categoriaId: json['categoriaId'] ?? ConstantesCategoria.defaultcategoriaId, // Valor por defecto si no hay categoría
     );
   }
 
@@ -36,6 +40,7 @@ class Noticia {
       'fuente': fuente,
       'publicadaEl': publicadaEl.toIso8601String(),
       'imagenUrl': imagenUrl,
+      'categoriaId': categoriaId,
     };
   }
 }

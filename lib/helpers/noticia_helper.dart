@@ -1,24 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/api/service/noticia_service.dart';
+import 'package:kgaona/api/service/categoria_service.dart';
 import 'package:kgaona/components/noticia_card.dart';
 import 'package:kgaona/constants.dart';
+import 'package:kgaona/domain/categoria.dart';
 import 'package:kgaona/domain/noticia.dart';
 import 'package:kgaona/components/formulario_agregar_noticia.dart';
+import 'package:kgaona/exceptions/api_exception.dart';
+import 'package:kgaona/helpers/error_helper.dart';
 
 Future<void> mostrarModalAgregarNoticia({
   required BuildContext context,
   required NoticiaService noticiaService,
-   required Function() onReinciar, // Nuevo callback para cargar la última página
+  required CategoriaService categoriaService,
+  required Function() onReinciar,
 }) async {
+  // Cargar categorías como lo haces actualmente
+  List<Category> categorias = [];
+  try {
+    categorias = await categoriaService.obtenerCategorias();
+  } catch (e) {
+    // Si falla la carga de categorías, mostramos un error pero continuamos
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No se pudieron cargar las categorías')),
+      );
+    }
+  }
+
+  if (!context.mounted) return;
+
   final noticia = await showModalBottomSheet<Noticia>(
     context: context,
     isScrollControlled: true,
-    builder: (context) => Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: const FormularioAgregarNoticia(),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
+    builder: (context) => FormularioAgregarNoticia(categorias: categorias),
   );
 
   if (noticia != null) {
@@ -27,18 +45,30 @@ Future<void> mostrarModalAgregarNoticia({
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(mensajeExito)),
+          SnackBar(
+            content: Text(mensajeExito),
+            backgroundColor: Colors.green,
+          ),
         );
-
-        // En lugar de recargar desde la primera página, cargamos la última página
         onReinciar();
       }
     } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
+      if (!context.mounted) return;
+      
+      String errorMessage = 'Error desconocido';
+      Color errorColor = Colors.grey;
+
+      if (e is ApiException) {
+        final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode);
+        errorMessage = errorData['message'];
+        errorColor = errorData['color'];
+      } else {
+        errorMessage = e.toString().replaceAll('Exception: ', '');
       }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
+      );
     }
   }
 }
@@ -46,17 +76,33 @@ Future<void> mostrarModalAgregarNoticia({
 Future<void> mostrarModalEditarNoticia({
   required BuildContext context,
   required NoticiaService noticiaService,
+  required CategoriaService categoriaService,
   required Noticia noticia,
   required Function(Noticia noticiaEditada) onNoticiaEditada,
 }) async {
+  // Cargar las categorías para la edición
+  List<Category> categorias = [];
+  try {
+    categorias = await categoriaService.obtenerCategorias();
+  } catch (e) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No se pudieron cargar las categorías')),
+      );
+    }
+  }
+
+  if (!context.mounted) return;
+
   final noticiaEditada = await showModalBottomSheet<Noticia>(
     context: context,
     isScrollControlled: true,
-    builder: (context) => Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: FormularioAgregarNoticia(noticia: noticia),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+    builder: (context) => FormularioAgregarNoticia(
+      noticia: noticia,
+      categorias: categorias,
     ),
   );
 
@@ -66,16 +112,30 @@ Future<void> mostrarModalEditarNoticia({
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(mensajeExito)),
+          SnackBar(
+            content: Text(mensajeExito),
+            backgroundColor: Colors.green,
+          ),
         );
         onNoticiaEditada(noticiaEditada);
       }
     } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
+      if (!context.mounted) return;
+      
+      String errorMessage = 'Error desconocido';
+      Color errorColor = Colors.grey;
+
+      if (e is ApiException) {
+        final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode);
+        errorMessage = errorData['message'];
+        errorColor = errorData['color'];
+      } else {
+        errorMessage = e.toString().replaceAll('Exception: ', '');
       }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
+      );
     }
   }
 }
@@ -111,6 +171,19 @@ Future<void> eliminarNoticia({
   }
 }
 
+String obtenerNombreCategoria(String categoriaId, List<Category> categorias) {
+  if (categoriaId.isEmpty || categoriaId == ConstantesCategoria.defaultcategoriaId) {
+    return ConstantesCategoria.defaultcategoriaId;
+  }
+  
+  // Busca la categoría en la lista de categorías
+  final categoria = categorias.firstWhere(
+    (c) => c.id == categoriaId,
+    orElse: () => Category(id: '', nombre: 'Desconocida', descripcion: '', imagenUrl: '')
+  );
+  return categoria.nombre;
+}
+
 Widget construirCuerpoNoticias({
   required bool isLoading,
   required String? errorMessage,
@@ -123,6 +196,7 @@ Widget construirCuerpoNoticias({
   required Function(Noticia noticia, int index) onEdit,
   required Function(Noticia noticia, int index) onDelete, // Nuevo parámetro para eliminar
   required VoidCallback onRetry,
+  required List<Category> categorias, // Nueva lista de categorías
   bool mostrarIndicadorCarga = true, // Nuevo parámetro para controlar el indicador
 }) {
   if (isLoading && noticias.isEmpty) {
@@ -202,6 +276,7 @@ Widget construirCuerpoNoticias({
           child: NoticiaCard(
             noticia: noticia,
             onEdit: () => onEdit(noticia, index),
+            categoriaNombre: obtenerNombreCategoria(noticia.categoriaId, categorias),
           ),
         );
       },

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kgaona/api/service/categoria_service.dart';
 import 'package:kgaona/api/service/noticia_service.dart';
 import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
 import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/constants.dart';
+import 'package:kgaona/domain/categoria.dart';
 import 'package:kgaona/domain/noticia.dart';
 import 'package:kgaona/helpers/noticia_helper.dart';
+import 'package:kgaona/views/categoria_screen.dart';
 
 class NoticiaScreen extends StatefulWidget {
   const NoticiaScreen({super.key});
@@ -15,10 +18,12 @@ class NoticiaScreen extends StatefulWidget {
 
 class NoticiaScreenState extends State<NoticiaScreen> {
   final NoticiaService _noticiaService = NoticiaService();
+  final CategoriaService _categoriaService = CategoriaService();
   final ScrollController _scrollController = ScrollController();
   final int _selectedIndex = 0;
 
   List<Noticia> _noticias = [];
+  List<Category> _categorias = [];
   int _numeroPagina = 1;
   bool _isLoading = false;
   bool _hasError = false; // Cambiado de _errorMessage a _hasError
@@ -31,6 +36,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
   void initState() {
     super.initState();
     _loadNoticias(cargaInicial: true);
+    _cargarCategorias(); // Añadir esta línea
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent &&
           !_isLoading &&
@@ -117,6 +123,25 @@ class NoticiaScreenState extends State<NoticiaScreen> {
     super.dispose();
   }
 
+  // Añadir este método para cargar las categorías
+  Future<void> _cargarCategorias() async {
+    try {
+      final categorias = await _categoriaService.obtenerCategorias();
+      setState(() {
+        _categorias = categorias;
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error al cargar las categorías'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
         // Podemos mostrar la última actualización en la UI
@@ -128,6 +153,19 @@ class NoticiaScreenState extends State<NoticiaScreen> {
       appBar: AppBar(
         title: const Text(ConstantesNoticias.tituloApp),
         centerTitle: true,
+        actions: [
+          // Añadir botón para ir a categorías
+          IconButton(
+            icon: const Icon(Icons.category),
+            tooltip: 'Categorías',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CategoriaScreen()),
+              );
+            },
+          ),
+        ],
       ),
       drawer: const SideMenu(),
       backgroundColor: Colors.white,
@@ -147,6 +185,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
             onPressed: () => mostrarModalAgregarNoticia(
               context: context,
               noticiaService: _noticiaService,
+              categoriaService: _categoriaService,
               onReinciar: _reiniciar, // Usar el método modificado
             ),
             style: TextButton.styleFrom(
@@ -170,24 +209,26 @@ class NoticiaScreenState extends State<NoticiaScreen> {
             child: construirCuerpoNoticias(
               isLoading: _isLoading,
               errorMessage: _errorMessage,
-              hasError: _hasError, // Nuevo parámetro
+              hasError: _hasError,
               noticias: _noticias,
               hasMore: _hasMore,
               scrollController: _scrollController,
               context: context,
               noticiaService: _noticiaService,
-              mostrarIndicadorCarga: _mostrarIndicadorCarga, // Pasar el control del indicador
-              onEdit: (noticia, index) => mostrarModalEditarNoticia(
-                context: context,
-                noticiaService: _noticiaService,
-                noticia: noticia,
-                onNoticiaEditada: (noticiaEditada) {
-                  setState(() {
-                    _noticias[index] = noticiaEditada;
-                  });
-                },
-              ),
-              // Nuevo callback para eliminar
+              categorias: _categorias, // Pasar la lista de categorías que ya tienes cargada
+              onEdit: (noticia, index) {
+                mostrarModalEditarNoticia(
+                  context: context,
+                  noticiaService: _noticiaService,
+                  categoriaService: _categoriaService, // Añadir este parámetro
+                  noticia: noticia,
+                  onNoticiaEditada: (noticiaEditada) {
+                    setState(() {
+                      _noticias[index] = noticiaEditada;
+                    });
+                  },
+                );
+              },
               onDelete: (noticia, index) {
                 eliminarNoticia(
                   context: context,
@@ -202,6 +243,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                 );
               },
               onRetry: () => _loadNoticias(cargaInicial: true),
+              mostrarIndicadorCarga: _mostrarIndicadorCarga,
             ),
           ),          
         ],
