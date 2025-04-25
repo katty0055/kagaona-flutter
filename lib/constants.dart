@@ -32,6 +32,9 @@ class ConstantesNoticias {
   static const String mensajeCargando = 'Cargando noticias...';
   static const String listaVacia = 'No hay noticias disponibles';
   static const String mensajeError = 'Error al cargar noticias';
+  static const String errorUnauthorized = 'No autorizado';
+  static const String errorNotFound = 'Noticias no encontradas';
+  static const String errorServer = 'Error del servidor';
 
 }
 

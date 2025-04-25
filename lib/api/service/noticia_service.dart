@@ -42,7 +42,7 @@ class NoticiaService {
       if (error.contains('Error HTTP 400')) {
         throw Exception('Solicitud inválida. agotaste la api.');
       } else if (error.contains('Error HTTP 404')) {
-        throw Exception('No se encontraron noticias.');
+        throw Exception(ConstantesNoticias.errorNotFound);
       } else if (error.contains('Error HTTP 500')) {
         throw Exception('Problema en el servidor. Intenta más tarde.');
       } else if (error.contains('Error de conexión')) {
