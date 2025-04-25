@@ -173,7 +173,7 @@ Future<void> eliminarNoticia({
 
 String obtenerNombreCategoria(String categoriaId, List<Category> categorias) {
   if (categoriaId.isEmpty || categoriaId == ConstantesCategoria.defaultcategoriaId) {
-    return 'Sin categoría';
+    return ConstantesCategoria.defaultcategoriaId;
   }
   
   // Busca la categoría en la lista de categorías

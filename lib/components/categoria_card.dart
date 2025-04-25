@@ -21,19 +21,6 @@ class CategoriaCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Dismissible(
-        key: Key(categoria.id ?? ''),
-        background: Container(
-          color: Colors.red,
-          alignment: Alignment.centerRight,
-          padding: const EdgeInsets.only(right: 20),
-          child: const Icon(Icons.delete, color: Colors.white),
-        ),
-        direction: DismissDirection.endToStart,
-        confirmDismiss: (_) async {
-          return false; // No eliminar automáticamente, usamos la función onDelete
-        },
-        onDismissed: (_) {}, // No hacemos nada aquí
         child: ListTile(
           contentPadding: const EdgeInsets.all(12),
           leading: ClipRRect(
@@ -97,7 +84,6 @@ class CategoriaCard extends StatelessWidget {
             );
           },
         ),
-      ),
     );
   }
 }

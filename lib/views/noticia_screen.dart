@@ -8,6 +8,7 @@ import 'package:kgaona/constants.dart';
 import 'package:kgaona/domain/categoria.dart';
 import 'package:kgaona/domain/noticia.dart';
 import 'package:kgaona/helpers/noticia_helper.dart';
+import 'package:kgaona/views/categoria_screen.dart';
 
 class NoticiaScreen extends StatefulWidget {
   const NoticiaScreen({super.key});
@@ -152,6 +153,19 @@ class NoticiaScreenState extends State<NoticiaScreen> {
       appBar: AppBar(
         title: const Text(ConstantesNoticias.tituloApp),
         centerTitle: true,
+        actions: [
+          // Añadir botón para ir a categorías
+          IconButton(
+            icon: const Icon(Icons.category),
+            tooltip: 'Categorías',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CategoriaScreen()),
+              );
+            },
+          ),
+        ],
       ),
       drawer: const SideMenu(),
       backgroundColor: Colors.white,
