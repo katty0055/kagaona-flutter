@@ -9,11 +9,11 @@ class ErrorHelper {
     switch (statusCode) {
       case 400:
         message = 'Solicitud incorrecta. Verifica los datos enviados.';
-        color = Colors.orange;
+        color = Colors.red;
         break;
       case 401:
         message = 'No autorizado. Verifica tus credenciales.';
-        color = Colors.red;
+        color = Colors.orange;
         break;
       case 403:
         message = 'Prohibido. No tienes permisos para acceder.';
@@ -21,7 +21,7 @@ class ErrorHelper {
         break;
       case 404:
         message = 'Recurso no encontrado. Verifica la URL.';
-        color = Colors.blueGrey;
+        color = Colors.grey;
         break;
       case 500:
         message = 'Error interno del servidor. Intenta más tarde.';
