@@ -78,7 +78,7 @@ class _FormularioAgregarNoticiaState extends State<FormularioAgregarNoticia> {
         });
       }
     } catch (e) {
-      if (context.mounted) {
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Error al seleccionar fecha: $e")),
         );
@@ -222,7 +222,7 @@ class _FormularioAgregarNoticiaState extends State<FormularioAgregarNoticia> {
                     value: categoria.id ?? '',
                     child: Text(categoria.nombre),
                   );
-                }).toList(),
+                }),
               ],
               onChanged: (value) {
                 if (value != null) {

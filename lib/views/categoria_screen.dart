@@ -63,10 +63,11 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
         errorMessage = errorData['message'];
         errorColor = errorData['color'];
       }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
-      );
+      if (mounted){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
+        );
+      }
     }
   } 
 
