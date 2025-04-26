@@ -26,7 +26,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
         );
         break;
       case 2: // Salir
-        showLogoutDialog(context); // Llama al diálogo reutilizable
+        DialogHelper.mostrarDialogoCerrarSesion(context); // Llama al diálogo reutilizable
         break;
     }
   }
