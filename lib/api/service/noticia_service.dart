@@ -25,7 +25,7 @@ class NoticiaService {
         return noticiasJson.map((item) => Noticia.fromJson(item)).toList();
       } else {
         throw ApiException(
-          'Error al obtener las noticias',
+          ConstantesNoticias.mensajeError,
           statusCode: response.statusCode,
         );
       }

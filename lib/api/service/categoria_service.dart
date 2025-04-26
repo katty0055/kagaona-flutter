@@ -25,7 +25,7 @@ class CategoriaService {
         return categoriasJson.map((json) => Categoria.fromJson(json)).toList();
       } else {
         throw ApiException(
-          'Error al obtener las categorías',
+          ConstantesCategoria.mensajeError,
           statusCode: response.statusCode,
         );
       }

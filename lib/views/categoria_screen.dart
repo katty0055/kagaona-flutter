@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/components/add_button.dart';
 import 'package:kgaona/components/last_updated_header.dart';
+import 'package:kgaona/constants/constants.dart';
 import 'package:kgaona/data/categoria_repository.dart';
 import 'package:kgaona/components/categoria_card.dart';
 import 'package:kgaona/components/side_menu.dart';
@@ -53,7 +54,7 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
         if(_categorias.isEmpty) {
           SnackBarHelper.mostrarInfo(
             context,
-            mensaje: 'No hay categorías disponibles',
+            mensaje: ConstantesCategoria.listaVacia,
           );
         } else {
           SnackBarHelper.mostrarExito(
@@ -72,7 +73,7 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
         ErrorProcessorHelper.manejarError(
           context,
           e,
-          mensajePredeterminado: 'Error al cargar categorias',
+          mensajePredeterminado: ConstantesCategoria.mensajeError,
         );
       }
     }
@@ -96,7 +97,7 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
         // Mostrar mensaje de éxito cuando la carga es correcta (código 200)
         SnackBarHelper.mostrarExito(
           context,
-          mensaje: 'Categoria creada exitosamente',
+          mensaje: ConstantesCategoria.successCreated,
         );
 
         // Esperar a que termine la animación del SnackBar antes de recargar
@@ -136,7 +137,7 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
         if (mounted) {
            SnackBarHelper.mostrarExito(
             context,
-            mensaje: 'Categoria actualizada exitosamente',
+            mensaje: ConstantesCategoria.successUpdated,
           );
           
           setState(() {
@@ -187,7 +188,7 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
         if (mounted) {
           SnackBarHelper.mostrarExito(
             context,
-            mensaje: 'Categoria eliminada exitosamente',
+            mensaje: ConstantesCategoria.successDeleted,
           );
         }
       } catch (e) {
@@ -246,7 +247,7 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'Ha ocurrido un error al cargar las categorías',
+              ConstantesCategoria.mensajeError,
               style: TextStyle(color: Colors.red),
               textAlign: TextAlign.center,
             ),
@@ -259,18 +260,41 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
         ),
       );
     } else if (_categorias.isEmpty) {
-      return const Center(child: Text('No hay categorías disponibles'));
-    } else {
-      return ListView.builder(
-        itemCount: _categorias.length,
-        itemBuilder: (context, index) {
-          final categoria = _categorias[index];
-          return CategoriaCard(
-            categoria: categoria,
-            onEdit: () => _mostrarModalEditarCategoria(categoria),
-            onDelete: () => _eliminarCategoria(categoria),
-          );
+      return RefreshIndicator(
+        onRefresh: () async {
+          // Retraso artificial para mostrar el indicador por más tiempo
+          await Future.delayed(const Duration(milliseconds: 1200));
+          return _cargarCategorias(mostrarMensaje: true);
         },
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.6,
+              child: const Center(child: Text(ConstantesCategoria.listaVacia)),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return RefreshIndicator(
+        onRefresh: () async {
+          // Retraso artificial para mostrar el indicador por más tiempo
+          await Future.delayed(const Duration(milliseconds: 1200));
+          return _cargarCategorias(mostrarMensaje: true);
+        },
+        child: ListView.builder(
+          physics: const AlwaysScrollableScrollPhysics(), // Necesario para pull-to-refresh
+          itemCount: _categorias.length,
+          itemBuilder: (context, index) {
+            final categoria = _categorias[index];
+            return CategoriaCard(
+              categoria: categoria,
+              onEdit: () => _mostrarModalEditarCategoria(categoria),
+              onDelete: () => _eliminarCategoria(categoria),
+            );
+          },
+        )
       );
     }
   }

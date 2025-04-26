@@ -35,7 +35,9 @@ class ConstantesNoticias {
   static const String errorUnauthorized = 'No autorizado';
   static const String errorNotFound = 'Noticias no encontradas';
   static const String errorServer = 'Error del servidor';
-
+  static const String successUpdated = 'Noticia actualizada exitosamente';
+  static const String successCreated = 'Noticia creada exitosamente';
+  static const String successDeleted = 'Noticia eliminada exitosamente';
 }
 
 class ApiConstants {
@@ -51,5 +53,8 @@ class ConstantesCategoria{
   static const int timeoutSeconds = 10;
   static const String errorTimeout = 'Tiempo de espera agotado';
   static const String mensajeError = 'Error al cargar categorías';
-
+  static const String successUpdated = 'Categoria actualizada exitosamente';
+  static const String listaVacia = 'No hay categorias disponibles';
+  static const String successDeleted = 'Categoria eliminada exitosamente';
+  static const String successCreated = 'Categoria creada exitosamente';
 }

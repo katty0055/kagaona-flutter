@@ -91,7 +91,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
           // Mostrar mensaje cuando la lista está vacía pero es un 200 (éxito)
           SnackBarHelper.mostrarInfo(
             context,
-            mensaje: 'No hay noticias disponibles por el momento',
+            mensaje: ConstantesNoticias.listaVacia,
           );
         } else {
           SnackBarHelper.mostrarExito(
@@ -111,7 +111,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
         ErrorProcessorHelper.manejarError(
           context,
           e,
-          mensajePredeterminado: 'Error al cargar noticias',
+          mensajePredeterminado: ConstantesNoticias.mensajeError,
         );
       }
     }
@@ -128,7 +128,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
         ErrorProcessorHelper.manejarError(
           context,
           e,
-          mensajePredeterminado: 'Error al cargar categorias',
+          mensajePredeterminado: ConstantesCategoria.mensajeError,
         );
       }
     }
@@ -202,54 +202,78 @@ class NoticiaScreenState extends State<NoticiaScreen> {
         ),
       );
     } else if (_noticias.isEmpty) {
-      return const Center(child: Text(ConstantesNoticias.listaVacia));
-    } else {
-      return ListView.builder(
-        controller: _scrollController,
-        itemCount:
-            _noticias.length + ((_hasMore && _mostrarIndicadorCarga) ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (index == _noticias.length && _hasMore && _mostrarIndicadorCarga) {
-            return Container(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              alignment: Alignment.center,
-              child: const CircularProgressIndicator(),
-            );
-          }
-
-          final noticia = _noticias[index];
-
-          return Dismissible(
-            key: Key(noticia.id ?? UniqueKey().toString()),
-            background: Container(
-              color: Colors.red,
-              alignment: Alignment.centerRight,
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: const Icon(Icons.delete, color: Colors.white),
-            ),
-            direction: DismissDirection.endToStart,
-            confirmDismiss: (direction) async {
-              return await DialogHelper.mostrarConfirmacion(
-                context: context,
-                titulo: 'Confirmar eliminación',
-                mensaje: '¿Estás seguro de que deseas eliminar esta noticia?',
-                textoCancelar: 'Cancelar',
-                textoConfirmar: 'Eliminar',
-              );
-            },
-            onDismissed: (direction) {
-              _eliminarNoticia(noticia, index);
-            },
-            child: NoticiaCard(
-              noticia: noticia,
-              onEdit: () => _mostrarModalEditarNoticia(noticia, index),
-              categoriaNombre: CategoriaHelper.obtenerNombreCategoria(
-                noticia.categoriaId,
-                _categorias,
-              ),
-            ),
-          );
+       return RefreshIndicator(
+        onRefresh: () async {
+          // Retraso artificial para mostrar el indicador por más tiempo
+          await Future.delayed(const Duration(milliseconds: 1200));
+          return _loadNoticias(cargaInicial: true, mostrarMensaje: true);
         },
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.6,
+              child: const Center(child: Text(ConstantesNoticias.listaVacia)),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return RefreshIndicator(
+        onRefresh: () async {
+          // Retraso artificial para mostrar el indicador por más tiempo
+          await Future.delayed(const Duration(milliseconds: 1200));
+          return _loadNoticias(cargaInicial: true, mostrarMensaje: true);
+        },
+        child: ListView.builder(
+          controller: _scrollController,
+          // Necesario para que funcione el pull-to-refresh
+          physics: const AlwaysScrollableScrollPhysics(),
+          itemCount:
+              _noticias.length + ((_hasMore && _mostrarIndicadorCarga) ? 1 : 0),
+          itemBuilder: (context, index) {
+            if (index == _noticias.length && _hasMore && _mostrarIndicadorCarga) {
+              return Container(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                alignment: Alignment.center,
+                child: const CircularProgressIndicator(),
+              );
+            }
+
+            final noticia = _noticias[index];
+
+            return Dismissible(
+              key: Key(noticia.id ?? UniqueKey().toString()),
+              background: Container(
+                color: Colors.red,
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: const Icon(Icons.delete, color: Colors.white),
+              ),
+              direction: DismissDirection.endToStart,
+              confirmDismiss: (direction) async {
+                return await DialogHelper.mostrarConfirmacion(
+                  context: context,
+                  titulo: 'Confirmar eliminación',
+                  mensaje: '¿Estás seguro de que deseas eliminar esta noticia?',
+                  textoCancelar: 'Cancelar',
+                  textoConfirmar: 'Eliminar',
+                );
+              },
+              onDismissed: (direction) {
+                _eliminarNoticia(noticia, index);
+              },
+              child: NoticiaCard(
+                noticia: noticia,
+                onEdit: () => _mostrarModalEditarNoticia(noticia, index),
+                categoriaNombre: CategoriaHelper.obtenerNombreCategoria(
+                  noticia.categoriaId,
+                  _categorias,
+                ),
+              ),
+            );
+          },
+        )
       );
     }
   }
@@ -272,7 +296,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
         // Mostrar mensaje de éxito cuando la carga es correcta (código 200)
         SnackBarHelper.mostrarExito(
           context,
-          mensaje: 'Noticia creada exitosamente',
+          mensaje: ConstantesNoticias.successCreated,
         );
         
         // Esperar a que termine la animación del SnackBar antes de recargar
@@ -320,7 +344,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
         // Mostrar mensaje de éxito
         SnackBarHelper.mostrarExito(
           context,
-          mensaje: 'Noticia actualizada exitosamente',
+          mensaje: ConstantesNoticias.successUpdated,
         );
 
         // Esperar a que termine la animación del SnackBar
@@ -377,7 +401,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
     
       SnackBarHelper.mostrarExito(
         context,
-        mensaje: 'Noticia eliminada exitosamente',
+        mensaje: ConstantesNoticias.successDeleted,
       );
 
       // Esperar a que termine la animación del SnackBar
