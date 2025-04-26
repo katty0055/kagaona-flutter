@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kgaona/constants.dart';
+import 'package:kgaona/constants/constants.dart';
 import 'package:kgaona/views/start_screen.dart';
 
 class ResultScreen extends StatelessWidget {
