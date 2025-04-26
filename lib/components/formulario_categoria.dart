@@ -62,12 +62,12 @@ class _FormularioCategoriaState extends State<FormularioCategoria> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                widget.categoria == null ? 'Crear nueva categoría' : 'Editar categoría',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
+              // Text(
+              //   widget.categoria == null ? 'Crear nueva categoría' : 'Editar categoría',
+              //   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              //   textAlign: TextAlign.center,
+              // ),
+              // const SizedBox(height: 16),
               TextFormField(
                 controller: _nombreController,
                 decoration: const InputDecoration(

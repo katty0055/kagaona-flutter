@@ -118,15 +118,15 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              widget.noticia == null ? 'Agregar Noticia' : 'Editar Noticia',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
+            // Text(
+            //   widget.noticia == null ? 'Agregar Noticia' : 'Editar Noticia',
+            //   style: const TextStyle(
+            //     fontSize: 20,
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            //   textAlign: TextAlign.center,
+            // ),
+            //const SizedBox(height: 16),
             TextFormField(
               controller: _tituloController,
               decoration: const InputDecoration(

@@ -257,9 +257,10 @@ class NoticiaScreenState extends State<NoticiaScreen> {
   // Método para mostrar el modal de agregar noticia
   Future<void> _mostrarModalAgregarNoticia() async {
     _cargarCategorias();
-    final noticia = await ModalHelper.mostrarModal<Noticia>(
+    final noticia = await ModalHelper.mostrarDialogo<Noticia>(
       context: context,
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+      title: 'Agregar noticia',
+      //borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
       child: FormularioNoticia(categorias: _categorias),
     );
 
@@ -278,7 +279,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
         await Future.delayed(const Duration(milliseconds: 1500));
         if (!mounted) return;
 
-        // Mostrar indicador de carga como en categoria_screen
+        // Mostrar indicador de carga 
         setState(() {
           _isLoading = true;
           _noticias = [];
@@ -303,9 +304,10 @@ class NoticiaScreenState extends State<NoticiaScreen> {
   // Método para mostrar el modal de editar noticia
   Future<void> _mostrarModalEditarNoticia(Noticia noticia, int index) async {
     _cargarCategorias();
-    final noticiaEditada = await ModalHelper.mostrarModal<Noticia>(
+    final noticiaEditada = await ModalHelper.mostrarDialogo<Noticia>(
       context: context,
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+      title: 'Editar noticia',
+      //borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
       child: FormularioNoticia(noticia: noticia, categorias: _categorias),
     );
 
@@ -313,16 +315,29 @@ class NoticiaScreenState extends State<NoticiaScreen> {
       try {
         await _noticiaRepository.editarNoticia(noticia.id!, noticiaEditada);
 
-        if (mounted) {
-          SnackBarHelper.mostrarExito(
-            context,
-            mensaje: 'Noticia actualizada exitosamente',
-          );
-          setState(() {
-            _noticias[index] = noticiaEditada;
-            _lastUpdated = DateTime.now();
-          });
-        }
+        if (!mounted) return;
+
+        // Mostrar mensaje de éxito
+        SnackBarHelper.mostrarExito(
+          context,
+          mensaje: 'Noticia actualizada exitosamente',
+        );
+
+        // Esperar a que termine la animación del SnackBar
+        await Future.delayed(const Duration(milliseconds: 1500));
+        
+        if (!mounted) return;
+      
+        // Mostrar indicador de carga 
+        setState(() {
+          _isLoading = true;
+          _noticias = [];
+          _lastUpdated = DateTime.now();
+        });
+        
+        // Cargar las noticias de nuevo SIN mostrar mensaje
+        await _loadNoticias(cargaInicial: true, mostrarMensaje: false);
+
       } catch (e) {
         if (mounted) {
           ErrorProcessorHelper.manejarError(
@@ -351,22 +366,32 @@ class NoticiaScreenState extends State<NoticiaScreen> {
 
       await _noticiaRepository.eliminarNoticia(noticia.id!);
 
-      if (mounted) {
-        SnackBarHelper.mostrarExito(
-          context,
-          mensaje: 'Noticia eliminada exitosamente',
-        );
-        setState(() {
-          _noticias.removeAt(index);
-          _lastUpdated = DateTime.now();
-        });
-      }
+      // Mostrar indicador de carga 
+      setState(() {
+        _isLoading = true;
+        _noticias = [];
+        _lastUpdated = DateTime.now();
+      });
+
+      if (!mounted) return;
+    
+      SnackBarHelper.mostrarExito(
+        context,
+        mensaje: 'Noticia eliminada exitosamente',
+      );
+
+      // Esperar a que termine la animación del SnackBar
+      await Future.delayed(const Duration(milliseconds: 1500));
+        
+      if (!mounted) return;        
+      // Cargar las noticias de nuevo SIN mostrar mensaje
+      await _loadNoticias(cargaInicial: true, mostrarMensaje: false);
     } catch (e) {
       if (mounted) {
         ErrorProcessorHelper.manejarError(
           context,
           e,
-          mensajePredeterminado: 'Ha ocurrido un error al crear la noticia',
+          mensajePredeterminado: 'Ha ocurrido un error al eliminar la noticia',
         );
       }
     }

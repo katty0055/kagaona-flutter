@@ -5,10 +5,8 @@ import 'package:kgaona/data/categoria_repository.dart';
 import 'package:kgaona/components/categoria_card.dart';
 import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
-import 'package:kgaona/constants/constants.dart';
 import 'package:kgaona/domain/categoria.dart';
 import 'package:kgaona/components/formulario_categoria.dart';
-import 'package:intl/intl.dart';
 import 'package:kgaona/helpers/dialog_helper.dart';
 import 'package:kgaona/helpers/error_processor_helper.dart';
 import 'package:kgaona/helpers/modal_helper.dart';
@@ -81,9 +79,10 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
   } 
 
   Future<void> _mostrarModalAgregarCategoria() async {
-    final categoria = await ModalHelper.mostrarModal<Categoria>(
+    final categoria = await ModalHelper.mostrarDialogo<Categoria>(
       context: context,
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+      title: 'Agregar Categoría',
+      //borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
       child: const FormularioCategoria(),
     );
 
@@ -119,14 +118,18 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
 
   // Método para mostrar el modal de editar categoría (integrado desde categoria_helper2)
   Future<void> _mostrarModalEditarCategoria(Categoria categoria) async {
-    final categoriaEditada = await ModalHelper.mostrarModal<Categoria>(
+    final categoriaEditada = await ModalHelper.mostrarDialogo<Categoria>(
      context: context,
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+     title: 'Editar Categoría',
+      //borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
       child: FormularioCategoria(categoria: categoria),
     );
 
     if (categoriaEditada != null && context.mounted) {
       try {
+        setState(() {
+          _isLoading = true;
+        });
         // Capturar el mensaje que retorna el servicio
         await _categoriaRepository.actualizarCategoria(categoria.id!, categoriaEditada);
         
@@ -141,6 +144,7 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
             if (index != -1) {
               _categorias[index] = categoriaEditada;
               _lastUpdated = DateTime.now();
+              _isLoading = false;
             }
           });
         }
