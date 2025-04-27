@@ -1,93 +1,97 @@
-import 'package:kgaona/data/categoria_repository.dart';
+import 'package:dio/dio.dart';
+import 'package:kgaona/constants/constants.dart';
 import 'package:kgaona/domain/categoria.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
 
-
 class CategoriaService {
-  final CategoriaRepository _categoriaRepository = CategoriaRepository();
+  final Dio _dio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(
+        milliseconds: (ConstantesCategoria.timeoutSeconds * 1000),
+      ),
+      receiveTimeout: const Duration(
+        milliseconds: (ConstantesCategoria.timeoutSeconds * 1000),
+      ),
+    ),
+  );
 
-  // Método privado para validar una categoría
-  void _validarCategoria(Category categoria) {
-    if (categoria.nombre.isEmpty) {
-      throw ApiException('El nombre de la categoría no puede estar vacío.', statusCode: 400);
-    }
-    if (categoria.descripcion.isEmpty) {
-      throw ApiException('La descripción de la categoría no puede estar vacía.', statusCode: 400);
-    }
-    if (categoria.imagenUrl.isEmpty) {
-      throw ApiException('La URL de la imagen no puede estar vacía.', statusCode: 400);
-    }
-  }
-
-  // Obtiene todas las categorías desde el repositorio
-  Future<List<Category>> obtenerCategorias() async {
+  /// Obtiene todas las categorías desde la API
+  Future<List<Categoria>> obtenerCategorias() async {
     try {
-      return await _categoriaRepository.obtenerCategorias();
-    } catch (e) {
-      if (e is ApiException) {
-        // Propaga el mensaje contextual de ApiException
-        rethrow;
+      final response = await _dio.get(ApiConstants.categoriaUrl);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> categoriasJson = response.data;
+        return categoriasJson.map((json) => Categoria.fromJson(json)).toList();
       } else {
-        throw Exception('Error desconocido: $e');
+        throw ApiException(
+          ConstantesCategoria.mensajeError,
+          statusCode: response.statusCode,
+        );
       }
+    } on DioException catch (e) {
+      throw ApiException(
+        'Error al conectar con la API de categorías: $e',
+        statusCode: e.response?.statusCode,
+      );
+    } catch (e) {
+      throw ApiException('Error desconocido: $e');
     }
   }
 
-  
-  // Crea una nueva categoría
-  Future<void> crearCategoria(Category categoria) async {
+  /// Crea una nueva categoría en la API
+  Future<void> crearCategoria(Map<String, dynamic> categoria) async {
     try {
-      // Validar la categoría antes de enviarla
-      _validarCategoria(categoria);
+      final response = await _dio.post(
+        ApiConstants.categoriaUrl,
+        data: categoria,
+      );
 
-      // Este método necesita ser implementado en el repositorio
-      await _categoriaRepository.crearCategoria(categoria.toJson());
-
-    } catch (e) {
-      if (e is ApiException) {
-        // Propaga el mensaje contextual de ApiException
-        rethrow;
-      } else {
-        throw Exception('Error desconocido: $e');
+      if (response.statusCode != 201) {
+        throw ApiException(
+          'Error al crear la categoría',
+          statusCode: response.statusCode,
+        );
       }
+    } catch (e) {
+      throw ApiException('Error al conectar con la API de categorías: $e');
     }
   }
 
-  // Edita una categoría existente
-  Future<void> actualizarCategoria(String id, Category categoria) async {
+  /// Edita una categoría existente en la API
+  Future<void> editarCategoria(
+    String id,
+    Map<String, dynamic> categoria,
+  ) async {
     try {
-      // Validar la categoría antes de enviarla
-      _validarCategoria(categoria);
+      final url = '${ApiConstants.categoriaUrl}/$id';
+      final response = await _dio.put(url, data: categoria);
 
-      // Este método necesita ser implementado en el repositorio
-      await _categoriaRepository.editarCategoria(id, categoria.toJson());
-
-    } catch (e) {
-      if (e is ApiException) {
-        // Propaga el mensaje contextual de ApiException
-        rethrow;
-      } else {
-        throw Exception('Error desconocido: $e');
+      if (response.statusCode != 200) {
+        throw ApiException(
+          'Error al editar la categoría',
+          statusCode: response.statusCode,
+        );
       }
+    } catch (e) {
+      throw ApiException('Error al conectar con la API de categorías: $e');
     }
   }
 
-  // Elimina una categoría
+  /// Elimina una categoría de la API
   Future<void> eliminarCategoria(String id) async {
     try {
-      if (id.isEmpty) {
-        throw Exception('El ID de la categoría no puede estar vacío.');
+      final url = '${ApiConstants.categoriaUrl}/$id';
+      final response = await _dio.delete(url);
+
+      if (response.statusCode != 200 && response.statusCode != 204) {
+        throw ApiException(
+          'Error al eliminar la categoría',
+          statusCode: response.statusCode,
+        );
       }
-
-      await _categoriaRepository.eliminarCategoria(id);
-
     } catch (e) {
-      if (e is ApiException) {
-        // Propaga el mensaje contextual de ApiException
-        rethrow;
-      } else {
-        throw Exception('Error desconocido: $e');
-      }
+      throw ApiException('Error al conectar con la API de categorías: $e');
     }
-  } 
+  }
 }

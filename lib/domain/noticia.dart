@@ -1,4 +1,4 @@
-import 'package:kgaona/constants.dart';
+import 'package:kgaona/constants/constants.dart';
 
 class Noticia {
   final String? id; // Campo opcional para manejar creación y edición

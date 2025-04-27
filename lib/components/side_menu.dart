@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/helpers/dialog_helper.dart';
-import 'package:kgaona/views/categoria_screen.dart';
 import 'package:kgaona/views/contador_screen.dart';
 import 'package:kgaona/views/mi_app_screen.dart';
+//import 'package:kgaona/views/noticia_screen.dart';
 import 'package:kgaona/views/noticia_screen.dart';
 import 'package:kgaona/views/quote_screen.dart';
 import 'package:kgaona/views/start_screen.dart';
@@ -72,19 +72,7 @@ class SideMenu extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => const NoticiaScreen()), // Navega a MiAppScreen
               );
             },
-          ),
-          ListTile(
-            leading: const Icon(Icons.category), // Ícono para el contador
-            title: const Text('Categorias'),
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const CategoriaScreen(),
-                ),
-              );
-            },
-          ),
+          ),      
           ListTile(
             leading: const Icon(Icons.apps), // Ícono para la nueva opción
             title: const Text('Mi App'),
@@ -123,7 +111,7 @@ class SideMenu extends StatelessWidget {
             leading: const Icon(Icons.exit_to_app),
             title: const Text('Cerrar Sesión'),
             onTap: () {
-              showLogoutDialog(context);
+              DialogHelper.mostrarDialogoCerrarSesion(context);
             },
           ),
         ],

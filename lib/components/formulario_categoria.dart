@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/domain/categoria.dart';
 
-class FormularioAgregarCategoria extends StatefulWidget {
-  final Category? categoria; // Categoría existente para edición (null para creación)
+class FormularioCategoria extends StatefulWidget {
+  final Categoria? categoria; // Categoría existente para edición (null para creación)
 
-  const FormularioAgregarCategoria({super.key, this.categoria});
+  const FormularioCategoria({super.key, this.categoria});
 
   @override
-  State<FormularioAgregarCategoria> createState() => _FormularioAgregarCategoriaState();
+  State<FormularioCategoria> createState() => _FormularioCategoriaState();
 }
 
-class _FormularioAgregarCategoriaState extends State<FormularioAgregarCategoria> {
+class _FormularioCategoriaState extends State<FormularioCategoria> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nombreController;
   late TextEditingController _descripcionController;
@@ -34,7 +34,7 @@ class _FormularioAgregarCategoriaState extends State<FormularioAgregarCategoria>
 
   void _guardarCategoria() {
     if (_formKey.currentState!.validate()) {
-      final categoria = Category(
+      final categoria = Categoria(
         id: widget.categoria?.id, // Solo se usa para edición
         nombre: _nombreController.text,
         descripcion: _descripcionController.text,
@@ -62,12 +62,12 @@ class _FormularioAgregarCategoriaState extends State<FormularioAgregarCategoria>
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                widget.categoria == null ? 'Crear nueva categoría' : 'Editar categoría',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
+              // Text(
+              //   widget.categoria == null ? 'Crear nueva categoría' : 'Editar categoría',
+              //   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              //   textAlign: TextAlign.center,
+              // ),
+              // const SizedBox(height: 16),
               TextFormField(
                 controller: _nombreController,
                 decoration: const InputDecoration(

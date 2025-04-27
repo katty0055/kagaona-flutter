@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:kgaona/api/service/categoria_service.dart';
+//import 'package:kgaona/components/add_button.dart';
+import 'package:kgaona/components/floating_add_button.dart';
+import 'package:kgaona/components/last_updated_header.dart';
+import 'package:kgaona/constants/constants.dart';
+import 'package:kgaona/data/categoria_repository.dart';
 import 'package:kgaona/components/categoria_card.dart';
 import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
-import 'package:kgaona/constants.dart';
 import 'package:kgaona/domain/categoria.dart';
-import 'package:intl/intl.dart';
-import 'package:kgaona/exceptions/api_exception.dart';
-// Importar el helper
-import 'package:kgaona/helpers/categoria_helper.dart';
-import 'package:kgaona/helpers/error_helper.dart';
+import 'package:kgaona/components/formulario_categoria.dart';
+import 'package:kgaona/helpers/dialog_helper.dart';
+import 'package:kgaona/helpers/error_processor_helper.dart';
+import 'package:kgaona/helpers/modal_helper.dart';
+import 'package:kgaona/helpers/snackbar_helper.dart';
 
 class CategoriaScreen extends StatefulWidget {
   const CategoriaScreen({super.key});
@@ -19,13 +22,12 @@ class CategoriaScreen extends StatefulWidget {
 }
 
 class _CategoriaScreenState extends State<CategoriaScreen> {
-  final CategoriaService _categoriaService = CategoriaService();
+  final CategoriaRepository _categoriaRepository = CategoriaRepository();
   final int _selectedIndex = 2; // Posición en el menú de navegación
   
-  List<Category> _categorias = [];
+  List<Categoria> _categorias = [];
   bool _isLoading = false;
   bool _hasError = false;
-  // String? _errorMessage;
   DateTime? _lastUpdated;
 
   @override
@@ -34,88 +36,140 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
     _cargarCategorias();
   }
 
-  Future<void> _cargarCategorias() async {
+  Future<void> _cargarCategorias({bool mostrarMensaje = true}) async {
     setState(() {
       _isLoading = true;
       _hasError = false;
-      // _errorMessage = null;
     });
 
     try {
-      final categorias = await _categoriaService.obtenerCategorias();
+      final categorias = await _categoriaRepository.obtenerCategorias();
       setState(() {
         _categorias = categorias;
         _lastUpdated = DateTime.now();
         _isLoading = false;
       });
+
+      // Mostrar mensaje de éxito cuando la carga es correcta (código 200)
+      if (mounted && mostrarMensaje) {
+        if(_categorias.isEmpty) {
+          SnackBarHelper.mostrarInfo(
+            context,
+            mensaje: ConstantesCategoria.listaVacia,
+          );
+        } else {
+          SnackBarHelper.mostrarExito(
+            context,
+            mensaje: 'Categorias cargadas correctamente',
+          );
+        }       
+      }
     } catch (e) {
       setState(() {
         _isLoading = false;
         _hasError = true;
-        // _errorMessage = e.toString();
       });
 
-      String errorMessage = 'Error desconocido';
-      Color errorColor = Colors.grey;
-
-      if (e is ApiException) {
-        final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode);
-        errorMessage = errorData['message'];
-        errorColor = errorData['color'];
-      }
-      if (mounted){
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
+      if (mounted) {
+        ErrorProcessorHelper.manejarError(
+          context,
+          e,
+          mensajePredeterminado: ConstantesCategoria.mensajeError,
         );
       }
     }
   } 
 
-  void _mostrarModalAgregarCategoria() {
-    // Esta función se implementará más tarde para permitir agregar categorías
-    mostrarModalAgregarCategoria(
+  Future<void> _mostrarModalAgregarCategoria() async {
+    final categoria = await ModalHelper.mostrarDialogo<Categoria>(
       context: context,
-      categoriaService: _categoriaService,
-      onCategoriaCreada: _cargarCategorias,
+      title: 'Agregar Categoría',
+      //borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+      child: const FormularioCategoria(),
     );
-  }  
 
-  void _editarCategoria(Category categoria) {
-    // Esta función se implementará más tarde para permitir editar categorías
-    mostrarModalEditarCategoria(
-      context: context,
-      categoriaService: _categoriaService,
-      categoria: categoria,
-      onCategoriaEditada: (categoriaEditada) {
-        setState(() {
-          final index = _categorias.indexWhere((c) => c.id == categoriaEditada.id);
-          if (index != -1) {
-            _categorias[index] = categoriaEditada;
-            _lastUpdated = DateTime.now();
-          }
-        });
-      },
-    );
+    if (categoria != null) {
+      try {
+        // Capturar el mensaje que retorna el servicio
+        await _categoriaRepository.crearCategoria(categoria);
+        
+        if (!mounted) return;
+            
+        // Mostrar mensaje de éxito cuando la carga es correcta (código 200)
+        SnackBarHelper.mostrarExito(
+          context,
+          mensaje: ConstantesCategoria.successCreated,
+        );
+
+        // Esperar a que termine la animación del SnackBar antes de recargar
+        await Future.delayed(const Duration(milliseconds: 1500));
+
+        _cargarCategorias(mostrarMensaje: false);
+        
+      } catch (e) {
+         if (mounted) {
+          ErrorProcessorHelper.manejarError(
+            context,
+            e,
+            mensajePredeterminado: 'Ha ocurrido un error al crear la categoria',
+          );
+        }
+      }
+    }
   }
 
-  void _eliminarCategoria(Category categoria) async {
+  // Método para mostrar el modal de editar categoría (integrado desde categoria_helper2)
+  Future<void> _mostrarModalEditarCategoria(Categoria categoria) async {
+    final categoriaEditada = await ModalHelper.mostrarDialogo<Categoria>(
+     context: context,
+     title: 'Editar Categoría',
+      //borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+      child: FormularioCategoria(categoria: categoria),
+    );
+
+    if (categoriaEditada != null && context.mounted) {
+      try {
+        setState(() {
+          _isLoading = true;
+        });
+        // Capturar el mensaje que retorna el servicio
+        await _categoriaRepository.actualizarCategoria(categoria.id!, categoriaEditada);
+        
+        if (mounted) {
+           SnackBarHelper.mostrarExito(
+            context,
+            mensaje: ConstantesCategoria.successUpdated,
+          );
+          
+          setState(() {
+            final index = _categorias.indexWhere((c) => c.id == categoriaEditada.id);
+            if (index != -1) {
+              _categorias[index] = categoriaEditada;
+              _lastUpdated = DateTime.now();
+              _isLoading = false;
+            }
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          ErrorProcessorHelper.manejarError(
+            context,
+            e,
+            mensajePredeterminado: 'Ha ocurrido un error al editar la categoria',
+          );
+        }
+      }
+    }
+  }
+
+  void _eliminarCategoria(Categoria categoria) async {
     // Confirmar eliminación
-    final confirmar = await showDialog<bool>(
+    final confirmar = await DialogHelper.mostrarConfirmacion(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirmar eliminación'),
-        content: Text('¿Estás seguro de eliminar la categoría "${categoria.nombre}"?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Eliminar'),
-          ),
-        ],
-      ),
+      titulo: 'Confirmar eliminación',
+      mensaje: '¿Estás seguro de eliminar la categoría "${categoria.nombre}"?',
+      textoCancelar: 'Cancelar',
+      textoConfirmar: 'Eliminar',
     );
 
     if (confirmar == true && categoria.id != null) {
@@ -124,7 +178,7 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
       });
 
       try {
-        await _categoriaService.eliminarCategoria(categoria.id!);
+        await _categoriaRepository.eliminarCategoria(categoria.id!);
         
         setState(() {
           _categorias.removeWhere((element) => element.id == categoria.id);
@@ -133,12 +187,9 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
         });
 
         if (mounted) {
-          // Mensaje de éxito
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Categoría eliminada exitosamente'),
-              backgroundColor: Colors.green,
-            ),
+          SnackBarHelper.mostrarExito(
+            context,
+            mensaje: ConstantesCategoria.successDeleted,
           );
         }
       } catch (e) {
@@ -146,28 +197,18 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
           _isLoading = false;
         });
 
-        if (!mounted) return;
-        
-        String errorMessage = 'Error desconocido';
-        Color errorColor = Colors.grey;
-
-        if (e is ApiException) {
-          final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode);
-          errorMessage = errorData['message'];
-          errorColor = errorData['color'];
-        } else {
-          // Si es otro tipo de excepción, usar el mensaje de la excepción
-          errorMessage = e.toString().replaceAll('Exception: ', '');
+        if (mounted) {
+          ErrorProcessorHelper.manejarError(
+            context,
+            e,
+            mensajePredeterminado: 'Ha ocurrido un error al eliminar la categoria',
+          );
         }
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
-        );
       }
     }
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -182,41 +223,23 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
       ),
       drawer: const SideMenu(),
       backgroundColor: Colors.white,
+      floatingActionButton: FloatingAddButton(
+        onPressed: _mostrarModalAgregarCategoria,
+        tooltip: 'Agregar Categoría',
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Column(
         children: [
-          if (_lastUpdated != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-              child: Text(
-                'Última actualización: ${DateFormat(Constants.formatoFecha).format(_lastUpdated!)}',
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          TextButton(
-            onPressed: () => _mostrarModalAgregarCategoria(),
-            style: TextButton.styleFrom(
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.zero,
-              ),
-              backgroundColor: Theme.of(context).primaryColor,
-              minimumSize: const Size(double.infinity, 48),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            ),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.add, color: Colors.white),
-                SizedBox(width: 8),
-                Text('Agregar Categoría', style: TextStyle(color: Colors.white)),
-              ],
-            ),
-          ),
+          LastUpdatedHeader(lastUpdated: _lastUpdated),
+          // AddButton(
+          //   text: 'Agregar Categoria',
+          //   onPressed: () => _mostrarModalAgregarCategoria(),
+          // ),
           Expanded(
             child: _construirCuerpoCategorias(),
           ),
         ],
-      ),
+      ),     
       bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: _selectedIndex),
     );
   }
@@ -230,7 +253,7 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'Ha ocurrido un error al cargar las categorías',
+              ConstantesCategoria.mensajeError,
               style: TextStyle(color: Colors.red),
               textAlign: TextAlign.center,
             ),
@@ -243,18 +266,41 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
         ),
       );
     } else if (_categorias.isEmpty) {
-      return const Center(child: Text('No hay categorías disponibles'));
-    } else {
-      return ListView.builder(
-        itemCount: _categorias.length,
-        itemBuilder: (context, index) {
-          final categoria = _categorias[index];
-          return CategoriaCard(
-            categoria: categoria,
-            onEdit: () => _editarCategoria(categoria),
-            onDelete: () => _eliminarCategoria(categoria),
-          );
+      return RefreshIndicator(
+        onRefresh: () async {
+          // Retraso artificial para mostrar el indicador por más tiempo
+          await Future.delayed(const Duration(milliseconds: 1200));
+          return _cargarCategorias(mostrarMensaje: true);
         },
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.6,
+              child: const Center(child: Text(ConstantesCategoria.listaVacia)),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return RefreshIndicator(
+        onRefresh: () async {
+          // Retraso artificial para mostrar el indicador por más tiempo
+          await Future.delayed(const Duration(milliseconds: 1200));
+          return _cargarCategorias(mostrarMensaje: true);
+        },
+        child: ListView.builder(
+          physics: const AlwaysScrollableScrollPhysics(), // Necesario para pull-to-refresh
+          itemCount: _categorias.length,
+          itemBuilder: (context, index) {
+            final categoria = _categorias[index];
+            return CategoriaCard(
+              categoria: categoria,
+              onEdit: () => _mostrarModalEditarCategoria(categoria),
+              onDelete: () => _eliminarCategoria(categoria),
+            );
+          },
+        )
       );
     }
   }

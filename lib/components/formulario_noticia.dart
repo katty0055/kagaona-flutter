@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:kgaona/constants.dart';
+import 'package:kgaona/constants/constants.dart';
 import 'package:kgaona/domain/categoria.dart';
 import 'package:kgaona/domain/noticia.dart';
 
-class FormularioAgregarNoticia extends StatefulWidget {
+class FormularioNoticia extends StatefulWidget {
   final Noticia? noticia; // Noticia existente para edición (null para creación)
-  final List<Category> categorias; // Lista de categorías disponibles
+  final List<Categoria> categorias; // Lista de categorías disponibles
 
-  const FormularioAgregarNoticia({super.key, this.noticia, required this.categorias});
+  const FormularioNoticia({super.key, this.noticia, required this.categorias});
 
   @override
-  State<FormularioAgregarNoticia> createState() => _FormularioAgregarNoticiaState();
+  State<FormularioNoticia> createState() => _FormularioNoticiaState();
 }
 
-class _FormularioAgregarNoticiaState extends State<FormularioAgregarNoticia> {
+class _FormularioNoticiaState extends State<FormularioNoticia> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _tituloController;
   late TextEditingController _descripcionController;
@@ -118,15 +118,15 @@ class _FormularioAgregarNoticiaState extends State<FormularioAgregarNoticia> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              widget.noticia == null ? 'Agregar Noticia' : 'Editar Noticia',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
+            // Text(
+            //   widget.noticia == null ? 'Agregar Noticia' : 'Editar Noticia',
+            //   style: const TextStyle(
+            //     fontSize: 20,
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            //   textAlign: TextAlign.center,
+            // ),
+            //const SizedBox(height: 16),
             TextFormField(
               controller: _tituloController,
               decoration: const InputDecoration(

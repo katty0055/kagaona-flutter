@@ -1,123 +1,91 @@
-import 'package:kgaona/constants.dart';
-import 'package:kgaona/data/noticia_repository.dart';
+import 'package:dio/dio.dart';
+import 'package:kgaona/constants/constants.dart';
 import 'package:kgaona/domain/noticia.dart';
+import 'package:kgaona/exceptions/api_exception.dart';
 
 class NoticiaService {
-  final NoticiaRepository _noticiaRepository = NoticiaRepository();
+  final Dio _dio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(
+        milliseconds: (ConstantesCategoria.timeoutSeconds * 1000),
+      ),
+      receiveTimeout: const Duration(
+        milliseconds: (ConstantesCategoria.timeoutSeconds * 1000),
+      ),
+    ),
+  );
 
-  // Método privado para validar una noticia
-  void _validarNoticia(Noticia noticia) {
-    if (noticia.titulo.isEmpty) {
-      throw Exception('El título de la noticia no puede estar vacío.');
-    }
-    if (noticia.descripcion.isEmpty) {
-      throw Exception('La descripción de la noticia no puede estar vacía.');
-    }
-    if (noticia.fuente.isEmpty) {
-      throw Exception('La fuente de la noticia no puede estar vacía.');
-    }
-    if (noticia.publicadaEl.isAfter(DateTime.now())) {
-      throw Exception('La fecha de publicación no puede estar en el futuro.');
-    }
-  }
-
-  Future<List<Noticia>> obtenerNoticias({
-    required int numeroPagina,
-    int tamanoPagina = Constants.pageSize,
-    bool cargaInicial = false,
-  }) async {
+  /// Obtiene todas las noticias desde la API
+  Future<List<Noticia>> obtenerNoticias() async {
     try {
-      final todasLasNoticias = await _noticiaRepository.fetchNoticiasDIO();
+      final response = await _dio.get(ApiConstants.newsUrl);
 
-      // Implementar paginación en el cliente
-      final inicio = (numeroPagina - 1) * tamanoPagina;
-      final fin = inicio + tamanoPagina;
-
-      return todasLasNoticias.sublist(
-        inicio,
-        fin > todasLasNoticias.length ? todasLasNoticias.length : fin,
+      if (response.statusCode == 200) {
+        final List<dynamic> noticiasJson = response.data;
+        return noticiasJson.map((item) => Noticia.fromJson(item)).toList();
+      } else {
+        throw ApiException(
+          ConstantesNoticias.mensajeError,
+          statusCode: response.statusCode,
+        );
+      }
+    } on DioException catch (e) {
+      throw ApiException(
+        'Error al conectar con la API de noticias: $e',
+        statusCode: e.response?.statusCode,
       );
     } catch (e) {
-      final error = e.toString();
-      if (error.contains('Error HTTP 400')) {
-        throw Exception('Solicitud inválida. agotaste la api.');
-      } else if (error.contains('Error HTTP 404')) {
-        throw Exception(ConstantesNoticias.errorNotFound);
-      } else if (error.contains('Error HTTP 500')) {
-        throw Exception('Problema en el servidor. Intenta más tarde.');
-      } else if (error.contains('Error de conexión')) {
-        throw Exception('No se pudo conectar con el servidor. Verifica tu conexión a Internet.');
-      } else {
-        throw Exception('Error desconocido: $error');
-      }
+      throw ApiException('Error desconocido: $e');
     }
   }
 
-  Future<String> crearNoticia(Noticia noticia) async {
+  /// Crea una nueva noticia en la API
+  Future<void> crearNoticia(Map<String, dynamic> noticia) async {
     try {
-      // Validar la noticia antes de enviarla
-      _validarNoticia(noticia);
+      final response = await _dio.post(ApiConstants.newsUrl, data: noticia);
 
-      // Llamar al repositorio para crear la noticia
-      await _noticiaRepository.crearNoticia(noticia);
-
-      // Devolver un mensaje de éxito
-      return 'Noticia creada exitosamente';
-
-    } catch (e) {
-      // Interpretar el error y devolver un mensaje adecuado
-      final error = e.toString();
-      if (error.contains('Error HTTP 400')) {
-        throw Exception('Datos inválidos. Verifica la información.');
-      } else if (error.contains('Error HTTP 500')) {
-        throw Exception('Problema en el servidor. Intenta más tarde.');
-      } else if (error.contains('Error de conexión')) {
-        throw Exception('No se pudo conectar con el servidor. Verifica tu conexión a Internet.');
-      } else {
-        throw Exception('Error desconocido: $error');
+      if (response.statusCode != 201) {
+        throw ApiException(
+          'Error al crear la noticia',
+          statusCode: response.statusCode,
+        );
       }
+    } catch (e) {
+      throw ApiException('Error al conectar con la API de noticias: $e');
     }
   }
 
-  Future<String> editarNoticia(String id, Noticia noticia) async {
+  /// Edite una noticia existente en la API
+  Future<void> editarNoticia(String id, Map<String, dynamic> noticia) async {
     try {
-      await _noticiaRepository.editarNoticia(id, noticia);
-      return 'Noticia editada exitosamente';
-    } catch (e) {
-      final error = e.toString();
-      if (error.contains('Error HTTP 400')) {
-        throw Exception('Datos inválidos. Verifica la información.');
-      } else if (error.contains('Error HTTP 500')) {
-        throw Exception('Problema en el servidor. Intenta más tarde.');
-      } else if (error.contains('Error de conexión')) {
-        throw Exception('No se pudo conectar con el servidor. Verifica tu conexión a Internet.');
-      } else {
-        throw Exception('Error desconocido: $error');
+      final url = '${ApiConstants.newsUrl}/$id';
+      final response = await _dio.put(url, data: noticia);
+
+      if (response.statusCode != 200) {
+        throw ApiException(
+          'Error al editar la noticia',
+          statusCode: response.statusCode,
+        );
       }
+    } catch (e) {
+      throw ApiException('Error al conectar con la API de noticias: $e');
     }
   }
 
-  Future<String> eliminarNoticia(String id) async {
+  /// Elimina una noticia existente en la API
+  Future<void> eliminarNoticia(String id) async {
     try {
-      if (id.isEmpty) {
-        throw Exception('El ID de la noticia no puede estar vacío.');
+      final url = '${ApiConstants.newsUrl}/$id';
+      final response = await _dio.delete(url);
+
+      if (response.statusCode != 200) {
+        throw ApiException(
+          'Error al eliminar la noticia',
+          statusCode: response.statusCode,
+        );
       }
-      
-      await _noticiaRepository.eliminarNoticia(id);
-      return 'Noticia eliminada exitosamente';
     } catch (e) {
-      final error = e.toString();
-      if (error.contains('Error HTTP 400')) {
-        throw Exception('Solicitud inválida. No se pudo eliminar, recargue la pagina.');
-      } else if (error.contains('Error HTTP 404')) {
-        throw Exception('No se encontró la noticia a eliminar.');
-      } else if (error.contains('Error HTTP 500')) {
-        throw Exception('Problema en el servidor. Intenta más tarde.');
-      } else if (error.contains('Error de conexión')) {
-        throw Exception('No se pudo conectar con el servidor. Verifica tu conexión a Internet.');
-      } else {
-        throw Exception('Error desconocido: $error');
-      }
+      throw ApiException('Error al conectar con la API de noticias: $e');
     }
   }
 }

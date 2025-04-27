@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:kgaona/constants.dart';
+import 'package:kgaona/constants/constants.dart';
 import 'package:kgaona/domain/quote.dart';
 
 class QuoteRepository {

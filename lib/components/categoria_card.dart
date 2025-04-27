@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kgaona/domain/categoria.dart';
 
 class CategoriaCard extends StatelessWidget {
-  final Category categoria;
+  final Categoria categoria;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
