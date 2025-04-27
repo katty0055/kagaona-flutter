@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:kgaona/components/add_button.dart';
+//import 'package:kgaona/components/add_button.dart';
 import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
+import 'package:kgaona/components/floating_add_button.dart';
 import 'package:kgaona/components/formulario_noticia.dart';
 import 'package:kgaona/components/last_updated_header.dart';
 import 'package:kgaona/components/noticia_card.dart';
@@ -166,12 +167,16 @@ class NoticiaScreenState extends State<NoticiaScreen> {
       body: Column(
         children: [
           LastUpdatedHeader(lastUpdated: _lastUpdated),
-          AddButton(
-            text: 'Agregar Noticia',
-            onPressed: () => _mostrarModalAgregarNoticia(),
-          ),
+          // AddButton(
+          //   text: 'Agregar Noticia',
+          //   onPressed: () => _mostrarModalAgregarNoticia(),
+          // ),
           Expanded(child: _construirCuerpoNoticias()),
         ],
+      ),
+      floatingActionButton: FloatingAddButton(
+        onPressed: _mostrarModalAgregarNoticia,
+        tooltip: 'Agregar Noticia',
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: _selectedIndex,

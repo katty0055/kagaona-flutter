@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kgaona/constants/constants.dart';
 
 class ErrorHelper {
   /// Devuelve un mensaje y un color basado en el código HTTP
@@ -12,7 +13,7 @@ class ErrorHelper {
         color = Colors.red;
         break;
       case 401:
-        message = 'No autorizado. Verifica tus credenciales.';
+        message = ConstantesNoticias.errorUnauthorized;
         color = Colors.orange;
         break;
       case 403:
@@ -20,11 +21,11 @@ class ErrorHelper {
         color = Colors.redAccent;
         break;
       case 404:
-        message = 'Recurso no encontrado. Verifica la URL.';
+        message = ConstantesNoticias.errorNotFound;
         color = Colors.grey;
         break;
       case 500:
-        message = 'Error interno del servidor. Intenta más tarde.';
+        message = ConstantesNoticias.errorServer;
         color = Colors.red;
         break;
       default:

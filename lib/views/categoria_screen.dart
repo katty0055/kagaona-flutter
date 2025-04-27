@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kgaona/components/add_button.dart';
+//import 'package:kgaona/components/add_button.dart';
+import 'package:kgaona/components/floating_add_button.dart';
 import 'package:kgaona/components/last_updated_header.dart';
 import 'package:kgaona/constants/constants.dart';
 import 'package:kgaona/data/categoria_repository.dart';
@@ -222,18 +223,23 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
       ),
       drawer: const SideMenu(),
       backgroundColor: Colors.white,
+      floatingActionButton: FloatingAddButton(
+        onPressed: _mostrarModalAgregarCategoria,
+        tooltip: 'Agregar Categoría',
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Column(
         children: [
           LastUpdatedHeader(lastUpdated: _lastUpdated),
-          AddButton(
-            text: 'Agregar Categoria',
-            onPressed: () => _mostrarModalAgregarCategoria(),
-          ),
+          // AddButton(
+          //   text: 'Agregar Categoria',
+          //   onPressed: () => _mostrarModalAgregarCategoria(),
+          // ),
           Expanded(
             child: _construirCuerpoCategorias(),
           ),
         ],
-      ),
+      ),     
       bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: _selectedIndex),
     );
   }
