@@ -17,6 +17,7 @@ import 'package:kgaona/helpers/dialog_helper.dart';
 import 'package:kgaona/helpers/error_processor_helper.dart';
 import 'package:kgaona/helpers/modal_helper.dart';
 import 'package:kgaona/helpers/snackbar_helper.dart';
+import 'package:kgaona/views/categoria_dos_screen.dart';
 import 'package:kgaona/views/categoria_screen.dart';
 
 class NoticiaScreen extends StatefulWidget {
@@ -155,7 +156,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const CategoriaScreen(),
+                  builder: (context) => CategoriaScreenDos(),
                 ),
               );
             },
