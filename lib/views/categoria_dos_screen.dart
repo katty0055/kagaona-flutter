@@ -91,7 +91,7 @@ class CategoriaScreenDos extends StatelessWidget {
           },
           child: ListView.builder(
             physics: const AlwaysScrollableScrollPhysics(), // Necesario para pull-to-refresh
-            itemCount: 0,
+            itemCount: state.categorias.length,
             itemBuilder: (context, index) {
               final categoria = state.categorias[index];
               return CategoriaCard(
