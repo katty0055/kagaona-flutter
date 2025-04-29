@@ -1,103 +1,98 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kgaona/bloc/contador/contador_bloc.dart';
+import 'package:kgaona/bloc/contador/contador_event.dart';
+import 'package:kgaona/bloc/contador/contador_state.dart';
 import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
 import 'package:kgaona/components/side_menu.dart';
 
-class ContadorScreen extends StatefulWidget {
+class ContadorScreen extends StatelessWidget {
   const ContadorScreen({super.key, required this.title});
 
   final String title;
 
   @override
-  State<ContadorScreen> createState() => _ContadorScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => ContadorBloc(),
+      child: _ContadorView(title: title),
+    );
+  }
 }
 
-class _ContadorScreenState extends State<ContadorScreen> {
-  int _counter = 0;
+class _ContadorView extends StatelessWidget {
+  const _ContadorView({required this.title});
+
+  final String title;
   final int _selectedIndex = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  void _decrementCounter() {
-    setState(() {
-      _counter--;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    String message;
-    Color messageColor;
-
-    if (_counter > 0) {
-      message = 'Contador en positivo';
-      messageColor = Colors.green;
-    } else if (_counter == 0) {
-      message = 'Contador en cero';
-      messageColor = Colors.black;
-    } else {
-      message = 'Contador en negativo';
-      messageColor = Colors.red;
-    }
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: Text(title),
       ),
       drawer: const SideMenu(),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+      body: BlocBuilder<ContadorBloc, ContadorState>(
+        builder: (context, state) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const Text('You have pushed the button this many times:'),
+                Text(
+                  '${state.valor}',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  state.mensaje,
+                  style: TextStyle(fontSize: 18, color: state.colorMensaje),
+                ),
+                const SizedBox(height: 16),
+                if (state.status == ContadorStatus.loading)
+                  const CircularProgressIndicator(),
+                if (state.status == ContadorStatus.error)
+                  Text(
+                    state.errorMessage ?? 'Ha ocurrido un error',
+                    style: const TextStyle(color: Colors.red),
+                  ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Text(message, style: TextStyle(fontSize: 18, color: messageColor)),
-            const SizedBox(height: 16),
-          ],
-        ),
+          );
+        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 16.0),
-        child:Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             FloatingActionButton(
               heroTag: 'decrement',
-              onPressed: _decrementCounter,
+              onPressed: () => context.read<ContadorBloc>().add(ContadorDecrementEvent()),
               tooltip: 'Decrement',
               child: const Icon(Icons.remove),
             ),
             const SizedBox(width: 16),
             FloatingActionButton(
               heroTag: 'increment',
-              onPressed: _incrementCounter,
+              onPressed: () => context.read<ContadorBloc>().add(ContadorIncrementEvent()),
               tooltip: 'Increment',
               child: const Icon(Icons.add),
             ),
             const SizedBox(width: 16),
             FloatingActionButton(
               heroTag: 'reset',
-              onPressed: () {
-                setState(() {
-                  _counter = 0;
-                });
-              },
+              onPressed: () => context.read<ContadorBloc>().add(ContadorResetEvent()),
               tooltip: 'Reset',
               child: const Icon(Icons.refresh),
             ),
           ],
         ),
-      ),          
-      bottomNavigationBar:  CustomBottomNavigationBar(selectedIndex: _selectedIndex),
+      ),
+      bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: _selectedIndex),
     );
   }
 }

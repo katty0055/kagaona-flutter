@@ -10,7 +10,7 @@ else
 fi
 
 # URL del endpoint
-URL="${BASE_URL}/${API_KEY}/${EXTENSION_URL}"
+URL="${BASE_URL}/${API_KEY}/noticias"
 
 # Contador de intentos
 attempt=0
