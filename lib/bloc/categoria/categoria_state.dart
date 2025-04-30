@@ -1,46 +1,57 @@
 import 'package:equatable/equatable.dart';
 import 'package:kgaona/domain/categoria.dart';
+import 'package:kgaona/exceptions/api_exception.dart';
 
-// Clase base abstracta para todos los estados
 abstract class CategoriaState extends Equatable {
-  const CategoriaState();
-  
   @override
   List<Object?> get props => [];
 }
 
-// Estado inicial
-// class CategoriaInitialState extends CategoriaState {
-//   const CategoriaInitialState();
-// }
-
-// Estado de carga
-class CategoriaLoadingState extends CategoriaState {
-  const CategoriaLoadingState();
+class CategoriaInitial extends CategoriaState {
+  @override
+  List<Object> get props => [];
 }
 
-// Estado cuando las categorías se han cargado con éxito
-// class CategoriaLoadedState extends CategoriaState {
-//   final List<Categoria> categorias;
-//   final DateTime lastUpdated;
-  
-//   const CategoriaLoadedState({
-//     required this.categorias,
-//     required this.lastUpdated,
-//   });
-  
-//   @override
-//   List<Object?> get props => [categorias, lastUpdated];
-// }
+enum TipoOperacion {
+  cargar,
+  crear,
+  actualizar,
+  eliminar
+}
 
-// Estado de error
-// class CategoriaErrorState extends CategoriaState {
-//   final String errorMessage;
-  
-//   const CategoriaErrorState({
-//     required this.errorMessage,
-//   });
-  
-//   @override
-//   List<Object?> get props => [errorMessage];
-// }
+class CategoriaError extends CategoriaState {
+  final String message;
+  final ApiException error;
+  final TipoOperacion tipoOperacion;
+
+  CategoriaError(this.message, this.error, this.tipoOperacion);
+
+  @override
+  List<Object?> get props => [message, error, tipoOperacion];
+}
+
+class CategoriaLoading extends CategoriaState {
+
+}
+
+class CategoriaLoaded extends CategoriaState {
+  final List<Categoria> categorias;
+  final DateTime lastUpdated;
+
+  CategoriaLoaded(this.categorias, this.lastUpdated);
+
+  @override
+  List<Object?> get props => [categorias, lastUpdated];
+}
+
+class CategoriaCreated extends CategoriaLoaded {
+  CategoriaCreated(super.categorias, super.lastUpdated);
+}
+
+class CategoriaUpdated extends CategoriaLoaded {
+  CategoriaUpdated(super.categorias, super.lastUpdated);
+}
+
+class CategoriaDeleted extends CategoriaLoaded {
+  CategoriaDeleted(super.categorias, super.lastUpdated);
+}

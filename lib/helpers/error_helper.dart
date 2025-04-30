@@ -3,10 +3,13 @@ import 'package:kgaona/constants/constants.dart';
 
 class ErrorHelper {
   /// Devuelve un mensaje y un color basado en el código HTTP
-  static Map<String, dynamic> getErrorMessageAndColor(int? statusCode) {
+  static Map<String, dynamic> getErrorMessageAndColor(
+    int? statusCode, 
+    {String? customMessage}
+  ) {
     String message;
     Color color;
-
+    
     switch (statusCode) {
       case 400:
         message = 'Solicitud incorrecta. Verifica los datos enviados.';
@@ -33,7 +36,12 @@ class ErrorHelper {
         color = Colors.grey;
         break;
     }
-
+  
+    // Permitir sobrescribir el mensaje si se proporciona uno personalizado
+    if (customMessage != null) {
+      message = customMessage;
+    }
+  
     return {'message': message, 'color': color};
   }
 }
