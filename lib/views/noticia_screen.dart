@@ -155,7 +155,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const CategoriaScreen(),
+                  builder: (context) => CategoriaScreen(),
                 ),
               );
             },

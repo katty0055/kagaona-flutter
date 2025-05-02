@@ -13,7 +13,7 @@ class ErrorProcessorHelper {
 
     if (e is ApiException) {
       final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode);
-      mensaje = errorData['message'];
+      mensaje = mensajePredeterminado.isEmpty? errorData['message']: mensajePredeterminado;
       color = errorData['color'];
     }
 
