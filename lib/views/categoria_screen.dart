@@ -5,7 +5,7 @@ import 'package:kgaona/bloc/categoria/categoria_event.dart';
 import 'package:kgaona/bloc/categoria/categoria_state.dart';
 import 'package:kgaona/components/floating_add_button.dart';
 import 'package:kgaona/components/last_updated_header.dart';
-import 'package:kgaona/constants/constants.dart';
+import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/components/categoria_card.dart';
 import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/components/custom_bottom_navigation_bar.dart';

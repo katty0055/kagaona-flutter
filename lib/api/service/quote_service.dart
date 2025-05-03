@@ -1,4 +1,4 @@
-import 'package:kgaona/constants/constants.dart';
+import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/data/quote_repository.dart';
 import 'package:kgaona/domain/quote.dart';
 

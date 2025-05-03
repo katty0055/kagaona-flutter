@@ -7,7 +7,7 @@ import 'package:kgaona/components/last_updated_header.dart';
 import 'package:kgaona/components/noticia_card.dart';
 import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/components/snackbar_component.dart';
-import 'package:kgaona/constants/constants.dart';
+import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/data/categoria_repository.dart';
 import 'package:kgaona/data/noticia_repository.dart';
 import 'package:kgaona/domain/categoria.dart';

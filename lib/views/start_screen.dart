@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
 import 'package:kgaona/components/side_menu.dart';
-import 'package:kgaona/constants/constants.dart';
+import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/views/game_screen.dart';
 
 class StartScreen extends StatelessWidget {

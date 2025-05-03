@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 //import 'package:kgaona/components/add_button.dart';
 import 'package:kgaona/components/floating_add_button.dart';
 import 'package:kgaona/components/last_updated_header.dart';
-import 'package:kgaona/constants/constants.dart';
+import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/data/categoria_repository.dart';
 import 'package:kgaona/components/categoria_card.dart';
 import 'package:kgaona/components/side_menu.dart';

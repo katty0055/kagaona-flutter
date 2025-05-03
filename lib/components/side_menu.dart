@@ -59,7 +59,7 @@ class SideMenu extends StatelessWidget {
             onTap: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const TareasScreen()),
+                MaterialPageRoute(builder: (context) => const TareaScreen()),
               );
             },
           ),

@@ -4,10 +4,6 @@ import 'package:watch_it/watch_it.dart';
 
 Future<void> initLocator() async {
   final sharedPreferences = await SharedPreferences.getInstance();
-
   di.registerSingleton<SharedPreferences>(sharedPreferences);
-  //di.registerSingleton<DbService>(DbService());
-
   di.registerSingleton<CategoriaRepository>(CategoriaRepository());
-
 }

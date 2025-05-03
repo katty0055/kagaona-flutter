@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:kgaona/constants/constants.dart';
+import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/domain/categoria.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
 

@@ -45,6 +45,7 @@ class ApiConstants {
   static String get baseUrl => dotenv.env['BASE_URL'] ?? '';
   static String categoriaUrl = '$baseUrl/$apiKey/categorias';
   static String newsUrl = '$baseUrl/$apiKey/noticias';
+  static String get preferenciasUrl => '$baseUrl/$apiKey/preferencias';
 }
 
 class ConstantesCategoria{

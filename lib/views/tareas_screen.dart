@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:kgaona/api/service/tareas_service.dart';
+import 'package:kgaona/api/service/tarea_service.dart';
 import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
 import 'package:kgaona/components/side_menu.dart';
-import 'package:kgaona/constants/constants.dart';
+import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/views/task_details_screen.dart';
 import 'package:kgaona/domain/task.dart';
 import 'package:kgaona/helpers/task_card_helper.dart';
 import 'package:kgaona/components/add_task_modal.dart'; // Importa el modal reutilizable
 
-class TareasScreen extends StatefulWidget {
-  const TareasScreen({super.key});
+class TareaScreen extends StatefulWidget {
+  const TareaScreen({super.key});
 
   @override
-  TareasScreenState createState() => TareasScreenState();
+  TareaScreenState createState() => TareaScreenState();
 }
 
-class TareasScreenState extends State<TareasScreen> {
+class TareaScreenState extends State<TareaScreen> {
   final TareasService _tareasService = TareasService();
   final ScrollController _scrollController = ScrollController();
   bool _cargando = false;
