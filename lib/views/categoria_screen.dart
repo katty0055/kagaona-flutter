@@ -25,8 +25,12 @@ class CategoriaScreen extends StatelessWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
     });
-    return BlocProvider(
-      create: (context) => CategoriaBloc()..add(CategoriaInitEvent()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<CategoriaBloc>(
+          create: (context) => CategoriaBloc()..add(CategoriaInitEvent()),
+        )
+      ],      
       child: _CategoriaScreenContent(),
     );
   }
