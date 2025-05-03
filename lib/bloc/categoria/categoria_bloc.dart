@@ -7,7 +7,7 @@ import 'package:watch_it/watch_it.dart';
 
 
 class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
-  final CategoriaRepository categoriaRepository = di<CategoriaRepository>();
+  final CategoriaRepository _categoriaRepository = di<CategoriaRepository>();
 
   CategoriaBloc() : super(CategoriaInitial()) {
     on<CategoriaInitEvent>(_onInit);
@@ -20,7 +20,7 @@ class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
     emit(CategoriaLoading());
 
     try {
-      final categorias = await categoriaRepository.obtenerCategorias();
+      final categorias = await _categoriaRepository.obtenerCategorias();
       emit(CategoriaLoaded(categorias, DateTime.now()));
     } catch (e) {
       if (e is ApiException) {
@@ -34,9 +34,9 @@ class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
 
     try {
 
-      await categoriaRepository.crearCategoria(event.categoria);
+      await _categoriaRepository.crearCategoria(event.categoria);
       
-      final categorias = await categoriaRepository.obtenerCategorias();
+      final categorias = await _categoriaRepository.obtenerCategorias();
 
       emit(CategoriaCreated(categorias, DateTime.now()));
     } catch (e) {
@@ -50,9 +50,9 @@ class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
     emit(CategoriaLoading());
 
     try {
-      await categoriaRepository.actualizarCategoria(event.id, event.categoria);
+      await _categoriaRepository.actualizarCategoria(event.id, event.categoria);
       
-      final categorias = await categoriaRepository.obtenerCategorias();
+      final categorias = await _categoriaRepository.obtenerCategorias();
 
       emit(CategoriaUpdated(categorias, DateTime.now()));
     } catch (e) {
@@ -66,9 +66,9 @@ class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
     emit(CategoriaLoading());
 
     try {
-      await categoriaRepository.eliminarCategoria(event.id);
+      await _categoriaRepository.eliminarCategoria(event.id);
       
-      final categorias = await categoriaRepository.obtenerCategorias();
+      final categorias = await _categoriaRepository.obtenerCategorias();
 
       emit(CategoriaDeleted(categorias, DateTime.now()));
     } catch (e) {

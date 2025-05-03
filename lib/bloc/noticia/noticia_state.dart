@@ -1,4 +1,6 @@
-part of 'noticia_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:kgaona/domain/noticia.dart';
+import 'package:kgaona/exceptions/api_exception.dart';
 
 sealed class NoticiaState extends Equatable {
   const NoticiaState();
@@ -21,14 +23,23 @@ class NoticiasLoaded extends NoticiaState {
   List<Object> get props => [noticiasList, lastUpdated];
 }
 
+enum TipoOperacion {
+  cargar,
+  crear,
+  actualizar,
+  eliminar,
+  filtrar
+}
+
 class NoticiasError extends NoticiaState {
   final String errorMessage;
-  final int? statusCode;
+  final ApiException error;
+  final TipoOperacion tipoOperacion;
 
-  const NoticiasError(this.errorMessage, {this.statusCode});
+  const NoticiasError(this.errorMessage, this.error, this.tipoOperacion);
 
   @override
-  List<Object> get props => [errorMessage, statusCode ?? 0];
+  List<Object> get props => [errorMessage, error, tipoOperacion];
 }
 
 class NoticiaCreated extends NoticiasLoaded {

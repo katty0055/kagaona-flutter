@@ -30,7 +30,7 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
     _tituloController = TextEditingController(text: widget.noticia?.titulo ?? '');
     _descripcionController = TextEditingController(text: widget.noticia?.descripcion ?? '');
     _fuenteController = TextEditingController(text: widget.noticia?.fuente ?? '');
-    _imagenUrlController = TextEditingController(text: widget.noticia?.imagenUrl ?? '');
+    _imagenUrlController = TextEditingController(text: widget.noticia?.urlImagen ?? '');
     _fechaSeleccionada = widget.noticia?.publicadaEl ?? DateTime.now();
     _fechaController = TextEditingController(
       text: DateFormat('dd/MM/yyyy').format(_fechaSeleccionada)
@@ -94,7 +94,7 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
         descripcion: _descripcionController.text,
         fuente: _fuenteController.text,
         publicadaEl: _fechaSeleccionada,
-        imagenUrl: _imagenUrlController.text.isEmpty 
+        urlImagen: _imagenUrlController.text.isEmpty 
             ? "https://picsum.photos/200/300" 
             : _imagenUrlController.text,
         categoriaId: _selectedCategoriaId,

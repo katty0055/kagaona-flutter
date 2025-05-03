@@ -1,15 +1,14 @@
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
-import 'package:kgaona/domain/noticia.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
 import 'package:kgaona/data/noticia_repository.dart';
 import 'package:watch_it/watch_it.dart';
+import 'package:kgaona/bloc/noticia/noticia_event.dart';
+import 'package:kgaona/bloc/noticia/noticia_state.dart';
 
-part 'noticia_event.dart';
-part 'noticia_state.dart';
+
 
 class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
-  final NoticiaRepository noticiaRepository = di<NoticiaRepository>();
+  final NoticiaRepository _noticiaRepository = di<NoticiaRepository>();
 
   NoticiaBloc() : super(NoticiaInitial()) {
     on<FetchNoticias>(_onFetchNoticias);
@@ -23,16 +22,11 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
     emit(NoticiasLoading());
 
     try {
-      final noticias = await noticiaRepository.obtenerNoticias();
+      final noticias = await _noticiaRepository.obtenerNoticias();
       emit(NoticiasLoaded(noticias, DateTime.now()));
     } catch (e) {
       if (e is ApiException) {
-        emit(NoticiasError(
-          'Error al cargar las noticias', 
-          statusCode: e.statusCode
-        ));
-      } else {
-        emit(NoticiasError('Error al cargar las noticias: ${e.toString()}'));
+        emit(NoticiasError('Error al cargar las noticias', e, TipoOperacion.cargar));
       }
     }
   }
@@ -41,18 +35,13 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
     emit(NoticiasLoading());
 
     try {
-      await noticiaRepository.crearNoticia(event.noticia);
+      await _noticiaRepository.crearNoticia(event.noticia);
       
-      final noticias = await noticiaRepository.obtenerNoticias();
+      final noticias = await _noticiaRepository.obtenerNoticias();
       emit(NoticiaCreated(noticias, DateTime.now()));
     } catch (e) {
       if (e is ApiException) {
-        emit(NoticiasError(
-          'Error al crear la noticia', 
-          statusCode: e.statusCode
-        ));
-      } else {
-        emit(NoticiasError('Error al crear la noticia: ${e.toString()}'));
+        emit(NoticiasError('Error al crear la noticia', e, TipoOperacion.crear));
       }
     }
   }
@@ -61,18 +50,13 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
     emit(NoticiasLoading());
 
     try {
-      await noticiaRepository.editarNoticia(event.id, event.noticia);
+      await _noticiaRepository.editarNoticia(event.id, event.noticia);
       
-      final noticias = await noticiaRepository.obtenerNoticias();
+      final noticias = await _noticiaRepository.obtenerNoticias();
       emit(NoticiaUpdated(noticias, DateTime.now()));
     } catch (e) {
       if (e is ApiException) {
-        emit(NoticiasError(
-          'Error al actualizar la noticia', 
-          statusCode: e.statusCode
-        ));
-      } else {
-        emit(NoticiasError('Error al actualizar la noticia: ${e.toString()}'));
+        emit(NoticiasError('Error al actualizar la noticia', e, TipoOperacion.actualizar));
       }
     }
   }
@@ -81,18 +65,13 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
     emit(NoticiasLoading());
 
     try {
-      await noticiaRepository.eliminarNoticia(event.id);
+      await _noticiaRepository.eliminarNoticia(event.id);
       
-      final noticias = await noticiaRepository.obtenerNoticias();
+      final noticias = await _noticiaRepository.obtenerNoticias();
       emit(NoticiaDeleted(noticias, DateTime.now()));
     } catch (e) {
       if (e is ApiException) {
-        emit(NoticiasError(
-          'Error al eliminar la noticia', 
-          statusCode: e.statusCode
-        ));
-      } else {
-        emit(NoticiasError('Error al eliminar la noticia: ${e.toString()}'));
+        emit(NoticiasError('Error al eliminar la noticia',e, TipoOperacion.eliminar));
       }
     }
   }
@@ -104,7 +83,7 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
     emit(NoticiasLoading());
 
     try {
-      final allNoticias = await noticiaRepository.obtenerNoticias();
+      final allNoticias = await _noticiaRepository.obtenerNoticias();
 
       final filteredNoticias =
           allNoticias
@@ -116,12 +95,7 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
       emit(NoticiaFiltered(filteredNoticias, DateTime.now(), event.categoriasIds));
     } catch (e) {
       if (e is ApiException) {
-        emit(NoticiasError(
-          'Error al filtrar noticias', 
-          statusCode: e.statusCode
-        ));
-      } else {
-        emit(NoticiasError('Error al filtrar noticias: ${e.toString()}'));
+        emit(NoticiasError('Error al filtrar noticias', e, TipoOperacion.filtrar));
       }
     }
   }

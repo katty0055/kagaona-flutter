@@ -1,4 +1,5 @@
-part of 'noticia_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:kgaona/domain/noticia.dart';
 
 sealed class NoticiaEvent extends Equatable {
   const NoticiaEvent();
