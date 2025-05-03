@@ -41,7 +41,7 @@ class PreferenciaService {
   }
 
   /// Obtiene las preferencias del usuario
-  Future<Preferencia> getPreferencias() async {
+  Future<Preferencia> obtenerPreferencias() async {
     try {
       // Si no hay ID almacenado, devolver preferencias vacías sin consultar API
       if (_preferenciaId != null && _preferenciaId!.isNotEmpty) {
