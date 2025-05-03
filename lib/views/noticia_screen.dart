@@ -14,7 +14,6 @@ import 'package:kgaona/domain/categoria.dart';
 import 'package:kgaona/domain/noticia.dart';
 import 'package:kgaona/helpers/categoria_helper.dart';
 import 'package:kgaona/helpers/dialog_helper.dart';
-import 'package:kgaona/helpers/error_processor_helper.dart';
 import 'package:kgaona/helpers/modal_helper.dart';
 import 'package:kgaona/helpers/snackbar_helper.dart';
 import 'package:kgaona/views/categoria_screen.dart';
@@ -109,7 +108,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
       });
 
       if (mounted) {
-        ErrorProcessorHelper.manejarError(
+        SnackBarHelper.manejarError(
           context,
           e,
           mensajePredeterminado: ConstantesNoticias.mensajeError,
@@ -126,7 +125,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
       });
     } catch (e) {
       if (mounted) {
-        ErrorProcessorHelper.manejarError(
+        SnackBarHelper.manejarError(
           context,
           e,
           mensajePredeterminado: ConstantesCategoria.mensajeError,
@@ -155,7 +154,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CategoriaScreen(),
+                  builder: (context) => const CategoriaScreen(),
                 ),
               );
             },
@@ -320,7 +319,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
         
       } catch (e) {
         if (mounted) {
-          ErrorProcessorHelper.manejarError(
+          SnackBarHelper.manejarError(
             context,
             e,
             mensajePredeterminado: 'Ha ocurrido un error al crear la noticia',
@@ -369,7 +368,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
 
       } catch (e) {
         if (mounted) {
-          ErrorProcessorHelper.manejarError(
+          SnackBarHelper.manejarError(
             context,
             e,
             mensajePredeterminado: 'Ha ocurrido un error al editar la noticia',
@@ -417,7 +416,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
       await _loadNoticias(cargaInicial: true, mostrarMensaje: false);
     } catch (e) {
       if (mounted) {
-        ErrorProcessorHelper.manejarError(
+        SnackBarHelper.manejarError(
           context,
           e,
           mensajePredeterminado: 'Ha ocurrido un error al eliminar la noticia',

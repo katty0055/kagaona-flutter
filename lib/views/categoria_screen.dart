@@ -12,7 +12,6 @@ import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
 import 'package:kgaona/components/formulario_categoria.dart';
 import 'package:kgaona/domain/categoria.dart';
 import 'package:kgaona/helpers/dialog_helper.dart';
-import 'package:kgaona/helpers/error_processor_helper.dart';
 import 'package:kgaona/helpers/modal_helper.dart';
 import 'package:kgaona/helpers/snackbar_helper.dart';
 
@@ -50,7 +49,7 @@ class _CategoriaScreenContent extends StatelessWidget {
             _ => 'Error al cargar las categorías'
           };
 
-          ErrorProcessorHelper.manejarError(
+          SnackBarHelper.manejarError(
             context,
             state.error,
             mensajePredeterminado: mensajeError,

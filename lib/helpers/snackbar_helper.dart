@@ -1,76 +1,98 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/components/snackbar_component.dart';
+import 'package:kgaona/exceptions/api_exception.dart';
+import 'package:kgaona/helpers/error_helper.dart';
 
-/// Helper para mostrar SnackBars de manera consistente en toda la aplicación
 class SnackBarHelper {
-  /// Muestra un SnackBar de éxito con un mensaje específico
-  static void mostrarExito(
-    BuildContext context, {
-    required String mensaje,
-    Duration duracion = const Duration(seconds: 2),
-  }) {
+  /// Muestra un mensaje de éxito
+  static void mostrarExito(BuildContext context, {required String mensaje}) {
     _mostrarSnackBar(
-      context,
-      mensaje: mensaje,
+      context, 
+      mensaje: mensaje, 
       color: Colors.green,
-      duracion: duracion,
+      duracion: const Duration(seconds: 3),
     );
   }
 
-  /// Muestra un SnackBar de error basado en una excepción
-  static void mostrarError(
-    BuildContext context, {
-    required String mensaje,
-    required snackBarColor,
-    Duration duracion = const Duration(seconds: 4),
+  /// Muestra un mensaje informativo
+  static void mostrarInfo(BuildContext context, {required String mensaje}) {
+    _mostrarSnackBar(
+      context, 
+      mensaje: mensaje, 
+      color: Colors.blue,
+      duracion: const Duration(seconds: 3),
+    );
+  }
+
+  /// Muestra un mensaje de advertencia
+  static void mostrarAdvertencia(BuildContext context, {required String mensaje}) {
+    _mostrarSnackBar(
+      context, 
+      mensaje: mensaje, 
+      color: Colors.orange,
+      duracion: const Duration(seconds: 4),
+    );
+  }
+
+  /// Muestra un mensaje de error
+  static void mostrarError(BuildContext context, {required String mensaje}) {
+    _mostrarSnackBar(
+      context, 
+      mensaje: mensaje, 
+      color: Colors.red,
+      duracion: const Duration(seconds: 4),
+    );
+  }
+
+  /// Procesa y muestra errores teniendo en cuenta el tipo de error
+  /// (Unifica la funcionalidad de ErrorProcessorHelper)
+  static void manejarError(
+    BuildContext context,
+    Object e, {
+    String? mensajePredeterminado,
   }) {
+    if (!context.mounted) return;
+
+    String mensaje = e.toString();
+    Color color = Colors.red;
+
+    // Usar ErrorHelper para procesar el error si es ApiException
+    if (e is ApiException) {
+      final errorInfo = ErrorHelper.getErrorMessageAndColor(
+        e.statusCode, 
+      );
+      mensaje = (mensajePredeterminado == null || mensajePredeterminado.isEmpty)? errorInfo['message']: mensajePredeterminado;
+      color = errorInfo['color'] as Color;
+    } 
+
     _mostrarSnackBar(
       context,
       mensaje: mensaje,
-      color: snackBarColor,
-      duracion: duracion,
+      color: color,
+      duracion: const Duration(seconds: 5),
     );
   }
 
-  /// Muestra un SnackBar informativo
-  static void mostrarInfo(
-    BuildContext context, {
-    required String mensaje,
-    Duration duracion = const Duration(seconds: 3),
-  }) {
-    _mostrarSnackBar(
-      context,
-      mensaje: mensaje,
-      color: Colors.blue,  // Color informativo
-      duracion: duracion,
-    );
-  }
-
-  /// Método privado para mostrar el SnackBar con parámetros personalizados
+  /// Método privado para mostrar el SnackBar usando el componente estándar
   static void _mostrarSnackBar(
     BuildContext context, {
     required String mensaje,
     required Color color,
     required Duration duracion,
-    VoidCallback? onAction,
-    String? actionLabel,
   }) {
-    // Verificar si el contexto todavía está montado
     if (!context.mounted) return;
 
-    // Cerrar cualquier SnackBar existente
+    // Limpia cualquier SnackBar que esté mostrándose actualmente
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
-    // Crear el SnackBar usando el componente y mostrarlo
-    final snackBar = SnackBarComponent.crear(
-      mensaje: mensaje,
-      color: color,
-      duracion: duracion,
-      onAction: onAction,
-      actionLabel: actionLabel,
+    
+    // Muestra el nuevo SnackBar
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBarComponent.crear(
+        mensaje: mensaje,
+        color: color,
+        duracion: duracion,
+      ),
     );
-
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }
 

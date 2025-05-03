@@ -10,7 +10,6 @@ import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
 import 'package:kgaona/domain/categoria.dart';
 import 'package:kgaona/components/formulario_categoria.dart';
 import 'package:kgaona/helpers/dialog_helper.dart';
-import 'package:kgaona/helpers/error_processor_helper.dart';
 import 'package:kgaona/helpers/modal_helper.dart';
 import 'package:kgaona/helpers/snackbar_helper.dart';
 
@@ -71,7 +70,7 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
       });
 
       if (mounted) {
-        ErrorProcessorHelper.manejarError(
+        SnackBarHelper.manejarError(
           context,
           e,
           mensajePredeterminado: ConstantesCategoria.mensajeError,
@@ -108,7 +107,7 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
         
       } catch (e) {
          if (mounted) {
-          ErrorProcessorHelper.manejarError(
+          SnackBarHelper.manejarError(
             context,
             e,
             mensajePredeterminado: 'Ha ocurrido un error al crear la categoria',
@@ -152,7 +151,7 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
         }
       } catch (e) {
         if (mounted) {
-          ErrorProcessorHelper.manejarError(
+          SnackBarHelper.manejarError(
             context,
             e,
             mensajePredeterminado: 'Ha ocurrido un error al editar la categoria',
@@ -198,7 +197,7 @@ class _CategoriaScreenState extends State<CategoriaScreen> {
         });
 
         if (mounted) {
-          ErrorProcessorHelper.manejarError(
+          SnackBarHelper.manejarError(
             context,
             e,
             mensajePredeterminado: 'Ha ocurrido un error al eliminar la categoria',
