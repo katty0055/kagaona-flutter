@@ -89,8 +89,8 @@ class NoticiaCard extends StatelessWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(16.0),
                       child:  Image.network(
-                        noticia.imagenUrl.isNotEmpty
-                            ? noticia.imagenUrl
+                        noticia.urlImagen.isNotEmpty
+                            ? noticia.urlImagen
                             : 'https://via.placeholder.com/100', // Imagen por defecto si no hay URL
                         height: 80, // Altura de la imagen
                         width: 100,

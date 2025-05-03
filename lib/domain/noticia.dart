@@ -6,7 +6,7 @@ class Noticia {
   final String descripcion;
   final String fuente;
   final DateTime publicadaEl;
-  final String imagenUrl; // Campo para la URL de la imagen
+  final String urlImagen; // Campo para la URL de la imagen
   final String categoriaId; // Nuevo campo para el ID de la categoría
 
   Noticia({
@@ -15,7 +15,7 @@ class Noticia {
     required this.descripcion,
     required this.fuente,
     required this.publicadaEl,
-    required this.imagenUrl,
+    required this.urlImagen,
     required this.categoriaId, // Campo requerido para la categoría
   });
 
@@ -27,7 +27,7 @@ class Noticia {
       descripcion: json['descripcion'] ?? 'Sin descripción',
       fuente: json['fuente'] ?? 'Fuente desconocida',
       publicadaEl: DateTime.tryParse(json['publicadaEl'] ?? '') ?? DateTime.now(),
-      imagenUrl: json['imagenUrl'] ?? 'https://via.placeholder.com/150',
+      urlImagen: json['imagenUrl'] ?? 'https://via.placeholder.com/150',
       categoriaId: json['categoriaId'] ?? ConstantesCategoria.defaultcategoriaId, // Valor por defecto si no hay categoría
     );
   }
@@ -39,7 +39,7 @@ class Noticia {
       'descripcion': descripcion,
       'fuente': fuente,
       'publicadaEl': publicadaEl.toIso8601String(),
-      'imagenUrl': imagenUrl,
+      'imagenUrl': urlImagen,
       'categoriaId': categoriaId,
     };
   }
