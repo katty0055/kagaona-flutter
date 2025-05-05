@@ -7,10 +7,7 @@ abstract class CategoriaState extends Equatable {
   List<Object?> get props => [];
 }
 
-class CategoriaInitial extends CategoriaState {
-  @override
-  List<Object> get props => [];
-}
+class CategoriaInitial extends CategoriaState {}
 
 enum TipoOperacion {
   cargar,

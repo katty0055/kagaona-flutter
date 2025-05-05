@@ -1,10 +1,66 @@
-part of 'noticia_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:kgaona/domain/noticia.dart';
+import 'package:kgaona/exceptions/api_exception.dart';
 
-sealed class NoticiaState extends Equatable {
-  const NoticiaState();
-  
+abstract class NoticiaState extends Equatable {  
   @override
   List<Object> get props => [];
 }
 
-final class NoticiaInitial extends NoticiaState {}
+class NoticiaInitial extends NoticiaState {}
+
+class NoticiaLoading extends NoticiaState {}
+
+class NoticiaLoaded extends NoticiaState {
+  final List<Noticia> noticias;
+  final DateTime lastUpdated;
+
+  NoticiaLoaded(this.noticias, this.lastUpdated);
+
+  @override
+  List<Object> get props => [noticias, lastUpdated];
+}
+
+enum TipoOperacionNoticia {
+  cargar,
+  crear,
+  actualizar,
+  eliminar,
+  filtrar
+}
+
+class NoticiaError extends NoticiaState {
+  final String message;
+  final ApiException error;
+  final TipoOperacionNoticia tipoOperacion;
+
+  NoticiaError(this.message, this.error, this.tipoOperacion);
+
+  @override
+  List<Object> get props => [message, error, tipoOperacion];
+}
+
+class NoticiaCreated extends NoticiaLoaded {
+  NoticiaCreated(super.noticias, super.lastUpdated);
+}
+
+class NoticiaUpdated extends NoticiaLoaded {
+  NoticiaUpdated(super.noticias, super.lastUpdated);
+}
+
+class NoticiaDeleted extends NoticiaLoaded {
+  NoticiaDeleted(super.noticias, super.lastUpdated);
+}
+
+class NoticiaFiltered extends NoticiaLoaded {
+  final List<String> appliedFilters;
+  
+  NoticiaFiltered(
+    super.noticias, 
+    super.lastUpdated,
+    this.appliedFilters
+  );
+  
+  @override
+  List<Object> get props => [...super.props, appliedFilters];
+}

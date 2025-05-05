@@ -5,14 +5,13 @@ import 'package:kgaona/bloc/categoria/categoria_event.dart';
 import 'package:kgaona/bloc/categoria/categoria_state.dart';
 import 'package:kgaona/components/floating_add_button.dart';
 import 'package:kgaona/components/last_updated_header.dart';
-import 'package:kgaona/constants/constants.dart';
+import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/components/categoria_card.dart';
 import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
 import 'package:kgaona/components/formulario_categoria.dart';
 import 'package:kgaona/domain/categoria.dart';
 import 'package:kgaona/helpers/dialog_helper.dart';
-import 'package:kgaona/helpers/error_processor_helper.dart';
 import 'package:kgaona/helpers/modal_helper.dart';
 import 'package:kgaona/helpers/snackbar_helper.dart';
 
@@ -25,8 +24,12 @@ class CategoriaScreen extends StatelessWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
     });
-    return BlocProvider(
-      create: (context) => CategoriaBloc()..add(CategoriaInitEvent()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<CategoriaBloc>(
+          create: (context) => CategoriaBloc()..add(CategoriaInitEvent()),
+        )
+      ],      
       child: _CategoriaScreenContent(),
     );
   }
@@ -46,7 +49,7 @@ class _CategoriaScreenContent extends StatelessWidget {
             _ => 'Error al cargar las categorías'
           };
 
-          ErrorProcessorHelper.manejarError(
+          SnackBarHelper.manejarError(
             context,
             state.error,
             mensajePredeterminado: mensajeError,
@@ -102,6 +105,12 @@ class _CategoriaScreenContent extends StatelessWidget {
           ),
           drawer: const SideMenu(),
           backgroundColor: Colors.white,
+          body: Column(
+            children: [
+              LastUpdatedHeader(lastUpdated: lastUpdated),
+              Expanded(child: _construirCuerpoCategorias(context, state)),
+            ],
+          ),
           floatingActionButton: FloatingAddButton(
             onPressed: () async {
               final categoria = await ModalHelper.mostrarDialogo<Categoria>(
@@ -122,14 +131,8 @@ class _CategoriaScreenContent extends StatelessWidget {
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           bottomNavigationBar: const CustomBottomNavigationBar(
-            selectedIndex: 2,
-          ),
-          body: Column(
-            children: [
-              LastUpdatedHeader(lastUpdated: lastUpdated),
-              Expanded(child: _construirCuerpoCategorias(context, state)),
-            ],
-          ),
+            selectedIndex: 0,
+          ),          
         );
       },
     );

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kgaona/constants/constants.dart';
+import 'package:kgaona/constants/constantes.dart';
 
 class ErrorHelper {
   /// Devuelve un mensaje y un color basado en el código HTTP

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kgaona/api/service/quote_service.dart';
 import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/domain/quote.dart';
-import 'package:kgaona/constants/constants.dart';
+import 'package:kgaona/constants/constantes.dart';
 import 'package:intl/intl.dart'; // Importa el paquete intl
 
 class QuoteScreen extends StatefulWidget {
