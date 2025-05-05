@@ -2,28 +2,26 @@ import 'package:equatable/equatable.dart';
 import 'package:kgaona/domain/noticia.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
 
-sealed class NoticiaState extends Equatable {
-  const NoticiaState();
-  
+abstract class NoticiaState extends Equatable {  
   @override
   List<Object> get props => [];
 }
 
 class NoticiaInitial extends NoticiaState {}
 
-class NoticiasLoading extends NoticiaState {}
+class NoticiaLoading extends NoticiaState {}
 
-class NoticiasLoaded extends NoticiaState {
-  final List<Noticia> noticiasList;
+class NoticiaLoaded extends NoticiaState {
+  final List<Noticia> noticias;
   final DateTime lastUpdated;
 
-  const NoticiasLoaded(this.noticiasList, this.lastUpdated);
+  NoticiaLoaded(this.noticias, this.lastUpdated);
 
   @override
-  List<Object> get props => [noticiasList, lastUpdated];
+  List<Object> get props => [noticias, lastUpdated];
 }
 
-enum TipoOperacion {
+enum TipoOperacionNoticia {
   cargar,
   crear,
   actualizar,
@@ -31,34 +29,34 @@ enum TipoOperacion {
   filtrar
 }
 
-class NoticiasError extends NoticiaState {
-  final String errorMessage;
+class NoticiaError extends NoticiaState {
+  final String message;
   final ApiException error;
-  final TipoOperacion tipoOperacion;
+  final TipoOperacionNoticia tipoOperacion;
 
-  const NoticiasError(this.errorMessage, this.error, this.tipoOperacion);
+  NoticiaError(this.message, this.error, this.tipoOperacion);
 
   @override
-  List<Object> get props => [errorMessage, error, tipoOperacion];
+  List<Object> get props => [message, error, tipoOperacion];
 }
 
-class NoticiaCreated extends NoticiasLoaded {
-  const NoticiaCreated(super.noticiasList, super.lastUpdated);
+class NoticiaCreated extends NoticiaLoaded {
+  NoticiaCreated(super.noticias, super.lastUpdated);
 }
 
-class NoticiaUpdated extends NoticiasLoaded {
-  const NoticiaUpdated(super.noticiasList, super.lastUpdated);
+class NoticiaUpdated extends NoticiaLoaded {
+  NoticiaUpdated(super.noticias, super.lastUpdated);
 }
 
-class NoticiaDeleted extends NoticiasLoaded {
-  const NoticiaDeleted(super.noticiasList, super.lastUpdated);
+class NoticiaDeleted extends NoticiaLoaded {
+  NoticiaDeleted(super.noticias, super.lastUpdated);
 }
 
-class NoticiaFiltered extends NoticiasLoaded {
+class NoticiaFiltered extends NoticiaLoaded {
   final List<String> appliedFilters;
   
-  const NoticiaFiltered(
-    super.noticiasList, 
+  NoticiaFiltered(
+    super.noticias, 
     super.lastUpdated,
     this.appliedFilters
   );

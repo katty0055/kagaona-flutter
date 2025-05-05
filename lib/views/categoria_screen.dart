@@ -105,6 +105,12 @@ class _CategoriaScreenContent extends StatelessWidget {
           ),
           drawer: const SideMenu(),
           backgroundColor: Colors.white,
+          body: Column(
+            children: [
+              LastUpdatedHeader(lastUpdated: lastUpdated),
+              Expanded(child: _construirCuerpoCategorias(context, state)),
+            ],
+          ),
           floatingActionButton: FloatingAddButton(
             onPressed: () async {
               final categoria = await ModalHelper.mostrarDialogo<Categoria>(
@@ -125,14 +131,8 @@ class _CategoriaScreenContent extends StatelessWidget {
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           bottomNavigationBar: const CustomBottomNavigationBar(
-            selectedIndex: 2,
-          ),
-          body: Column(
-            children: [
-              LastUpdatedHeader(lastUpdated: lastUpdated),
-              Expanded(child: _construirCuerpoCategorias(context, state)),
-            ],
-          ),
+            selectedIndex: 0,
+          ),          
         );
       },
     );

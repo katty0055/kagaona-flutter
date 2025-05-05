@@ -5,13 +5,14 @@ import 'package:kgaona/helpers/error_helper.dart';
 
 class SnackBarHelper {
   /// Muestra un mensaje de éxito
-  static void mostrarExito(BuildContext context, {required String mensaje}) {
+  static void mostrarExito(BuildContext context, {required String mensaje}) async {
     _mostrarSnackBar(
       context, 
       mensaje: mensaje, 
       color: Colors.green,
       duracion: const Duration(seconds: 3),
     );
+    return Future.delayed(const Duration(milliseconds: 1500));
   }
 
   /// Muestra un mensaje informativo

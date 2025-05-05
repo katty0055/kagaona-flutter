@@ -1,84 +1,41 @@
 import 'package:equatable/equatable.dart';
 
 abstract class PreferenciaEvent extends Equatable {
-  const PreferenciaEvent();
-
+  
   @override
   List<Object?> get props => [];
 }
 
+// Evento para cargar las preferencias iniciales
 class LoadPreferences extends PreferenciaEvent {
-  const LoadPreferences();
+  LoadPreferences();
 }
 
+// Evento para guardar las preferencias
+class SavePreferences extends PreferenciaEvent {
+  final List<String> selectedCategories;
+  
+  SavePreferences({required this.selectedCategories});
+  
+  @override
+  List<Object?> get props => [selectedCategories];
+}
+
+// Evento para cambiar la selección de una categoría
 class ChangeCategory extends PreferenciaEvent {
   final String category;
   final bool selected;
-
-  const ChangeCategory({
+  
+  ChangeCategory({
     required this.category,
     required this.selected,
   });
-
+  
   @override
-  List<Object> get props => [category, selected];
+  List<Object?> get props => [category, selected];
 }
 
-class ChangeFavoritesVisibility extends PreferenciaEvent {
-  final bool showFavorites;
-
-  const ChangeFavoritesVisibility({required this.showFavorites});
-
-  @override
-  List<Object> get props => [showFavorites];
-}
-
-class SearchByKeyword extends PreferenciaEvent {
-  final String? keyword;
-
-  const SearchByKeyword({this.keyword});
-
-  @override
-  List<Object?> get props => [keyword];
-}
-
-class FilterByDate extends PreferenciaEvent {
-  final DateTime? fromDate;
-  final DateTime? toDate;
-
-  const FilterByDate({
-    this.fromDate,
-    this.toDate,
-  });
-
-  @override
-  List<Object?> get props => [fromDate, toDate];
-}
-
-class ChangeSort extends PreferenciaEvent {
-  final String sortBy;
-  final bool ascending;
-
-  const ChangeSort({
-    required this.sortBy,
-    required this.ascending,
-  });
-
-  @override
-  List<Object> get props => [sortBy, ascending];
-}
-
+// Evento para restablecer todos los filtros
 class ResetFilters extends PreferenciaEvent {
-  const ResetFilters();
-}
-
-class SavePreferences extends PreferenciaEvent {
-  final List<String> selectedCategories;
-
-  const SavePreferences({
-    required this.selectedCategories,
-  });
-
-  @override
-  List<Object> get props => [selectedCategories];
+  ResetFilters();
 }
