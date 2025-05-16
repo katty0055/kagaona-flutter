@@ -51,7 +51,7 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
     emit(NoticiaLoading());
 
     try {
-      await _noticiaRepository.editarNoticia(event.id, event.noticia);
+      await _noticiaRepository.editarNoticia(event.noticia);
       
       final noticias = await _noticiaRepository.obtenerNoticias();
       emit(NoticiaUpdated(noticias, DateTime.now()));

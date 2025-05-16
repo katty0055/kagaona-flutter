@@ -1,24 +1,30 @@
 import 'package:dio/dio.dart';
 import 'package:kgaona/constants/constantes.dart';
+import 'package:kgaona/core/api_config.dart';
 import 'package:kgaona/domain/noticia.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
 
 class NoticiaService {
   final Dio _dio = Dio(
     BaseOptions(
+      baseUrl: ApiConfig.beeceptorBaseUrl,
       connectTimeout: const Duration(
         milliseconds: (ConstantesCategoria.timeoutSeconds * 1000),
       ),
       receiveTimeout: const Duration(
         milliseconds: (ConstantesCategoria.timeoutSeconds * 1000),
       ),
+            headers: {
+        'Authorization': 'Bearer ${ApiConfig.beeceptorApiKey}',
+        'Content-Type': 'application/json',
+      },
     ),
   );
 
   /// Obtiene todas las noticias desde la API
   Future<List<Noticia>> obtenerNoticias() async {
     try {
-      final response = await _dio.get(ApiConstants.newsUrl);
+      final response = await _dio.get(ApiConfig.noticiasEndpoint);
 
       if (response.statusCode == 200) {
         final List<dynamic> noticiasJson = response.data;
@@ -46,7 +52,10 @@ class NoticiaService {
   /// Crea una nueva noticia en la API
   Future<void> crearNoticia(Noticia noticia) async {
     try {
-      final response = await _dio.post(ApiConstants.newsUrl, data: noticia.toMap());
+      final response = await _dio.post(
+        ApiConfig.noticiasEndpoint, 
+        data: noticia.toMap()
+      );
 
       if (response.statusCode != 201) {
         throw ApiException(
@@ -61,8 +70,8 @@ class NoticiaService {
 
   /// Edite una noticia existente en la API
   Future<void> editarNoticia(Noticia noticia) async {
-    try {
-      final url = '${ApiConstants.newsUrl}/${noticia.id}';
+    try {      
+      final url = '${ApiConfig.noticiasEndpoint}/${noticia.id}';
       final response = await _dio.put(url, data: noticia.toMap());
 
       if (response.statusCode != 200) {
@@ -79,7 +88,7 @@ class NoticiaService {
   /// Elimina una noticia existente en la API
   Future<void> eliminarNoticia(String id) async {
     try {
-      final url = '${ApiConstants.newsUrl}/$id';
+      final url = '${ApiConfig.noticiasEndpoint}/$id';
       final response = await _dio.delete(url);
 
       if (response.statusCode != 200 || response.statusCode != 201) {

@@ -50,7 +50,7 @@ class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
     emit(CategoriaLoading());
 
     try {
-      await _categoriaRepository.actualizarCategoria(event.id, event.categoria);
+      await _categoriaRepository.actualizarCategoria(event.categoria);
       
       final categorias = await _categoriaRepository.obtenerCategorias();
 

@@ -1,24 +1,30 @@
 import 'package:dio/dio.dart';
 import 'package:kgaona/constants/constantes.dart';
+import 'package:kgaona/core/api_config.dart';
 import 'package:kgaona/domain/categoria.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
 
 class CategoriaService {
   final Dio _dio = Dio(
     BaseOptions(
+      baseUrl: ApiConfig.beeceptorBaseUrl,
       connectTimeout: const Duration(
         milliseconds: (ConstantesCategoria.timeoutSeconds * 1000),
       ),
       receiveTimeout: const Duration(
         milliseconds: (ConstantesCategoria.timeoutSeconds * 1000),
       ),
+            headers: {
+        'Authorization': 'Bearer ${ApiConfig.beeceptorApiKey}',
+        'Content-Type': 'application/json',
+      },
     ),
   );
 
   /// Obtiene todas las categorías desde la API
   Future<List<Categoria>> obtenerCategorias() async {
     try {
-      final response = await _dio.get(ApiConstants.categoriaUrl);
+      final response = await _dio.get(ApiConfig.categoriaEndpoint);
 
       if (response.statusCode == 200) {
         final List<dynamic> categoriasJson = response.data;
@@ -47,7 +53,7 @@ class CategoriaService {
   Future<void> crearCategoria(Categoria categoria) async {
     try {
       final response = await _dio.post(
-        ApiConstants.categoriaUrl,
+        ApiConfig.categoriaEndpoint,
         data: categoria.toMap(),
       );
 
@@ -65,7 +71,7 @@ class CategoriaService {
   /// Edita una categoría existente en la API
   Future<void> editarCategoria(Categoria categoria) async {
     try {
-      final url = '${ApiConstants.categoriaUrl}/${categoria.id}';
+      final url = '${ApiConfig.categoriaEndpoint}/${categoria.id}';
       final response = await _dio.put(url, data: categoria.toMap());
 
       if (response.statusCode != 200) {
@@ -82,7 +88,7 @@ class CategoriaService {
   /// Elimina una categoría de la API
   Future<void> eliminarCategoria(String id) async {
     try {
-      final url = '${ApiConstants.categoriaUrl}/$id';
+      final url = '${ApiConfig.categoriaEndpoint}/$id';
       final response = await _dio.delete(url);
 
       if (response.statusCode != 200 || response.statusCode != 201) {

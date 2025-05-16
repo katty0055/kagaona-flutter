@@ -184,12 +184,13 @@ class _CategoriaScreenContent extends StatelessWidget {
                     context: context,
                     title: 'Editar Categoría',
                     child: FormularioCategoria(categoria: categoria),
-                  );
-
-                  if (categoriaEditada != null && context.mounted) {
+                  );                  if (categoriaEditada != null && context.mounted) {
+                    // Usar copyWith para mantener el ID original y actualizar el resto de datos
+                    final categoriaActualizada = categoriaEditada.copyWith(id: categoria.id);
+                    
                     // Usar el BLoC para actualizar la categoría
                     context.read<CategoriaBloc>().add(
-                      CategoriaUpdateEvent(categoria.id!, categoriaEditada),
+                      CategoriaUpdateEvent(categoriaActualizada),
                     );
                   }
                 },

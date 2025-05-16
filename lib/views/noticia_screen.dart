@@ -283,8 +283,10 @@ class _NoticiaScreenContent extends StatelessWidget {
                   );
                   
                   if (noticiaEditada != null && context.mounted) {
+                    // Usar copyWith para mantener el ID original y actualizar el resto de datos
+                    final noticiaActualizada = noticiaEditada.copyWith(id: noticia.id);
                     context.read<NoticiaBloc>().add(
-                      UpdateNoticiaEvent(noticia.id!, noticiaEditada),
+                      UpdateNoticiaEvent(noticiaActualizada),
                     );
                   }
                 },
