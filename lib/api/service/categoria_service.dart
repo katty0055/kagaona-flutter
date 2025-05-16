@@ -22,7 +22,11 @@ class CategoriaService {
 
       if (response.statusCode == 200) {
         final List<dynamic> categoriasJson = response.data;
-        return categoriasJson.map((json) => Categoria.fromJson(json)).toList();
+        return categoriasJson
+            .map<Categoria>(
+              (json) => CategoriaMapper.fromMap(json as Map<String, dynamic>),
+            )
+            .toList();
       } else {
         throw ApiException(
           ConstantesCategoria.mensajeError,
@@ -40,11 +44,11 @@ class CategoriaService {
   }
 
   /// Crea una nueva categoría en la API
-  Future<void> crearCategoria(Map<String, dynamic> categoria) async {
+  Future<void> crearCategoria(Categoria categoria) async {
     try {
       final response = await _dio.post(
         ApiConstants.categoriaUrl,
-        data: categoria,
+        data: categoria.toMap(),
       );
 
       if (response.statusCode != 201) {
@@ -59,13 +63,10 @@ class CategoriaService {
   }
 
   /// Edita una categoría existente en la API
-  Future<void> editarCategoria(
-    String id,
-    Map<String, dynamic> categoria,
-  ) async {
+  Future<void> editarCategoria(Categoria categoria) async {
     try {
-      final url = '${ApiConstants.categoriaUrl}/$id';
-      final response = await _dio.put(url, data: categoria);
+      final url = '${ApiConstants.categoriaUrl}/${categoria.id}';
+      final response = await _dio.put(url, data: categoria.toMap());
 
       if (response.statusCode != 200) {
         throw ApiException(
@@ -84,7 +85,7 @@ class CategoriaService {
       final url = '${ApiConstants.categoriaUrl}/$id';
       final response = await _dio.delete(url);
 
-      if (response.statusCode != 200 && response.statusCode != 204) {
+      if (response.statusCode != 200 || response.statusCode != 201) {
         throw ApiException(
           'Error al eliminar la categoría',
           statusCode: response.statusCode,

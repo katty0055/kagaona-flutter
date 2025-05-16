@@ -289,7 +289,7 @@ class _NoticiaScreenContent extends StatelessWidget {
                   }
                 },
                   categoriaNombre: CategoriaHelper.obtenerNombreCategoria(
-                    noticia.categoriaId,
+                    noticia.categoriaId?? '',
                     categorias,
                   ),
                 ),

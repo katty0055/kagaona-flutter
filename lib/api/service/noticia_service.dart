@@ -22,7 +22,11 @@ class NoticiaService {
 
       if (response.statusCode == 200) {
         final List<dynamic> noticiasJson = response.data;
-        return noticiasJson.map((item) => Noticia.fromJson(item)).toList();
+        return noticiasJson
+            .map<Noticia>(
+              (json) => NoticiaMapper.fromMap(json as Map<String, dynamic>),
+            )
+            .toList();
       } else {
         throw ApiException(
           ConstantesNoticias.mensajeError,
@@ -40,9 +44,9 @@ class NoticiaService {
   }
 
   /// Crea una nueva noticia en la API
-  Future<void> crearNoticia(Map<String, dynamic> noticia) async {
+  Future<void> crearNoticia(Noticia noticia) async {
     try {
-      final response = await _dio.post(ApiConstants.newsUrl, data: noticia);
+      final response = await _dio.post(ApiConstants.newsUrl, data: noticia.toMap());
 
       if (response.statusCode != 201) {
         throw ApiException(
@@ -56,10 +60,10 @@ class NoticiaService {
   }
 
   /// Edite una noticia existente en la API
-  Future<void> editarNoticia(String id, Map<String, dynamic> noticia) async {
+  Future<void> editarNoticia(Noticia noticia) async {
     try {
-      final url = '${ApiConstants.newsUrl}/$id';
-      final response = await _dio.put(url, data: noticia);
+      final url = '${ApiConstants.newsUrl}/${noticia.id}';
+      final response = await _dio.put(url, data: noticia.toMap());
 
       if (response.statusCode != 200) {
         throw ApiException(
@@ -78,7 +82,7 @@ class NoticiaService {
       final url = '${ApiConstants.newsUrl}/$id';
       final response = await _dio.delete(url);
 
-      if (response.statusCode != 200) {
+      if (response.statusCode != 200 || response.statusCode != 201) {
         throw ApiException(
           'Error al eliminar la noticia',
           statusCode: response.statusCode,
