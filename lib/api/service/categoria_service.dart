@@ -1,104 +1,45 @@
-import 'package:dio/dio.dart';
+import 'package:kgaona/api/service/base_service.dart';
 import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/core/api_config.dart';
 import 'package:kgaona/domain/categoria.dart';
-import 'package:kgaona/exceptions/api_exception.dart';
 
-class CategoriaService {
-  final Dio _dio = Dio(
-    BaseOptions(
-      baseUrl: ApiConfig.beeceptorBaseUrl,
-      connectTimeout: const Duration(
-        milliseconds: (ConstantesCategoria.timeoutSeconds * 1000),
-      ),
-      receiveTimeout: const Duration(
-        milliseconds: (ConstantesCategoria.timeoutSeconds * 1000),
-      ),
-            headers: {
-        'Authorization': 'Bearer ${ApiConfig.beeceptorApiKey}',
-        'Content-Type': 'application/json',
-      },
-    ),
-  );
-
+class CategoriaService extends BaseService {
   /// Obtiene todas las categorías desde la API
   Future<List<Categoria>> obtenerCategorias() async {
-    try {
-      final response = await _dio.get(ApiConfig.categoriaEndpoint);
+    final List<dynamic> categoriasJson = await get<List<dynamic>>(
+      ApiConfig.categoriaEndpoint,
+      errorMessage: ConstantesCategorias.mensajeError,
+    );
 
-      if (response.statusCode == 200) {
-        final List<dynamic> categoriasJson = response.data;
-        return categoriasJson
-            .map<Categoria>(
-              (json) => CategoriaMapper.fromMap(json as Map<String, dynamic>),
-            )
-            .toList();
-      } else {
-        throw ApiException(
-          ConstantesCategoria.mensajeError,
-          statusCode: response.statusCode,
-        );
-      }
-    } on DioException catch (e) {
-      throw ApiException(
-        'Error al conectar con la API de categorías: $e',
-        statusCode: e.response?.statusCode,
-      );
-    } catch (e) {
-      throw ApiException('Error desconocido: $e');
-    }
+    return categoriasJson
+        .map<Categoria>(
+          (json) => CategoriaMapper.fromMap(json as Map<String, dynamic>),
+        )
+        .toList();
   }
 
   /// Crea una nueva categoría en la API
   Future<void> crearCategoria(Categoria categoria) async {
-    try {
-      final response = await _dio.post(
-        ApiConfig.categoriaEndpoint,
-        data: categoria.toMap(),
-      );
-
-      if (response.statusCode != 201) {
-        throw ApiException(
-          'Error al crear la categoría',
-          statusCode: response.statusCode,
-        );
-      }
-    } catch (e) {
-      throw ApiException('Error al conectar con la API de categorías: $e');
-    }
+    await post(
+      ApiConfig.categoriaEndpoint,
+      data: categoria.toMap(),
+      errorMessage: 'Error al crear la categoría',
+    );
   }
 
   /// Edita una categoría existente en la API
   Future<void> editarCategoria(Categoria categoria) async {
-    try {
-      final url = '${ApiConfig.categoriaEndpoint}/${categoria.id}';
-      final response = await _dio.put(url, data: categoria.toMap());
-
-      if (response.statusCode != 200) {
-        throw ApiException(
-          'Error al editar la categoría',
-          statusCode: response.statusCode,
-        );
-      }
-    } catch (e) {
-      throw ApiException('Error al conectar con la API de categorías: $e');
-    }
+    final url = '${ApiConfig.categoriaEndpoint}/${categoria.id}';
+    await put(
+      url,
+      data: categoria.toMap(),
+      errorMessage: 'Error al editar la categoría',
+    );
   }
 
   /// Elimina una categoría de la API
   Future<void> eliminarCategoria(String id) async {
-    try {
-      final url = '${ApiConfig.categoriaEndpoint}/$id';
-      final response = await _dio.delete(url);
-
-      if (response.statusCode != 200 || response.statusCode != 201) {
-        throw ApiException(
-          'Error al eliminar la categoría',
-          statusCode: response.statusCode,
-        );
-      }
-    } catch (e) {
-      throw ApiException('Error al conectar con la API de categorías: $e');
-    }
+    final url = '${ApiConfig.categoriaEndpoint}/$id';
+    await delete(url, errorMessage: 'Error al eliminar la categoría');
   }
 }

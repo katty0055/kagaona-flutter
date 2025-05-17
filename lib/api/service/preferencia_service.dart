@@ -9,8 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class PreferenciaService {
   final Dio _dio = Dio(
     BaseOptions(
-      connectTimeout: const Duration(seconds: ConstantesCategoria.timeoutSeconds),
-      receiveTimeout: const Duration(seconds: ConstantesCategoria.timeoutSeconds),
+      connectTimeout: const Duration(seconds: ConstantesApi.timeoutSeconds),
+      receiveTimeout: const Duration(seconds: ConstantesApi.timeoutSeconds),
     ),
   );
 
@@ -46,7 +46,7 @@ class PreferenciaService {
       // Si no hay ID almacenado, devolver preferencias vacías sin consultar API
       if (_preferenciaId != null && _preferenciaId!.isNotEmpty) {
         final response = await _dio.get(
-          '${ApiConstants.preferenciasUrl}/$_preferenciaId',
+          '${ConstantesApi.preferenciasUrl}/$_preferenciaId',
         );
         // Si la respuesta es exitosa, convertir a objeto Preferencia
         return Preferencia.fromJson(response.data);
@@ -71,7 +71,7 @@ class PreferenciaService {
   Future<void> guardarPreferencias(Preferencia preferencia) async {
     try {
       await _dio.put(
-        '${ApiConstants.preferenciasUrl}/$_preferenciaId',
+        '${ConstantesApi.preferenciasUrl}/$_preferenciaId',
         data: preferencia.toJson(),
       );
     } on DioException catch (e) {
@@ -91,7 +91,7 @@ class PreferenciaService {
 
       // Crear un nuevo registro en la API
       final Response response = await _dio.post(
-        ApiConstants.preferenciasUrl,
+        ConstantesApi.preferenciasUrl,
         data: preferenciasVacias.toJson(),
       );
 

@@ -16,7 +16,7 @@ class ErrorHelper {
         color = Colors.red;
         break;
       case 401:
-        message = ConstantesNoticias.errorUnauthorized;
+        message = ConstantesApi.errorUnauthorized;
         color = Colors.orange;
         break;
       case 403:
@@ -28,7 +28,7 @@ class ErrorHelper {
         color = Colors.grey;
         break;
       case 500:
-        message = ConstantesNoticias.errorServer;
+        message = ConstantesApi.errorServer;
         color = Colors.red;
         break;
       default:
