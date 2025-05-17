@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kgaona/domain/noticia.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
 import 'package:kgaona/data/noticia_repository.dart';

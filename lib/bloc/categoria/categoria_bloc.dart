@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kgaona/bloc/categoria/categoria_event.dart';
 import 'package:kgaona/bloc/categoria/categoria_state.dart';
 import 'package:kgaona/data/categoria_repository.dart';

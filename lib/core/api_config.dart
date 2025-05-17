@@ -8,5 +8,5 @@ class ApiConfig {
   // Rutas para los endpoints específicos en Beeceptor
   static const String categoriaEndpoint = '/categorias';
   static const String noticiasEndpoint = '/noticias';
-  static const String preferenciasEndpoint = '/preferencias';
+  static const String preferenciasEndpoint = '/preferenciasEmail';
 }

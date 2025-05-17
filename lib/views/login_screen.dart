@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:kgaona/api/service/auth_service.dart';
-import 'package:kgaona/views/welcome_screen.dart'; 
+import 'package:kgaona/data/auth_repository.dart';
+import 'package:kgaona/views/welcome_screen.dart';
+import 'package:watch_it/watch_it.dart';
 
 class LoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
@@ -11,7 +12,8 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextEditingController usernameController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
-    final MockAuthService authService = MockAuthService();
+    final AuthRepository authRepository = di<AuthRepository>();
+    
     return Scaffold(
       // appBar: AppBar(title: const Text('Inicio de Sesión')),
       body: Padding(
@@ -33,7 +35,7 @@ class LoginScreen extends StatelessWidget {
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'El usuario es obligatorio';
+                    return 'El correo es obligatorio';
                   }
                   return null;
                 },
@@ -70,7 +72,7 @@ class LoginScreen extends StatelessWidget {
                     );
 
                     try {
-                      final success = await authService.login(
+                      final success = await authRepository.login(
                         username,
                         password,
                       );
@@ -79,6 +81,7 @@ class LoginScreen extends StatelessWidget {
                       Navigator.pop(context); // Cierra el indicador de carga
 
                       if (success) {
+                        // El repositorio ya almacenó el token y email
                         Navigator.push(
                           context,
                           MaterialPageRoute(

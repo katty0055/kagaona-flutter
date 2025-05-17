@@ -1,5 +1,3 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 class Constants {
   //const String TITLE_APPBAR = 'Lista de Tareas';
   static const String tituloAppbar = 'Lista de Tareas';
@@ -36,13 +34,11 @@ class ConstantesNoticias {
 }
 
 class ConstantesApi {
-  static String get apiKey => dotenv.env['API_KEY'] ?? '';
-  static String get baseUrl => dotenv.env['BASE_URL'] ?? '';
-  static String get preferenciasUrl => '$baseUrl/$apiKey/preferencias';
   static const String errorServer = 'Error del servidor';
   static const String errorUnauthorized = 'No autorizado';
   static const int timeoutSeconds = 10;
   static const String errorTimeout = 'Tiempo de espera agotado';
+  static const String usuarioDefault = 'Usuario anonimo';
 }
 
 class ConstantesCategorias{

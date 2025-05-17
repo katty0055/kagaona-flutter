@@ -35,9 +35,9 @@ class BaseService {
 
     // Identificar tipo de endpoint
     String errorNotFound = '';
-    if (endpoint.contains('/categorias')) {
+    if (endpoint.contains(ApiConfig.categoriaEndpoint)) {
       errorNotFound = ConstantesCategorias.errorNocategoria;
-    } else if (endpoint.contains('/noticias')) {
+    } else if (endpoint.contains(ApiConfig.noticiasEndpoint)) {
       errorNotFound = ConstantesNoticias.errorNotFound;
     }
     
