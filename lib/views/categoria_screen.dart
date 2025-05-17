@@ -58,24 +58,24 @@ class _CategoriaScreenContent extends StatelessWidget {
           // Mensaje específico para creación
           SnackBarHelper.mostrarExito(
             context,
-            mensaje: ConstantesCategoria.successCreated,
+            mensaje: ConstantesCategorias.successCreated,
           );
         } else if (state is CategoriaUpdated) {
           // Mensaje específico para actualización
           SnackBarHelper.mostrarExito(
             context,
-            mensaje: ConstantesCategoria.successUpdated,
+            mensaje: ConstantesCategorias.successUpdated,
           );
         }else if (state is CategoriaDeleted) {
           SnackBarHelper.mostrarExito(
             context,
-            mensaje: ConstantesCategoria.successDeleted,
+            mensaje: ConstantesCategorias.successDeleted,
           );
         } else if (state is CategoriaLoaded) {
           if (state.categorias.isEmpty) {
             SnackBarHelper.mostrarInfo(
               context,
-              mensaje: ConstantesCategoria.listaVacia,
+              mensaje: ConstantesCategorias.listaVacia,
             );
           }else{
             SnackBarHelper.mostrarExito(
@@ -184,12 +184,13 @@ class _CategoriaScreenContent extends StatelessWidget {
                     context: context,
                     title: 'Editar Categoría',
                     child: FormularioCategoria(categoria: categoria),
-                  );
-
-                  if (categoriaEditada != null && context.mounted) {
+                  );                  if (categoriaEditada != null && context.mounted) {
+                    // Usar copyWith para mantener el ID original y actualizar el resto de datos
+                    final categoriaActualizada = categoriaEditada.copyWith(id: categoria.id);
+                    
                     // Usar el BLoC para actualizar la categoría
                     context.read<CategoriaBloc>().add(
-                      CategoriaUpdateEvent(categoria.id!, categoriaEditada),
+                      CategoriaUpdateEvent(categoriaActualizada),
                     );
                   }
                 },
@@ -225,7 +226,7 @@ class _CategoriaScreenContent extends StatelessWidget {
             children: [
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.6,
-                child: const Center(child: Text(ConstantesCategoria.listaVacia)),
+                child: const Center(child: Text(ConstantesCategorias.listaVacia)),
               ),
             ],
           ),

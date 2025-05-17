@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kgaona/bloc/preferencia/preferencia_event.dart';
 import 'package:kgaona/bloc/preferencia/preferencia_state.dart';
 import 'package:kgaona/data/preferencia_repository.dart';
@@ -45,16 +45,21 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
       }       
     }
   }
-
   Future<void> _onSavePreferences(
     SavePreferences event,
     Emitter<PreferenciaState> emit,
   ) async {
     try {
-      // Guardar las categorías seleccionadas en el repositorio
+      // Emitir un estado de carga para mostrar al usuario que está procesando
+      emit(PreferenciaLoading());
+      
+      // Primero guardamos en la caché local (si es necesario)
       await _preferenciaRepository.guardarCategoriasSeleccionadas(
         event.selectedCategories,
       );
+      
+      // Luego sincronizamos con la API (esto es lo importante)
+      await _preferenciaRepository.guardarCambiosEnAPI();
 
       // Emitir estado de éxito
       emit(
@@ -121,7 +126,6 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
       }
     }
   }
-
   Future<void> _onResetFilters(
     ResetFilters event,
     Emitter<PreferenciaState> emit,
@@ -129,11 +133,14 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
     emit(PreferenciaLoading());
 
     try {
-      // Limpiar todas las categorías seleccionadas
+      // Limpiar todas las categorías seleccionadas (solo modifica la caché)
       await _preferenciaRepository.limpiarFiltrosCategorias();
 
+      // Guardar los cambios en la API inmediatamente
+      await _preferenciaRepository.guardarCambiosEnAPI();
+
       // Emitir estado de reseteo
-      emit(PreferenciasReset(lastUpdated: null, operacionExitosa: true));
+      emit(PreferenciasReset(lastUpdated: DateTime.now(), operacionExitosa: true));
     } catch (e) {
       if (e is ApiException) {
         emit(

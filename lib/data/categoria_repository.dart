@@ -45,7 +45,7 @@ class CategoriaRepository {
   Future<void> crearCategoria(Categoria categoria) async {
     try {
       _validarCategoria(categoria);
-      await _categoriaService.crearCategoria(categoria.toJson());
+      await _categoriaService.crearCategoria(categoria);
     } catch (e) {
       if (e is ApiException) {
         rethrow;
@@ -56,10 +56,10 @@ class CategoriaRepository {
   }
 
   /// Edita una categoría existente
-  Future<void> actualizarCategoria(String id, Categoria categoria) async {
+  Future<void> actualizarCategoria(Categoria categoria) async {
     try {
       _validarCategoria(categoria);
-      await _categoriaService.editarCategoria(id, categoria.toJson());
+      await _categoriaService.editarCategoria(categoria);
     } catch (e) {
       if (e is ApiException) {
         rethrow;

@@ -22,13 +22,12 @@ class AddNoticiaEvent extends NoticiaEvent {
 }
 
 class UpdateNoticiaEvent extends NoticiaEvent {
-  final String id;
   final Noticia noticia;
 
-  UpdateNoticiaEvent(this.id, this.noticia);
+  UpdateNoticiaEvent(this.noticia);
 
   @override
-  List<Object> get props => [id, noticia];
+  List<Object> get props => [noticia];
 }
 
 class DeleteNoticiaEvent extends NoticiaEvent {

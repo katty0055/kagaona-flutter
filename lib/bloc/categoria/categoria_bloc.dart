@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kgaona/bloc/categoria/categoria_event.dart';
 import 'package:kgaona/bloc/categoria/categoria_state.dart';
 import 'package:kgaona/data/categoria_repository.dart';
@@ -50,7 +50,7 @@ class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
     emit(CategoriaLoading());
 
     try {
-      await _categoriaRepository.actualizarCategoria(event.id, event.categoria);
+      await _categoriaRepository.actualizarCategoria(event.categoria);
       
       final categorias = await _categoriaRepository.obtenerCategorias();
 
