@@ -2,13 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:kgaona/components/snackbar_component.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
 import 'package:kgaona/helpers/error_helper.dart';
+import 'package:kgaona/helpers/snackbar_manager.dart';
 
 class SnackBarHelper {
   /// Muestra un mensaje de éxito
-  static void mostrarExito(BuildContext context, {required String mensaje}) async {
+  static void mostrarExito(
+    BuildContext context, {
+    required String mensaje,
+  }) async {
+    // Verificar si se puede mostrar el SnackBar (no hay mensajes de conectividad)
+    if (!SnackBarManager().canShowSnackBar()) return;
+
     _mostrarSnackBar(
-      context, 
-      mensaje: mensaje, 
+      context,
+      mensaje: mensaje,
       color: Colors.green,
       duracion: const Duration(seconds: 3),
     );
@@ -17,19 +24,28 @@ class SnackBarHelper {
 
   /// Muestra un mensaje informativo
   static void mostrarInfo(BuildContext context, {required String mensaje}) {
+    // Verificar si se puede mostrar el SnackBar (no hay mensajes de conectividad)
+    if (!SnackBarManager().canShowSnackBar()) return;
+
     _mostrarSnackBar(
-      context, 
-      mensaje: mensaje, 
+      context,
+      mensaje: mensaje,
       color: Colors.blue,
       duracion: const Duration(seconds: 3),
     );
   }
 
   /// Muestra un mensaje de advertencia
-  static void mostrarAdvertencia(BuildContext context, {required String mensaje}) {
+  static void mostrarAdvertencia(
+    BuildContext context, {
+    required String mensaje,
+  }) {
+    // Verificar si se puede mostrar el SnackBar (no hay mensajes de conectividad)
+    if (!SnackBarManager().canShowSnackBar()) return;
+
     _mostrarSnackBar(
-      context, 
-      mensaje: mensaje, 
+      context,
+      mensaje: mensaje,
       color: Colors.orange,
       duracion: const Duration(seconds: 4),
     );
@@ -37,9 +53,12 @@ class SnackBarHelper {
 
   /// Muestra un mensaje de error
   static void mostrarError(BuildContext context, {required String mensaje}) {
+    // Verificar si se puede mostrar el SnackBar (no hay mensajes de conectividad)
+    if (!SnackBarManager().canShowSnackBar()) return;
+
     _mostrarSnackBar(
-      context, 
-      mensaje: mensaje, 
+      context,
+      mensaje: mensaje,
       color: Colors.red,
       duracion: const Duration(seconds: 4),
     );
@@ -52,26 +71,33 @@ class SnackBarHelper {
     Object e, {
     String? mensajePredeterminado,
     Duration? duration,
+    bool isConnectivityMessage =
+        false, // Indica si es un mensaje de conectividad
   }) {
     if (!context.mounted) return;
+
+    // Si no es un mensaje de conectividad y ya hay uno mostrándose, no mostrar nada
+    if (!isConnectivityMessage && !SnackBarManager().canShowSnackBar()) return;
 
     String mensaje = e.toString();
     Color color = Colors.red;
 
     // Usar ErrorHelper para procesar el error si es ApiException
     if (e is ApiException) {
-      final errorInfo = ErrorHelper.getErrorMessageAndColor(
-        e.statusCode, 
-      );
-      mensaje = (mensajePredeterminado == null || mensajePredeterminado.isEmpty)? errorInfo['message']: mensajePredeterminado;
+      final errorInfo = ErrorHelper.getErrorMessageAndColor(e.statusCode);
+      mensaje =
+          (mensajePredeterminado == null || mensajePredeterminado.isEmpty)
+              ? errorInfo['message']
+              : mensajePredeterminado;
       color = errorInfo['color'] as Color;
-    } 
+    }
 
     _mostrarSnackBar(
       context,
       mensaje: mensaje,
       color: color,
       duracion: duration ?? const Duration(seconds: 5),
+      isConnectivityMessage: isConnectivityMessage,
     );
   }
 
@@ -81,12 +107,19 @@ class SnackBarHelper {
     required String mensaje,
     required Color color,
     required Duration duracion,
+    bool isConnectivityMessage =
+        false, // Indica si es un mensaje de conectividad
   }) {
     if (!context.mounted) return;
 
+    // Si es un mensaje de conectividad, actualizar el estado del manager
+    if (isConnectivityMessage) {
+      SnackBarManager().setConnectivitySnackBarShowing(true);
+    }
+
     // Limpia cualquier SnackBar que esté mostrándose actualmente
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    
+
     // Muestra el nuevo SnackBar
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBarComponent.crear(
@@ -97,4 +130,3 @@ class SnackBarHelper {
     );
   }
 }
-

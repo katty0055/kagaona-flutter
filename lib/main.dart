@@ -5,7 +5,6 @@ import 'package:kgaona/di/locator.dart';
 import 'package:kgaona/bloc/contador/contador_bloc.dart';
 import 'package:kgaona/bloc/connectivity/connectivity_bloc.dart';
 import 'package:kgaona/components/connectivity_wrapper.dart';
-import 'package:kgaona/helpers/global_snack_service.dart';
 import 'package:kgaona/helpers/secure_storage_service.dart';
 import 'package:kgaona/views/login_screen.dart';
 import 'package:watch_it/watch_it.dart';

@@ -19,17 +19,20 @@ import 'package:kgaona/helpers/categoria_helper.dart';
 import 'package:kgaona/helpers/dialog_helper.dart';
 import 'package:kgaona/helpers/modal_helper.dart';
 import 'package:kgaona/helpers/snackbar_helper.dart';
+import 'package:kgaona/helpers/snackbar_manager.dart';
 import 'package:kgaona/views/categoria_screen.dart';
 import 'package:kgaona/views/preferencia_screen.dart';
 
 class NoticiaScreen extends StatelessWidget {
   const NoticiaScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     // Limpiar cualquier SnackBar existente al entrar a esta pantalla
+    // pero solo si no está mostrándose el SnackBar de conectividad
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      if (!SnackBarManager().isConnectivitySnackBarShowing) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      }
     });
     return MultiBlocProvider(
       providers: [
@@ -116,8 +119,7 @@ class _NoticiaScreenContent extends StatelessWidget {
                   final noticiaBloc = context.read<NoticiaBloc>();
                   // Navegar a la pantalla de preferencias proporcionando el NoticiaBloc actual
                   await Navigator.push(
-                    context,
-                    MaterialPageRoute(
+                    context,                    MaterialPageRoute(
                       builder: (context) => BlocProvider.value(
                         value: noticiaBloc,
                         child: const PreferenciaScreen(),

@@ -14,6 +14,7 @@ import 'package:kgaona/domain/categoria.dart';
 import 'package:kgaona/helpers/dialog_helper.dart';
 import 'package:kgaona/helpers/modal_helper.dart';
 import 'package:kgaona/helpers/snackbar_helper.dart';
+import 'package:kgaona/helpers/snackbar_manager.dart';
 
 class CategoriaScreen extends StatelessWidget {
   const CategoriaScreen({super.key});
@@ -21,8 +22,11 @@ class CategoriaScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Limpiar cualquier SnackBar existente al entrar a esta pantalla
+    // pero solo si no está mostrándose el SnackBar de conectividad
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      if (!SnackBarManager().isConnectivitySnackBarShowing) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      }
     });
     return MultiBlocProvider(
       providers: [

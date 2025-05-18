@@ -10,6 +10,7 @@ import 'package:kgaona/bloc/preferencia/preferencia_event.dart';
 import 'package:kgaona/bloc/preferencia/preferencia_state.dart';
 import 'package:kgaona/domain/categoria.dart';
 import 'package:kgaona/helpers/snackbar_helper.dart';
+import 'package:kgaona/helpers/snackbar_manager.dart';
 
 class PreferenciaScreen extends StatelessWidget {
   const PreferenciaScreen({super.key});
@@ -17,8 +18,11 @@ class PreferenciaScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Limpiar cualquier SnackBar existente al entrar a esta pantalla
+    // pero solo si no está mostrándose el SnackBar de conectividad
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      if (!SnackBarManager().isConnectivitySnackBarShowing) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      }
     });
     
     // Obtener referencia al NoticiaBloc existente para filtrar después
