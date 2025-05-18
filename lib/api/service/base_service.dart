@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/core/api_config.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
+import 'package:kgaona/helpers/connectivity_service.dart';
+import 'package:watch_it/watch_it.dart' show di;
 
 /// Clase base para servicios API que proporciona funcionalidad común
 class BaseService {
@@ -57,13 +59,17 @@ class BaseService {
         return ApiException('Error desconocido en $endpoint', statusCode: statusCode);
     }
   }
-  
-  /// Método privado que ejecuta una petición HTTP y maneja los errores de forma centralizada
+    /// Método privado que ejecuta una petición HTTP y maneja los errores de forma centralizada
   Future<T> _executeRequest<T>(
     Future<Response<dynamic>> Function() requestFn,
     String errorMessage,
   ) async {
     try {
+      // Verificar la conectividad antes de realizar la solicitud HTTP
+      final connectivityService = di<ConnectivityService>();
+      await connectivityService.checkConnectivity();
+      
+      // Proceder con la solicitud HTTP si hay conectividad
       final response = await requestFn();
       
       if (response.statusCode == 200) {

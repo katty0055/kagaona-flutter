@@ -51,6 +51,7 @@ class SnackBarHelper {
     BuildContext context,
     Object e, {
     String? mensajePredeterminado,
+    Duration? duration,
   }) {
     if (!context.mounted) return;
 
@@ -70,7 +71,7 @@ class SnackBarHelper {
       context,
       mensaje: mensaje,
       color: color,
-      duracion: const Duration(seconds: 5),
+      duracion: duration ?? const Duration(seconds: 5),
     );
   }
 

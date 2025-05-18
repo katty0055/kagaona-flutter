@@ -9,8 +9,7 @@ class ErrorHelper {
   ) {
     String message;
     Color color;
-    
-    switch (statusCode) {
+      switch (statusCode) {
       case 400:
         message = 'Solicitud incorrecta. Verifica los datos enviados.';
         color = Colors.red;
@@ -29,6 +28,10 @@ class ErrorHelper {
         break;
       case 500:
         message = ConstantesApi.errorServer;
+        color = Colors.red;
+        break;
+      case 503:
+        message = 'Por favor, verifica tu conexión a internet.';
         color = Colors.red;
         break;
       default:

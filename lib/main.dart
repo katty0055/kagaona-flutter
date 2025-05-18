@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:kgaona/di/locator.dart';
 import 'package:kgaona/bloc/contador/contador_bloc.dart';
+import 'package:kgaona/bloc/connectivity/connectivity_bloc.dart';
+import 'package:kgaona/components/connectivity_wrapper.dart';
+import 'package:kgaona/helpers/global_snack_service.dart';
 import 'package:kgaona/helpers/secure_storage_service.dart';
 import 'package:kgaona/views/login_screen.dart';
 import 'package:watch_it/watch_it.dart';
@@ -21,7 +24,6 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -29,14 +31,20 @@ class MyApp extends StatelessWidget {
         BlocProvider<ContadorBloc>(
           create: (context) => ContadorBloc(),
         ),
+        BlocProvider<ConnectivityBloc>(
+          create: (context) => ConnectivityBloc(),
+        ),
         // Otros BLoCs aquí...
-      ],
-      child: MaterialApp(
+      ],      child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.pinkAccent),
         ),
-        home: LoginScreen(),
+        builder: (context, child) {
+          // Envolvemos con nuestro ConnectivityWrapper 
+          return ConnectivityWrapper(child: child ?? const SizedBox.shrink());
+        },
+        home: LoginScreen(), // Pantalla inicial
       ),
     );
   }
