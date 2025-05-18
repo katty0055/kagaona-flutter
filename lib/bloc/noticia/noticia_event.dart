@@ -6,7 +6,7 @@ abstract class NoticiaEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class NoticiaInitEvent extends NoticiaEvent{}
+class NoticiaInitEvent extends NoticiaEvent {}
 
 class FetchNoticiasEvent extends NoticiaEvent {
   FetchNoticiasEvent();

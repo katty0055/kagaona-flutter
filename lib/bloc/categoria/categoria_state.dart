@@ -9,12 +9,7 @@ abstract class CategoriaState extends Equatable {
 
 class CategoriaInitial extends CategoriaState {}
 
-enum TipoOperacion {
-  cargar,
-  crear,
-  actualizar,
-  eliminar
-}
+enum TipoOperacion { cargar, crear, actualizar, eliminar }
 
 class CategoriaError extends CategoriaState {
   final String message;
@@ -27,9 +22,7 @@ class CategoriaError extends CategoriaState {
   List<Object?> get props => [message, error, tipoOperacion];
 }
 
-class CategoriaLoading extends CategoriaState {
-
-}
+class CategoriaLoading extends CategoriaState {}
 
 class CategoriaLoaded extends CategoriaState {
   final List<Categoria> categorias;

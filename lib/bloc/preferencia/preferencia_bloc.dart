@@ -42,9 +42,10 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
             tipoOperacion: TipoOperacionPreferencia.cargar,
           ),
         );
-      }       
+      }
     }
   }
+
   Future<void> _onSavePreferences(
     SavePreferences event,
     Emitter<PreferenciaState> emit,
@@ -52,12 +53,12 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
     try {
       // Emitir un estado de carga para mostrar al usuario que está procesando
       emit(PreferenciaLoading());
-      
+
       // Primero guardamos en la caché local (si es necesario)
       await _preferenciaRepository.guardarCategoriasSeleccionadas(
         event.selectedCategories,
       );
-      
+
       // Luego sincronizamos con la API (esto es lo importante)
       await _preferenciaRepository.guardarCambiosEnAPI();
 
@@ -91,7 +92,9 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
     }
 
     final currentState = state as PreferenciasLoaded;
-    List<String> updatedCategories = List.from(currentState.categoriasSeleccionadas);
+    List<String> updatedCategories = List.from(
+      currentState.categoriasSeleccionadas,
+    );
 
     // Primero emitir el cambio local (inmediato)
     if (event.selected) {
@@ -103,10 +106,12 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
     }
 
     // Emitir el nuevo estado inmediatamente
-    emit(PreferenciasLoaded(
-      categoriasSeleccionadas: updatedCategories,
-      lastUpdated: DateTime.now(),
-    ));
+    emit(
+      PreferenciasLoaded(
+        categoriasSeleccionadas: updatedCategories,
+        lastUpdated: DateTime.now(),
+      ),
+    );
 
     // Luego realizar la operación de persistencia en segundo plano
     try {
@@ -118,14 +123,17 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
     } catch (e) {
       // Solo emitir error si es realmente grave, para no interrumpir la experiencia
       if (e is ApiException && e.statusCode! >= 500) {
-        emit(PreferenciaError(
-          'Error al actualizar la categoría',
-          error: e,
-          tipoOperacion: TipoOperacionPreferencia.cambiarCategoria,
-        ));
+        emit(
+          PreferenciaError(
+            'Error al actualizar la categoría',
+            error: e,
+            tipoOperacion: TipoOperacionPreferencia.cambiarCategoria,
+          ),
+        );
       }
     }
   }
+
   Future<void> _onResetFilters(
     ResetFilters event,
     Emitter<PreferenciaState> emit,
@@ -140,7 +148,9 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
       await _preferenciaRepository.guardarCambiosEnAPI();
 
       // Emitir estado de reseteo
-      emit(PreferenciasReset(lastUpdated: DateTime.now(), operacionExitosa: true));
+      emit(
+        PreferenciasReset(lastUpdated: DateTime.now(), operacionExitosa: true),
+      );
     } catch (e) {
       if (e is ApiException) {
         emit(
