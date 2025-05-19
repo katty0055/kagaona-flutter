@@ -3,11 +3,13 @@ import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/core/api_config.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
 import 'package:kgaona/helpers/connectivity_service.dart';
+import 'package:kgaona/helpers/secure_storage_service.dart';
 import 'package:watch_it/watch_it.dart' show di;
 
 /// Clase base para servicios API que proporciona funcionalidad común
 class BaseService {
   late final Dio _dio;
+  final SecureStorageService _secureStorage = SecureStorageService();
   
   /// Constructor que inicializa la configuración de Dio con los parámetros base
   BaseService() {
@@ -91,51 +93,57 @@ class BaseService {
       throw ApiException('Error inesperado: ${e.toString()}');
     }
   }
-
   /// Método genérico para realizar solicitudes GET
   Future<T> get<T>(
     String endpoint, {
     Map<String, dynamic>? queryParameters,
     String errorMessage = 'Error al conectar con la API',
+    bool requireAuthToken = false,
   }) async {
+    final options = await _getRequestOptions(requireAuthToken: requireAuthToken);
     return _executeRequest<T>(
       () => _dio.get(
         endpoint,
         queryParameters: queryParameters,
+        options: options,
       ),
       errorMessage,
     );
   }
-
   /// Método genérico para realizar solicitudes POST
   Future<dynamic> post(
     String endpoint, {
     required dynamic data,
     Map<String, dynamic>? queryParameters,
     String errorMessage = 'Error al crear el recurso',
+    bool requireAuthToken = false,
   }) async {
+    final options = await _getRequestOptions(requireAuthToken: requireAuthToken);
     return _executeRequest<dynamic>(
       () => _dio.post(
         endpoint,
         data: data,
         queryParameters: queryParameters,
+        options: options,
       ),
       errorMessage,
     );
   }
-
   /// Método genérico para realizar solicitudes PUT
   Future<dynamic> put(
     String endpoint, {
     required dynamic data,
     Map<String, dynamic>? queryParameters,
     String errorMessage = 'Error al actualizar el recurso',
+    bool requireAuthToken = false,
   }) async {
+    final options = await _getRequestOptions(requireAuthToken: requireAuthToken);
     return _executeRequest<dynamic>(
       () => _dio.put(
         endpoint,
         data: data,
         queryParameters: queryParameters,
+        options: options,
       ),
       errorMessage,
     );
@@ -146,13 +154,38 @@ class BaseService {
     String endpoint, {
     Map<String, dynamic>? queryParameters,
     String errorMessage = 'Error al eliminar el recurso',
+    bool requireAuthToken = false,
   }) async {
+    final options = await _getRequestOptions(requireAuthToken: requireAuthToken);
     return _executeRequest<dynamic>(
       () => _dio.delete(
         endpoint,
         queryParameters: queryParameters,
+        options: options,
       ),
       errorMessage,
     );
+  }
+
+  /// Obtiene opciones de solicitud con token de autenticación si es requerido
+  Future<Options> _getRequestOptions({bool requireAuthToken = false}) async {
+    final options = Options();
+    
+    if (requireAuthToken) {
+      final jwt = await _secureStorage.getJwt();
+      if (jwt != null && jwt.isNotEmpty) {
+        options.headers = {
+          ...(options.headers ?? {}),
+          'X-Auth-Token': jwt,
+        };
+      } else {
+        throw ApiException(
+          'No se encontró el token de autenticación',
+          statusCode: 401,
+        );
+      }
+    }
+    
+    return options;
   }
 }

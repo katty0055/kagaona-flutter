@@ -9,4 +9,5 @@ class ApiConfig {
   static const String noticiasEndpoint = '/noticias';
   static const String preferenciasEndpoint = '/preferenciasEmail';
   static const String comentariosEndpoint = '/comentarios';
+  static const String reportesEndpoint = '/reportes';
 }

@@ -3,18 +3,21 @@ import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/domain/noticia.dart';
 import 'package:intl/intl.dart';
 import 'package:kgaona/views/comentarios/comentarios_screen.dart';
+import 'package:kgaona/components/reporte_dialog.dart';
 
 class NoticiaCard extends StatelessWidget {
   final Noticia noticia;
   final VoidCallback onEdit; // Callback para editar la noticia
   final String
   categoriaNombre; // Nuevo parámetro para mostrar el nombre de la categoría
+  final VoidCallback? onReport; // Callback para reportar la noticia
 
   const NoticiaCard({
     super.key,
     required this.noticia,
     required this.onEdit,
     required this.categoriaNombre,
+    this.onReport,
   });
 
   @override
@@ -150,12 +153,27 @@ class NoticiaCard extends StatelessWidget {
                       );
                     },
                     tooltip: 'Ver comentarios',
-                  ),
-                  IconButton(
+                  ),                  IconButton(
                     icon: const Icon(Icons.share),
                     onPressed: () {
                       // Acción para compartir
                     },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.flag),
+                    onPressed: () {
+                      // Acción para reportar noticia
+                      if (onReport != null) {
+                        onReport!();
+                      } else {
+                        // Si no se proporcionó un callback, usar el diálogo de reportes directamente
+                        ReporteDialog.mostrarDialogoReporte(
+                          context: context,
+                          noticiaId: noticia.id!,
+                        );
+                      }
+                    },
+                    tooltip: 'Reportar noticia',
                   ),
                   IconButton(
                     icon: const Icon(Icons.edit),

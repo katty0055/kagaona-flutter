@@ -62,3 +62,12 @@ class ConstantesCategorias{
   static const String successDeleted = 'Categoria eliminada exitosamente';
   static const String successCreated = 'Categoria creada exitosamente';
 }
+
+class ReporteConstantes {
+  static const String reporteCreado = 'Reporte enviado con éxito';
+  static const String noticiaNoExiste = 'La noticia reportada no existe';
+  static const String errorCrearReporte = 'Error al crear el reporte';
+  static const String errorObtenerReportes = 'Error al obtener reportes';
+  static const String listaVacia = 'No hay reportes disponibles';
+  static const String mensajeCargando = 'Cargando reportes...';
+}

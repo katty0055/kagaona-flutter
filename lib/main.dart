@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:kgaona/bloc/comentario/comentario_bloc.dart';
+import 'package:kgaona/bloc/reporte/reporte_bloc.dart';
 import 'package:kgaona/di/locator.dart';
 import 'package:kgaona/bloc/contador/contador_bloc.dart';
 import 'package:kgaona/bloc/connectivity/connectivity_bloc.dart';
@@ -34,7 +35,8 @@ class MyApp extends StatelessWidget {
         BlocProvider<ConnectivityBloc>(
           create: (context) => ConnectivityBloc(),
         ),
-         BlocProvider(create: (context) => ComentarioBloc()),
+        BlocProvider(create: (context) => ComentarioBloc()),
+        BlocProvider(create: (context) => ReporteBloc()),
       ],      child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(

@@ -11,6 +11,7 @@ import 'package:kgaona/components/floating_add_button.dart';
 import 'package:kgaona/components/formulario_noticia.dart';
 import 'package:kgaona/components/last_updated_header.dart';
 import 'package:kgaona/components/noticia_card.dart';
+import 'package:kgaona/components/reporte_dialog.dart';
 import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/domain/categoria.dart';
@@ -261,9 +262,15 @@ class _NoticiaScreenContent extends StatelessWidget {
                 },
                 onDismissed: (direction) {
                   context.read<NoticiaBloc>().add(DeleteNoticiaEvent(noticia.id!));
-                },
-                child: NoticiaCard(
+                },                child: NoticiaCard(
                   noticia: noticia,
+                  onReport: () {
+                    // Mostrar el diálogo de reportes
+                    ReporteDialog.mostrarDialogoReporte(
+                      context: context, 
+                      noticiaId: noticia.id!,
+                    );
+                  },
                   onEdit: () async {
                   // Solo muestra el formulario si las categorías están cargadas
                   if (categorias.isEmpty) {
