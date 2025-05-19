@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kgaona/bloc/preferencia/preferencia_event.dart';
 import 'package:kgaona/bloc/preferencia/preferencia_state.dart';
 import 'package:kgaona/data/preferencia_repository.dart';
@@ -42,7 +42,7 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
             tipoOperacion: TipoOperacionPreferencia.cargar,
           ),
         );
-      }       
+      }
     }
   }
 
@@ -51,10 +51,16 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
     Emitter<PreferenciaState> emit,
   ) async {
     try {
-      // Guardar las categorías seleccionadas en el repositorio
+      // Emitir un estado de carga para mostrar al usuario que está procesando
+      emit(PreferenciaLoading());
+
+      // Primero guardamos en la caché local (si es necesario)
       await _preferenciaRepository.guardarCategoriasSeleccionadas(
         event.selectedCategories,
       );
+
+      // Luego sincronizamos con la API (esto es lo importante)
+      await _preferenciaRepository.guardarCambiosEnAPI();
 
       // Emitir estado de éxito
       emit(
@@ -86,7 +92,9 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
     }
 
     final currentState = state as PreferenciasLoaded;
-    List<String> updatedCategories = List.from(currentState.categoriasSeleccionadas);
+    List<String> updatedCategories = List.from(
+      currentState.categoriasSeleccionadas,
+    );
 
     // Primero emitir el cambio local (inmediato)
     if (event.selected) {
@@ -98,10 +106,12 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
     }
 
     // Emitir el nuevo estado inmediatamente
-    emit(PreferenciasLoaded(
-      categoriasSeleccionadas: updatedCategories,
-      lastUpdated: DateTime.now(),
-    ));
+    emit(
+      PreferenciasLoaded(
+        categoriasSeleccionadas: updatedCategories,
+        lastUpdated: DateTime.now(),
+      ),
+    );
 
     // Luego realizar la operación de persistencia en segundo plano
     try {
@@ -113,11 +123,13 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
     } catch (e) {
       // Solo emitir error si es realmente grave, para no interrumpir la experiencia
       if (e is ApiException && e.statusCode! >= 500) {
-        emit(PreferenciaError(
-          'Error al actualizar la categoría',
-          error: e,
-          tipoOperacion: TipoOperacionPreferencia.cambiarCategoria,
-        ));
+        emit(
+          PreferenciaError(
+            'Error al actualizar la categoría',
+            error: e,
+            tipoOperacion: TipoOperacionPreferencia.cambiarCategoria,
+          ),
+        );
       }
     }
   }
@@ -129,11 +141,16 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
     emit(PreferenciaLoading());
 
     try {
-      // Limpiar todas las categorías seleccionadas
+      // Limpiar todas las categorías seleccionadas (solo modifica la caché)
       await _preferenciaRepository.limpiarFiltrosCategorias();
 
+      // Guardar los cambios en la API inmediatamente
+      await _preferenciaRepository.guardarCambiosEnAPI();
+
       // Emitir estado de reseteo
-      emit(PreferenciasReset(lastUpdated: null, operacionExitosa: true));
+      emit(
+        PreferenciasReset(lastUpdated: DateTime.now(), operacionExitosa: true),
+      );
     } catch (e) {
       if (e is ApiException) {
         emit(

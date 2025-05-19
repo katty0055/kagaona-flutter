@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:kgaona/domain/noticia.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
 
-abstract class NoticiaState extends Equatable {  
+abstract class NoticiaState extends Equatable {
   @override
   List<Object> get props => [];
 }
@@ -21,13 +21,7 @@ class NoticiaLoaded extends NoticiaState {
   List<Object> get props => [noticias, lastUpdated];
 }
 
-enum TipoOperacionNoticia {
-  cargar,
-  crear,
-  actualizar,
-  eliminar,
-  filtrar
-}
+enum TipoOperacionNoticia { cargar, crear, actualizar, eliminar, filtrar }
 
 class NoticiaError extends NoticiaState {
   final String message;
@@ -54,13 +48,9 @@ class NoticiaDeleted extends NoticiaLoaded {
 
 class NoticiaFiltered extends NoticiaLoaded {
   final List<String> appliedFilters;
-  
-  NoticiaFiltered(
-    super.noticias, 
-    super.lastUpdated,
-    this.appliedFilters
-  );
-  
+
+  NoticiaFiltered(super.noticias, super.lastUpdated, this.appliedFilters);
+
   @override
   List<Object> get props => [...super.props, appliedFilters];
 }

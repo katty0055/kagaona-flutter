@@ -6,19 +6,11 @@ abstract class PreferenciaState extends Equatable {
   List<Object?> get props => [];
 }
 
-// Estado inicial cuando aún no se ha cargado nada
 class PreferenciaInitial extends PreferenciaState {}
 
-// Estado durante la carga de preferencias
 class PreferenciaLoading extends PreferenciaState {}
 
-// Estado de error al procesar preferencias
-enum TipoOperacionPreferencia {
-  cargar,
-  guardar,
-  reiniciar,
-  cambiarCategoria
-}
+enum TipoOperacionPreferencia { cargar, guardar, reiniciar, cambiarCategoria }
 
 class PreferenciaError extends PreferenciaState {
   final String mensaje;
@@ -48,7 +40,11 @@ class PreferenciasLoaded extends PreferenciaState {
   });
 
   @override
-  List<Object?> get props => [categoriasSeleccionadas, lastUpdated, operacionExitosa];
+  List<Object?> get props => [
+    categoriasSeleccionadas,
+    lastUpdated,
+    operacionExitosa,
+  ];
 }
 
 // Estado después de guardar preferencias con éxito

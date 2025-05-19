@@ -1,5 +1,3 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 class Constants {
   //const String TITLE_APPBAR = 'Lista de Tareas';
   static const String tituloAppbar = 'Lista de Tareas';
@@ -25,37 +23,51 @@ class Constants {
 }
 
 class ConstantesNoticias {
-  static String get defaultQuery => dotenv.env['DEFAULT_QUERY'] ?? 'tecnología';
-  static String get sortBy => dotenv.env['SORT_BY'] ?? 'publishedAt';
-  static String get language => dotenv.env['LANGUAGE'] ?? 'es';
   static const String tituloApp = 'Noticias Técnicas';
   static const String mensajeCargando = 'Cargando noticias...';
   static const String listaVacia = 'No hay noticias disponibles';
   static const String mensajeError = 'Error al cargar noticias';
-  static const String errorUnauthorized = 'No autorizado';
-  static const String errorNotFound = 'Noticias no encontradas';
-  static const String errorServer = 'Error del servidor';
+  static const String errorNotFound = 'Noticia no encontrada';
   static const String successUpdated = 'Noticia actualizada exitosamente';
   static const String successCreated = 'Noticia creada exitosamente';
   static const String successDeleted = 'Noticia eliminada exitosamente';
 }
 
-class ApiConstants {
-  static String get apiKey => dotenv.env['API_KEY'] ?? '';
-  static String get baseUrl => dotenv.env['BASE_URL'] ?? '';
-  static String categoriaUrl = '$baseUrl/$apiKey/categorias';
-  static String newsUrl = '$baseUrl/$apiKey/noticias';
-  static String get preferenciasUrl => '$baseUrl/$apiKey/preferencias';
-}
-
-class ConstantesCategoria{
-  static const String errorNocategoria = 'Categoría no encontrada';
-  static const String defaultcategoriaId = 'sin_categoria';
+class ConstantesApi {
+  static const String errorServer = 'Error del servidor';
+  static const String errorUnauthorized = 'No autorizado';
   static const int timeoutSeconds = 10;
   static const String errorTimeout = 'Tiempo de espera agotado';
-  static const String mensajeError = 'Error al cargar categorías';
-  static const String successUpdated = 'Categoria actualizada exitosamente';
+  static const String usuarioDefault = 'Usuario anonimo';
+}
+
+class ConstantesComentarios {
+  static const String mensajeCargando = 'Cargando comentarios...';
+  static const String listaVacia = 'No hay comentarios disponibles';
+  static const String mensajeError = 'Error al cargar comentarios';
+  static const String errorNoComentario = 'Comentario no encontrado';
+  static const String successCreated = 'Comentario agregado exitosamente';
+  static const String successReaction = 'Reacción registrada exitosamente';
+  static const String successSubcomentario = 'Subcomentario agregado exitosamente';
+}
+
+class ConstantesCategorias{
+  static const String tituloApp = 'Categorías de Noticias';
+  static const String mensajeCargando = 'Cargando categorias...';
   static const String listaVacia = 'No hay categorias disponibles';
+  static const String mensajeError = 'Error al cargar categorías';
+  static const String errorNocategoria = 'Categoría no encontrada';
+  static const String defaultcategoriaId = 'sin_categoria';
+  static const String successUpdated = 'Categoria actualizada exitosamente';
   static const String successDeleted = 'Categoria eliminada exitosamente';
   static const String successCreated = 'Categoria creada exitosamente';
+}
+
+class ReporteConstantes {
+  static const String reporteCreado = 'Reporte enviado con éxito';
+  static const String noticiaNoExiste = 'La noticia reportada no existe';
+  static const String errorCrearReporte = 'Error al crear el reporte';
+  static const String errorObtenerReportes = 'Error al obtener reportes';
+  static const String listaVacia = 'No hay reportes disponibles';
+  static const String mensajeCargando = 'Cargando reportes...';
 }

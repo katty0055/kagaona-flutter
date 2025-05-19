@@ -38,7 +38,7 @@ class NoticiaRepository {
   Future<void> crearNoticia(Noticia noticia) async {
     try {
       _validarNoticia(noticia);
-      await _noticiaService.crearNoticia(noticia.toJson());
+      await _noticiaService.crearNoticia(noticia);
     } catch (e) {
       if (e is ApiException) {
         rethrow;
@@ -49,10 +49,10 @@ class NoticiaRepository {
   }
 
   /// Edita una noticia existente
-  Future<void> editarNoticia(String id, Noticia noticia) async {
+  Future<void> editarNoticia(Noticia noticia) async {
     try {
       _validarNoticia(noticia);
-      await _noticiaService.editarNoticia(id, noticia.toJson());
+      await _noticiaService.editarNoticia(noticia);
     } catch (e) {
       if (e is ApiException) {
         rethrow;

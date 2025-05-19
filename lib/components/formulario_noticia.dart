@@ -22,8 +22,7 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
   late TextEditingController _imagenUrlController;
   late TextEditingController _fechaController;
   DateTime _fechaSeleccionada = DateTime.now();
-  String _selectedCategoriaId = ConstantesCategoria.defaultcategoriaId;
-
+  String _selectedCategoriaId = ConstantesCategorias.defaultcategoriaId;
   @override
   void initState() {
     super.initState();
@@ -35,7 +34,16 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
     _fechaController = TextEditingController(
       text: DateFormat('dd/MM/yyyy').format(_fechaSeleccionada)
     );
-    _selectedCategoriaId = widget.noticia?.categoriaId ?? ConstantesCategoria.defaultcategoriaId;
+    
+    // Verificar si el ID de categoría existe en la lista antes de asignarlo
+    if (widget.noticia?.categoriaId != null) {
+      final existeCategoria = widget.categorias.any((c) => c.id == widget.noticia!.categoriaId);
+      _selectedCategoriaId = existeCategoria 
+          ? widget.noticia!.categoriaId! 
+          : ConstantesCategorias.defaultcategoriaId;
+    } else {
+      _selectedCategoriaId = ConstantesCategorias.defaultcategoriaId;
+    }
   }
 
   @override
@@ -213,13 +221,14 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
               items: [
                 // Opción por defecto
                 const DropdownMenuItem<String>(
-                  value: ConstantesCategoria.defaultcategoriaId,
+                  value: ConstantesCategorias.defaultcategoriaId,
                   child: Text('Sin categoría'),
-                ),
-                // Opciones de categorías cargadas
-                ...widget.categorias.map((categoria) {
+                ),                // Opciones de categorías cargadas
+                ...widget.categorias
+                    .where((categoria) => categoria.id != null && categoria.id!.isNotEmpty)
+                    .map((categoria) {
                   return DropdownMenuItem<String>(
-                    value: categoria.id ?? '',
+                    value: categoria.id!,
                     child: Text(categoria.nombre),
                   );
                 }),

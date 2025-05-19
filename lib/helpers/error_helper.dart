@@ -9,14 +9,13 @@ class ErrorHelper {
   ) {
     String message;
     Color color;
-    
-    switch (statusCode) {
+      switch (statusCode) {
       case 400:
         message = 'Solicitud incorrecta. Verifica los datos enviados.';
         color = Colors.red;
         break;
       case 401:
-        message = ConstantesNoticias.errorUnauthorized;
+        message = ConstantesApi.errorUnauthorized;
         color = Colors.orange;
         break;
       case 403:
@@ -28,7 +27,11 @@ class ErrorHelper {
         color = Colors.grey;
         break;
       case 500:
-        message = ConstantesNoticias.errorServer;
+        message = ConstantesApi.errorServer;
+        color = Colors.red;
+        break;
+      case 503:
+        message = 'Por favor, verifica tu conexión a internet.';
         color = Colors.red;
         break;
       default:

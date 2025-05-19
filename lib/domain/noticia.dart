@@ -1,46 +1,23 @@
-import 'package:kgaona/constants/constantes.dart';
+import 'package:dart_mappable/dart_mappable.dart';
+part 'noticia.mapper.dart';
 
-class Noticia {
-  final String? id; // Campo opcional para manejar creación y edición
+@MappableClass()
+class Noticia with NoticiaMappable{
+  final String? id; 
   final String titulo;
   final String descripcion;
   final String fuente;
   final DateTime publicadaEl;
-  final String urlImagen; // Campo para la URL de la imagen
-  final String categoriaId; // Nuevo campo para el ID de la categoría
+  final String urlImagen; 
+  final String? categoriaId; 
 
   Noticia({
-    this.id, // El id es opcional
+    this.id, 
     required this.titulo,
     required this.descripcion,
     required this.fuente,
     required this.publicadaEl,
     required this.urlImagen,
-    required this.categoriaId, // Campo requerido para la categoría
+    this.categoriaId, 
   });
-
-  // Método para convertir un JSON en una instancia de Noticia
-  factory Noticia.fromJson(Map<String, dynamic> json) {
-    return Noticia(
-      id: json['_id'], // El id viene del servidor
-      titulo: json['titulo'] ?? 'Sin título',
-      descripcion: json['descripcion'] ?? 'Sin descripción',
-      fuente: json['fuente'] ?? 'Fuente desconocida',
-      publicadaEl: DateTime.tryParse(json['publicadaEl'] ?? '') ?? DateTime.now(),
-      urlImagen: json['imagenUrl'] ?? 'https://via.placeholder.com/150',
-      categoriaId: json['categoriaId'] ?? ConstantesCategoria.defaultcategoriaId, // Valor por defecto si no hay categoría
-    );
-  }
-
-  // Método para convertir una instancia de Noticia a JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'titulo': titulo,
-      'descripcion': descripcion,
-      'fuente': fuente,
-      'publicadaEl': publicadaEl.toIso8601String(),
-      'imagenUrl': urlImagen,
-      'categoriaId': categoriaId,
-    };
-  }
 }

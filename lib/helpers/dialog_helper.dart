@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:kgaona/data/preferencia_repository.dart';
+import 'package:kgaona/helpers/secure_storage_service.dart';
 import 'package:kgaona/views/login_screen.dart';
+import 'package:get_it/get_it.dart';
 
 /// Helper para gestionar diferentes tipos de diálogos en la aplicación
 class DialogHelper {
@@ -32,7 +35,6 @@ class DialogHelper {
       },
     );
   }
-
   /// Muestra un diálogo específico para cerrar sesión
   static void mostrarDialogoCerrarSesion(BuildContext context) {
     showDialog(
@@ -48,13 +50,28 @@ class DialogHelper {
               },
               child: const Text('Cancelar'),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Cierra el diálogo
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                );
+            ElevatedButton(              onPressed: () async {
+                // Obtener instancia del SecureStorageService
+                final secureStorage = GetIt.instance<SecureStorageService>();
+                
+                // Obtener instancia del PreferenciaRepository para limpiar la caché
+                final preferenciasRepo = GetIt.instance<PreferenciaRepository>();
+                
+                // Invalidamos la caché de preferencias
+                preferenciasRepo.invalidarCache();
+                
+                // Limpiamos los datos de sesión
+                await secureStorage.clearAllSessionData();
+                
+                if (context.mounted) {
+                  Navigator.of(context).pop(); // Cierra el diálogo
+                  
+                  // Redireccionar a la pantalla de login, eliminando todas las pantallas del stack
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                    (route) => false, // Elimina todas las rutas previas
+                  );
+                }
               },
               child: const Text('Cerrar Sesión'),
             ),

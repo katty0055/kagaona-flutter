@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:kgaona/api/service/auth_service.dart';
-import 'package:kgaona/views/welcome_screen.dart'; 
+import 'package:kgaona/components/snackbar_component.dart';
+import 'package:kgaona/data/auth_repository.dart';
+import 'package:kgaona/exceptions/api_exception.dart';
+import 'package:kgaona/views/welcome_screen.dart';
+import 'package:watch_it/watch_it.dart';
 
 class LoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
@@ -11,7 +14,8 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextEditingController usernameController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
-    final MockAuthService authService = MockAuthService();
+    final AuthRepository authRepository = di<AuthRepository>();
+    
     return Scaffold(
       // appBar: AppBar(title: const Text('Inicio de Sesión')),
       body: Padding(
@@ -33,7 +37,7 @@ class LoginScreen extends StatelessWidget {
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'El usuario es obligatorio';
+                    return 'El correo es obligatorio';
                   }
                   return null;
                 },
@@ -67,10 +71,8 @@ class LoginScreen extends StatelessWidget {
                       builder: (BuildContext context) {
                         return const Center(child: CircularProgressIndicator());
                       },
-                    );
-
-                    try {
-                      final success = await authService.login(
+                    );                    try {
+                      await authRepository.login(
                         username,
                         password,
                       );
@@ -78,26 +80,37 @@ class LoginScreen extends StatelessWidget {
                       if (!context.mounted) return; // Verifica si el widget sigue montado antes de usar el contexto
                       Navigator.pop(context); // Cierra el indicador de carga
 
-                      if (success) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const WelcomeScreen(),
-                          ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Inicio de sesión fallido'),
-                          ),
-                        );
-                      }
+                      // Si llegamos aquí, el login fue exitoso
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const WelcomeScreen(),
+                        ),
+                      );
                     } catch (e) {
                       if (!context.mounted) return; // Verifica si el widget sigue montado
                       Navigator.pop(context); // Cierra el indicador de carga
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+                      
+                      // Usar SnackBarHelper para mostrar errores de forma consistente
+                      if (e is ApiException && e.statusCode == 503) {
+                        // Error de conectividad
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBarComponent.crear(
+                            mensaje: 'Por favor, verifica tu conexión a internet.',
+                            color: Colors.red,
+                            duracion: const Duration(seconds: 4),
+                          ),
+                        );
+                      } else {
+                        // Otros errores
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBarComponent.crear(
+                            mensaje: 'Inicio de sesión fallido',
+                            color: Colors.red,
+                            duracion: const Duration(seconds: 4),
+                          ),
+                        );
+                      }
                     }
                   }
                 },

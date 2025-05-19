@@ -1,111 +1,46 @@
-
-import 'dart:async';
-import 'package:dio/dio.dart';
-import 'package:kgaona/constants/constantes.dart';
+import 'package:kgaona/api/service/base_service.dart';
+import 'package:kgaona/core/api_config.dart';
 import 'package:kgaona/domain/preferencia.dart';
-import 'package:kgaona/exceptions/api_exception.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class PreferenciaService {
-  final Dio _dio = Dio(
-    BaseOptions(
-      connectTimeout: const Duration(seconds: ConstantesCategoria.timeoutSeconds),
-      receiveTimeout: const Duration(seconds: ConstantesCategoria.timeoutSeconds),
-    ),
-  );
-
-  // Clave para almacenar el ID en SharedPreferences
-  static const String _preferenciaIdKey = 'preferencia_id';
-
-  // ID para preferencias, inicialmente nulo
-  String? _preferenciaId;
-
-  // Constructor que inicializa el ID desde SharedPreferences
-  PreferenciaService() {
-    _cargarIdGuardado();
+class PreferenciaService extends BaseService {
+  /// Obtiene las preferencias del usuario identificadas por su email
+  Future<Preferencia> obtenerPreferenciaPorEmail(String email) async {
+    final endpoint = '${ApiConfig.preferenciasEndpoint}/$email';
+    final Map<String, dynamic> responseData = await get<Map<String, dynamic>>(
+      endpoint,
+      errorMessage: 'Error al obtener preferencias',
+    );
+    
+    return PreferenciaMapper.fromMap(responseData);
   }
 
-  Future<void> _cargarIdGuardado() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (prefs.containsKey(_preferenciaIdKey)) {
-      _preferenciaId = prefs.getString(_preferenciaIdKey);
-    } else {
-      _preferenciaId = '';
-    }
-  }
-
-  Future<void> _guardarId(String id) async {
-    _preferenciaId = id;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_preferenciaIdKey, id);
-  }
-
-  /// Obtiene las preferencias del usuario
-  Future<Preferencia> obtenerPreferencias() async {
-    try {
-      // Si no hay ID almacenado, devolver preferencias vacías sin consultar API
-      if (_preferenciaId != null && _preferenciaId!.isNotEmpty) {
-        final response = await _dio.get(
-          '${ApiConstants.preferenciasUrl}/$_preferenciaId',
-        );
-        // Si la respuesta es exitosa, convertir a objeto Preferencia
-        return Preferencia.fromJson(response.data);
-      }
-      return await _crearPreferenciasVacias();
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 404) {
-        // Si no existe, devolver preferencias vacías
-        return await _crearPreferenciasVacias();
-      } else {
-        throw ApiException(
-          'Error al conectar con la API de preferencias: $e',
-          statusCode: e.response?.statusCode,
-        );
-      }
-    } catch (e) {
-      throw ApiException('Error desconocido: $e');
-    }
-  }
-
-  /// Guarda las preferencias del usuario (Actualiza)
+  /// Actualiza las preferencias del usuario en la API
   Future<void> guardarPreferencias(Preferencia preferencia) async {
-    try {
-      await _dio.put(
-        '${ApiConstants.preferenciasUrl}/$_preferenciaId',
-        data: preferencia.toJson(),
-      );
-    } on DioException catch (e) {
-      throw ApiException(
-        'Error al conectar con la API de preferencias: $e',
-        statusCode: e.response?.statusCode,
-      );
-    } catch (e) {
-      throw ApiException('Error desconocido: $e');
-    }
+    final endpoint = '${ApiConfig.preferenciasEndpoint}/${preferencia.email}';
+    final dataToSend = PreferenciaMapper.ensureInitialized().encodeMap(preferencia);
+    
+    await put(
+      endpoint,
+      data: dataToSend,
+      errorMessage: 'Error al guardar preferencias',
+    );
   }
+    /// Crea un nuevo registro de preferencias en la API
+  Future<Preferencia> crearPreferencias(String email, {List<String>? categorias}) async {
+    final Map<String, dynamic> preferenciasData = {
+      'email': email,
+      'categoriasSeleccionadas': categorias ?? []
+    };
 
-  /// Método auxiliar para crear un nuevo registro de preferencias vacías
-  Future<Preferencia> _crearPreferenciasVacias() async {
-    try {
-      final preferenciasVacias = Preferencia.empty();
-
-      // Crear un nuevo registro en la API
-      final Response response = await _dio.post(
-        ApiConstants.preferenciasUrl,
-        data: preferenciasVacias.toJson(),
-      );
-
-      // Guardar el nuevo ID
-      await _guardarId(response.data['_id']);
-
-      return preferenciasVacias;
-    } on DioException catch (e) {
-      throw ApiException(
-        'Error al conectar con la API de preferencias: $e',
-        statusCode: e.response?.statusCode,
-      );
-    } catch (e) {
-      throw ApiException('Error desconocido: $e');
-    }
+    await post(
+      ApiConfig.preferenciasEndpoint,
+      data: preferenciasData,
+      errorMessage: 'Error al crear preferencias',
+    );
+    
+    return Preferencia(
+      email: email,
+      categoriasSeleccionadas: categorias ?? []
+    );
   }
 }

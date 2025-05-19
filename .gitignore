@@ -271,3 +271,5 @@ sonar-project.properties
 
 #vscode
 .vscode/
+
+!.env.example
