@@ -41,6 +41,16 @@ class ConstantesApi {
   static const String usuarioDefault = 'Usuario anonimo';
 }
 
+class ConstantesComentarios {
+  static const String mensajeCargando = 'Cargando comentarios...';
+  static const String listaVacia = 'No hay comentarios disponibles';
+  static const String mensajeError = 'Error al cargar comentarios';
+  static const String errorNoComentario = 'Comentario no encontrado';
+  static const String successCreated = 'Comentario agregado exitosamente';
+  static const String successReaction = 'Reacción registrada exitosamente';
+  static const String successSubcomentario = 'Subcomentario agregado exitosamente';
+}
+
 class ConstantesCategorias{
   static const String tituloApp = 'Categorías de Noticias';
   static const String mensajeCargando = 'Cargando categorias...';

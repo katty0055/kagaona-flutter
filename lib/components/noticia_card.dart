@@ -2,43 +2,55 @@ import 'package:flutter/material.dart';
 import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/domain/noticia.dart';
 import 'package:intl/intl.dart';
+import 'package:kgaona/views/comentarios/comentarios_screen.dart';
 
 class NoticiaCard extends StatelessWidget {
   final Noticia noticia;
   final VoidCallback onEdit; // Callback para editar la noticia
-  final String categoriaNombre; // Nuevo parámetro para mostrar el nombre de la categoría
+  final String
+  categoriaNombre; // Nuevo parámetro para mostrar el nombre de la categoría
 
-  const NoticiaCard({super.key, required this.noticia, required this.onEdit, required this.categoriaNombre});
+  const NoticiaCard({
+    super.key,
+    required this.noticia,
+    required this.onEdit,
+    required this.categoriaNombre,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
-    children: [
-      Card(
-        margin: const EdgeInsets.only(top:16.0, bottom: 0.0, left: 0.0, right: 0.0), // Margen de la tarjeta
-        color: Colors.white, 
-        shape: null, 
-        elevation: 0.0,
+      children: [
+        Card(
+          margin: const EdgeInsets.only(
+            top: 16.0,
+            bottom: 0.0,
+            left: 0.0,
+            right: 0.0,
+          ), // Margen de la tarjeta
+          color: Colors.white,
+          shape: null,
+          elevation: 0.0,
           child: Column(
             children: [
               Row(
-                  children: [
-                    Icon(Icons.category, size: 14, color: Colors.grey[600]),
-                    const SizedBox(width: 4),
-                    Text(
-                      categoriaNombre,
-                      style: TextStyle(
-                        color: Colors.grey[600], 
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
+                children: [
+                  Icon(Icons.category, size: 14, color: Colors.grey[600]),
+                  const SizedBox(width: 4),
+                  Text(
+                    categoriaNombre,
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
-                ),
-              // Primera fila: Texto y la imagen   
+                  ),
+                ],
+              ),
+              // Primera fila: Texto y la imagen
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),          
-                child:Row(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Columna para el texto (2/3 del ancho)
@@ -88,7 +100,7 @@ class NoticiaCard extends StatelessWidget {
                     const SizedBox(width: 30),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(16.0),
-                      child:  Image.network(
+                      child: Image.network(
                         noticia.urlImagen.isNotEmpty
                             ? noticia.urlImagen
                             : 'https://via.placeholder.com/100', // Imagen por defecto si no hay URL
@@ -112,15 +124,32 @@ class NoticiaCard extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),              
+              ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end, // Alinea los botones al final
+                mainAxisAlignment:
+                    MainAxisAlignment.end, // Alinea los botones al final
                 children: [
                   IconButton(
                     icon: const Icon(Icons.star_border),
                     onPressed: () {
                       // Acción para marcar como favorito
                     },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.comment),
+                    onPressed: () {
+                      // Navegar a la vista de comentarios
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder:
+                              (context) => ComentariosScreen(
+                                noticiaId: noticia.id!,
+                                noticiaTitulo: noticia.titulo,
+                              ),
+                        ),
+                      );
+                    },
+                    tooltip: 'Ver comentarios',
                   ),
                   IconButton(
                     icon: const Icon(Icons.share),
@@ -141,15 +170,15 @@ class NoticiaCard extends StatelessWidget {
           ),
         ),
         const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 17.0, vertical: 0.0), // Padding horizontal de 16
-          child:Divider(
-            color: Colors.grey, 
-          ),
+          padding: EdgeInsets.symmetric(
+            horizontal: 17.0,
+            vertical: 0.0,
+          ), // Padding horizontal de 16
+          child: Divider(color: Colors.grey),
         ),
       ],
-  );
-}
-
+    );
+  }
 
   String _formatDate(DateTime date) {
     return DateFormat(Constants.formatoFecha).format(date);

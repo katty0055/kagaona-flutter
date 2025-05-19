@@ -32,8 +32,8 @@ class CategoriaScreen extends StatelessWidget {
       providers: [
         BlocProvider<CategoriaBloc>(
           create: (context) => CategoriaBloc()..add(CategoriaInitEvent()),
-        )
-      ],      
+        ),
+      ],
       child: _CategoriaScreenContent(),
     );
   }
@@ -50,7 +50,7 @@ class _CategoriaScreenContent extends StatelessWidget {
             TipoOperacion.actualizar => 'Error al actualizar la categoría',
             TipoOperacion.crear => 'Error al crear la categoría',
             TipoOperacion.eliminar => 'Error al eliminar la categoría',
-            _ => 'Error al cargar las categorías'
+            _ => 'Error al cargar las categorías',
           };
 
           SnackBarHelper.manejarError(
@@ -70,7 +70,7 @@ class _CategoriaScreenContent extends StatelessWidget {
             context,
             mensaje: ConstantesCategorias.successUpdated,
           );
-        }else if (state is CategoriaDeleted) {
+        } else if (state is CategoriaDeleted) {
           SnackBarHelper.mostrarExito(
             context,
             mensaje: ConstantesCategorias.successDeleted,
@@ -81,7 +81,7 @@ class _CategoriaScreenContent extends StatelessWidget {
               context,
               mensaje: ConstantesCategorias.listaVacia,
             );
-          }else{
+          } else {
             SnackBarHelper.mostrarExito(
               context,
               mensaje: 'Categorías cargadas correctamente',
@@ -136,7 +136,7 @@ class _CategoriaScreenContent extends StatelessWidget {
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           bottomNavigationBar: const CustomBottomNavigationBar(
             selectedIndex: 0,
-          ),          
+          ),
         );
       },
     );
@@ -160,7 +160,8 @@ class _CategoriaScreenContent extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () => context.read<CategoriaBloc>().add(CategoriaInitEvent()),
+              onPressed:
+                  () => context.read<CategoriaBloc>().add(CategoriaInitEvent()),
               child: const Text('Reintentar'),
             ),
           ],
@@ -184,14 +185,18 @@ class _CategoriaScreenContent extends StatelessWidget {
               return CategoriaCard(
                 categoria: categoria,
                 onEdit: () async {
-                  final categoriaEditada = await ModalHelper.mostrarDialogo<Categoria>(
-                    context: context,
-                    title: 'Editar Categoría',
-                    child: FormularioCategoria(categoria: categoria),
-                  );                  if (categoriaEditada != null && context.mounted) {
+                  final categoriaEditada =
+                      await ModalHelper.mostrarDialogo<Categoria>(
+                        context: context,
+                        title: 'Editar Categoría',
+                        child: FormularioCategoria(categoria: categoria),
+                      );
+                  if (categoriaEditada != null && context.mounted) {
                     // Usar copyWith para mantener el ID original y actualizar el resto de datos
-                    final categoriaActualizada = categoriaEditada.copyWith(id: categoria.id);
-                    
+                    final categoriaActualizada = categoriaEditada.copyWith(
+                      id: categoria.id,
+                    );
+
                     // Usar el BLoC para actualizar la categoría
                     context.read<CategoriaBloc>().add(
                       CategoriaUpdateEvent(categoriaActualizada),
@@ -203,13 +208,16 @@ class _CategoriaScreenContent extends StatelessWidget {
                   final confirmar = await DialogHelper.mostrarConfirmacion(
                     context: context,
                     titulo: 'Confirmar eliminación',
-                    mensaje: '¿Estás seguro de eliminar la categoría "${categoria.nombre}"?',
+                    mensaje:
+                        '¿Estás seguro de eliminar la categoría "${categoria.nombre}"?',
                     textoCancelar: 'Cancelar',
                     textoConfirmar: 'Eliminar',
                   );
 
                   if (confirmar == true && context.mounted) {
-                    context.read<CategoriaBloc>().add(CategoriaDeleteEvent(categoria.id!));
+                    context.read<CategoriaBloc>().add(
+                      CategoriaDeleteEvent(categoria.id!),
+                    );
                   }
                 },
               );
@@ -223,14 +231,16 @@ class _CategoriaScreenContent extends StatelessWidget {
             await Future.delayed(const Duration(milliseconds: 1200));
             if (context.mounted) {
               context.read<CategoriaBloc>().add(CategoriaInitEvent());
-            }            
+            }
           },
           child: ListView(
             physics: const AlwaysScrollableScrollPhysics(),
             children: [
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.6,
-                child: const Center(child: Text(ConstantesCategorias.listaVacia)),
+                child: const Center(
+                  child: Text(ConstantesCategorias.listaVacia),
+                ),
               ),
             ],
           ),
