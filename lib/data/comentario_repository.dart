@@ -96,9 +96,7 @@ class ComentarioRepository extends CacheableRepository<Comentario> {
       validarNoVacio(noticiaId, 'ID de la noticia');
       return _comentarioService.obtenerNumeroComentarios(noticiaId);
     }, mensajeError: 'Error al obtener número de comentarios');
-  }
-
-  /// Registra una reacción (like o dislike) a un comentario
+  }  /// Registra una reacción (like o dislike) a un comentario
   Future<void> reaccionarComentario(
     String comentarioId, 
     String tipo, 
@@ -116,26 +114,35 @@ class ComentarioRepository extends CacheableRepository<Comentario> {
         );
       }
       
-      await _comentarioService.reaccionarComentario(
-        comentarioId, 
-        tipo, 
-        incrementar
-      );
-      
-      // Si sabemos a qué noticia pertenece este comentario, invalidamos su caché
-      if (_noticiaSeleccionadaId != null) {
-        _comentariosPorNoticia.remove(_noticiaSeleccionadaId);
+      try {
+        // Realizar la llamada a la API para registrar la reacción
+        await _comentarioService.reaccionarComentario(
+          comentarioId: comentarioId, 
+          tipoReaccion: tipo  
+        );
+        
+        // Invalidar TODA la caché para asegurar que se recarguen los datos frescos
         invalidarCache();
+      } catch (e) {
+        // Si hay un error, asegurarse de que se propague
+        rethrow;
       }
     }, mensajeError: 'Error al registrar reacción');
   }
-
   /// Agrega un subcomentario a un comentario existente
   /// Los subcomentarios no pueden tener a su vez subcomentarios
   Future<void> agregarSubcomentario(Comentario subcomentario) async {
     return manejarExcepcion(() async {
       validarSubcomentario(subcomentario);
-      await _comentarioService.agregarSubcomentario(subcomentario);
+      
+      // El idSubComentario contiene el ID del comentario padre al que queremos responder
+      final comentarioPadreId = subcomentario.idSubComentario!;
+      
+      await _comentarioService.agregarSubcomentario(
+        comentarioId: comentarioPadreId, 
+        autor: subcomentario.autor, 
+        texto: subcomentario.texto
+      );
       
       // Invalidar caché para la noticia correspondiente
       _comentariosPorNoticia.remove(subcomentario.noticiaId);
