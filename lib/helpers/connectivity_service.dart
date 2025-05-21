@@ -20,6 +20,7 @@ class ConnectivityService {
   /// Verifica la conectividad y lanza una excepción si no hay conexión
   Future<void> checkConnectivity() async {
     if (!await hasInternetConnection()) {
+      //pasar a constante
       throw ApiException('Por favor, verifica tu conexión a internet.', 
         statusCode: 503
       );

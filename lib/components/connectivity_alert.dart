@@ -21,7 +21,8 @@ class ConnectivityAlert extends StatelessWidget {
       },
       listener: (context, state) {
         // Obtener la instancia del SnackBarManager
-        final SnackBarManager snackBarManager = SnackBarManager();        if (state is ConnectivityDisconnected) {
+        final SnackBarManager snackBarManager = SnackBarManager();
+        if (state is ConnectivityDisconnected) {
           // Ya no es necesario mostrar el SnackBar porque ahora mostramos una pantalla completa
           // Solo actualizamos el estado del manager para seguimiento interno
           snackBarManager.setConnectivitySnackBarShowing(true);
