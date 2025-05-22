@@ -43,7 +43,6 @@ class PreferenciaScreen extends StatelessWidget {
             SnackBarHelper.manejarError(
               context,
               state.error,
-              mensajePredeterminado: 'Error al cargar preferencias',
             );
           } else if (state is PreferenciasSaved) {           
             
@@ -93,7 +92,7 @@ class PreferenciaScreen extends StatelessWidget {
         } else if (catState is CategoriaError) {
           return _construirWidgetError(
             context,
-            'Error al cargar categorías: ${catState.message}',
+            'Error al cargar categorías: ${catState.error.message}',
             () => context.read<CategoriaBloc>().add(CategoriaInitEvent()),
           );
         } else if (prefState is PreferenciaError) {

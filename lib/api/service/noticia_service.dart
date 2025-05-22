@@ -8,7 +8,7 @@ class NoticiaService extends BaseService {
   Future<List<Noticia>> obtenerNoticias() async {
     final List<dynamic> noticiasJson = await get<List<dynamic>>(
       ApiConfig.noticiasEndpoint,
-      errorMessage: ConstantesNoticias.mensajeError,
+      errorMessage: NoticiasConstantes.mensajeError,
     );
 
     return noticiasJson

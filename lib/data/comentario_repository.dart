@@ -1,5 +1,5 @@
 import 'package:kgaona/api/service/comentario_service.dart';
-import 'package:kgaona/core/base_repository.dart';
+import 'package:kgaona/data/base_repository.dart';
 import 'package:kgaona/domain/comentario.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
 

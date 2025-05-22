@@ -14,7 +14,7 @@ class ComentarioService extends BaseService {
     final endpoint = ApiConfig.comentariosEndpoint;
     final List<dynamic> comentariosJson = await get<List<dynamic>>(
       endpoint,
-      errorMessage: ConstantesComentarios.mensajeError,
+      errorMessage: ComentarioConstantes.mensajeError,
     );
 
     // Filtrar solo los comentarios para la noticia específica
@@ -166,7 +166,7 @@ class ComentarioService extends BaseService {
         }
       }
 
-      throw ApiException(ConstantesApi.errorServer, statusCode: 404);
+      throw ApiException(ComentarioConstantes.errorServer, statusCode: 404);
     } on DioException catch (e) {
       debugPrint('❌ DioException en reaccionarComentario: ${e.toString()}');
     } catch (e) {

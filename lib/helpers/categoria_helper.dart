@@ -3,8 +3,8 @@ import 'package:kgaona/domain/categoria.dart';
 
 class CategoriaHelper {
   static String obtenerNombreCategoria(String categoriaId, List<Categoria> categorias) {
-    if (categoriaId.isEmpty || categoriaId == ConstantesCategorias.defaultcategoriaId) {
-      return 'Sin categoría';
+    if (categoriaId.isEmpty || categoriaId == CategoriaConstantes.defaultcategoriaId) {
+      return CategoriaConstantes.defaultcategoriaId;
     }
     
     final categoria = categorias.firstWhere(

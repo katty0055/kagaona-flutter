@@ -1,3 +1,4 @@
+import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
 
 /// La clase BaseRepository sirve como base para todos los repositorios de la aplicación.
@@ -23,7 +24,6 @@ abstract class BaseRepository<T> {
         // Envolver otras excepciones en ApiException con mensaje contextual
         throw ApiException(
           '$mensajeError: $e',
-          statusCode: e is ArgumentError ? 400 : 500,
         );
       }
     }
@@ -33,7 +33,7 @@ abstract class BaseRepository<T> {
   void validarNoVacio(String? valor, String nombreCampo) {
     if (valor == null || valor.isEmpty) {
       throw ApiException(
-        'El $nombreCampo no puede estar vacío.',
+        '$nombreCampo${ValidacionConstantes.campoVacio}',
         statusCode: 400,
       );
     }

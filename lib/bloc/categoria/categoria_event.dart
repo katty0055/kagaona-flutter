@@ -6,7 +6,14 @@ abstract class CategoriaEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class CategoriaInitEvent extends CategoriaEvent {}
+class CategoriaInitEvent extends CategoriaEvent {
+  final bool forzarRecarga;
+  
+  CategoriaInitEvent({this.forzarRecarga = false});
+  
+  @override
+  List<Object?> get props => [forzarRecarga];
+}
 
 class CategoriaCreateEvent extends CategoriaEvent {
   final Categoria categoria;

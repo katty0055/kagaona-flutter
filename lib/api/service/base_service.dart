@@ -18,10 +18,10 @@ class BaseService {
       BaseOptions(
         baseUrl: ApiConfig.beeceptorBaseUrl,
         connectTimeout: const Duration(
-          milliseconds: (ConstantesApi.timeoutSeconds * 1000),
+          milliseconds: (AppConstantes.timeoutSeconds * 1000),
         ),
         receiveTimeout: const Duration(
-          milliseconds: (ConstantesApi.timeoutSeconds * 1000),
+          milliseconds: (AppConstantes.timeoutSeconds * 1000),
         ),
         headers: {
           'x-beeceptor-auth': ApiConfig.beeceptorApiKey,
@@ -35,15 +35,25 @@ class BaseService {
     // Manejo de errores de timeout
     if (e.type == DioExceptionType.connectionTimeout ||
         e.type == DioExceptionType.receiveTimeout) {
-      throw ApiException(ConstantesApi.errorTimeout);
+      throw ApiException(AppConstantes.errorTimeOut);
     }
 
-    // Identificar tipo de endpoint
+    // Personalización de errores según el endpoint
     String errorNotFound = '';
+    String errorUnauthorized = '';
+    String errorBadRequest = '';
+    String errorServer = '';
+
     if (endpoint.contains(ApiConfig.categoriaEndpoint)) {
-      errorNotFound = ConstantesCategorias.errorNocategoria;
+      errorNotFound = CategoriaConstantes.errorNocategoria;
+      errorUnauthorized = CategoriaConstantes.errorUnauthorized;
+      errorBadRequest = CategoriaConstantes.errorInvalidData;
+      errorServer = CategoriaConstantes.errorServer;
     } else if (endpoint.contains(ApiConfig.noticiasEndpoint)) {
-      errorNotFound = ConstantesNoticias.errorNotFound;
+      errorNotFound = NoticiasConstantes.errorNotFound;
+      errorUnauthorized = NoticiasConstantes.errorUnauthorized;
+      errorBadRequest = NoticiasConstantes.errorInvalidData;
+      errorServer = NoticiasConstantes.errorServer;
     }
     //falta los otros endpoints
     final statusCode = e.response?.statusCode;
@@ -51,18 +61,19 @@ class BaseService {
     // Aplicar código de estado al tipo de recurso
     switch (statusCode) {
       case 400:
-        return ApiException('Datos inválidos para esta url $endpoint', statusCode: 400);
+        return ApiException(errorBadRequest, statusCode: 400);
       case 401:
-        return ApiException(ConstantesApi.errorUnauthorized, statusCode: 401);
+        return ApiException(errorUnauthorized, statusCode: 401);
       case 404:
       //personalizacion
         return ApiException(errorNotFound, statusCode: 404);
       case 500:
-        return ApiException(ConstantesApi.errorServer, statusCode: 500);
+        return ApiException(errorServer, statusCode: 500);
       default:
         return ApiException('Error desconocido en $endpoint', statusCode: statusCode);
     }
   }
+
     /// Método privado que ejecuta una petición HTTP y maneja los errores de forma centralizada
   Future<T> _executeRequest<T>(
     Future<Response<dynamic>> Function() requestFn,
@@ -99,7 +110,7 @@ class BaseService {
   Future<T> get<T>(
     String endpoint, {
     Map<String, dynamic>? queryParameters,
-    String errorMessage = 'Error al conectar con la API',
+    String errorMessage = AppConstantes.errorGetDefault,
     bool requireAuthToken = false,
   }) async {
     final options = await _getRequestOptions(requireAuthToken: requireAuthToken);
@@ -117,7 +128,7 @@ class BaseService {
     String endpoint, {
     required dynamic data,
     Map<String, dynamic>? queryParameters,
-    String errorMessage = 'Error al crear el recurso',
+    String errorMessage = AppConstantes.errorCreateDefault,
     bool requireAuthToken = false,
   }) async {
     final options = await _getRequestOptions(requireAuthToken: requireAuthToken);
@@ -136,7 +147,7 @@ class BaseService {
     String endpoint, {
     required dynamic data,
     Map<String, dynamic>? queryParameters,
-    String errorMessage = 'Error al actualizar el recurso',
+    String errorMessage = AppConstantes.errorUpdateDefault,
     bool requireAuthToken = false,
   }) async {
     final options = await _getRequestOptions(requireAuthToken: requireAuthToken);
@@ -155,7 +166,7 @@ class BaseService {
   Future<dynamic> delete(
     String endpoint, {
     Map<String, dynamic>? queryParameters,
-    String errorMessage = 'Error al eliminar el recurso',
+    String errorMessage = AppConstantes.errorDeleteDefault,
     bool requireAuthToken = false,
   }) async {
     final options = await _getRequestOptions(requireAuthToken: requireAuthToken);
@@ -182,7 +193,7 @@ class BaseService {
         };
       } else {
         throw ApiException(
-          'No se encontró el token de autenticación',
+          AppConstantes.tokenNoEncontrado,
           statusCode: 401,
         );
       }

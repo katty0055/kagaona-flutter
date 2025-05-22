@@ -27,7 +27,7 @@ class QuoteRepository {
 
   Future<List<Quote>> getPaginatedQuotes({
     required int pageNumber,
-    int pageSize = Constants.pageSize,
+    int pageSize = CotizacionConstantes.pageSize,
   }) async {
     // Simula un delay de 2 segundos
     await Future.delayed(const Duration(seconds: 2));

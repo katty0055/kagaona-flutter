@@ -199,6 +199,6 @@ class NoticiaCard extends StatelessWidget {
   }
 
   String _formatDate(DateTime date) {
-    return DateFormat(Constants.formatoFecha).format(date);
+    return DateFormat(AppConstantes.formatoFecha).format(date);
   }
 }

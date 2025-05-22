@@ -12,14 +12,13 @@ class CategoriaInitial extends CategoriaState {}
 enum TipoOperacion { cargar, crear, actualizar, eliminar }
 
 class CategoriaError extends CategoriaState {
-  final String message;
   final ApiException error;
   final TipoOperacion tipoOperacion;
 
-  CategoriaError(this.message, this.error, this.tipoOperacion);
+  CategoriaError(this.error, this.tipoOperacion);
 
   @override
-  List<Object?> get props => [message, error, tipoOperacion];
+  List<Object?> get props => [error, tipoOperacion];
 }
 
 class CategoriaLoading extends CategoriaState {}
@@ -44,4 +43,9 @@ class CategoriaUpdated extends CategoriaLoaded {
 
 class CategoriaDeleted extends CategoriaLoaded {
   CategoriaDeleted(super.categorias, super.lastUpdated);
+}
+
+/// Estado especial para cuando se recarga la caché forzadamente
+class CategoriaReloaded extends CategoriaLoaded {
+  CategoriaReloaded(super.categorias, super.lastUpdated);
 }

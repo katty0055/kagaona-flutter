@@ -79,9 +79,6 @@ class CategoriaCard extends StatelessWidget {
           onTap: () {
             // Aquí podríamos navegar a un detalle de la categoría
             // o mostrar las noticias filtradas por esta categoría
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Seleccionaste: ${categoria.nombre}')),
-            );
           },
         ),
     );

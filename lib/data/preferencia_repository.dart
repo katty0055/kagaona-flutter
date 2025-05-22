@@ -1,5 +1,5 @@
 import 'package:kgaona/api/service/preferencia_service.dart';
-import 'package:kgaona/core/base_repository.dart';
+import 'package:kgaona/data/base_repository.dart';
 import 'package:kgaona/domain/preferencia.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
 import 'package:kgaona/helpers/secure_storage_service.dart';

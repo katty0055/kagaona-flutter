@@ -24,7 +24,6 @@ class CommentList extends StatelessWidget {
           SnackBarHelper.manejarError(
             context,
             state.error,
-            mensajePredeterminado: 'Error al cargar comentarios',
           );
         }
       },

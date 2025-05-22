@@ -8,7 +8,7 @@ class CategoriaService extends BaseService {
   Future<List<Categoria>> obtenerCategorias() async {
     final List<dynamic> categoriasJson = await get<List<dynamic>>(
       ApiConfig.categoriaEndpoint,
-      errorMessage: ConstantesCategorias.mensajeError,
+      errorMessage: CategoriaConstantes.mensajeError,
     );
 
     return categoriasJson
@@ -19,27 +19,30 @@ class CategoriaService extends BaseService {
   }
 
   /// Crea una nueva categoría en la API
-  Future<void> crearCategoria(Categoria categoria) async {
-    await post(
+  /// Retorna el objeto categoria con los datos actualizados desde el servidor (incluyendo ID)
+  Future<Categoria> crearCategoria(Categoria categoria) async {
+    final response = await post(
       ApiConfig.categoriaEndpoint,
       data: categoria.toMap(),
-      errorMessage: 'Error al crear la categoría',
+      errorMessage: CategoriaConstantes.errorCreated,
     );
+    return CategoriaMapper.fromMap(response);
   }
 
   /// Edita una categoría existente en la API
-  Future<void> editarCategoria(Categoria categoria) async {
+  Future<Categoria> editarCategoria(Categoria categoria) async {
     final url = '${ApiConfig.categoriaEndpoint}/${categoria.id}';
-    await put(
+    final response = await put(
       url,
       data: categoria.toMap(),
-      errorMessage: 'Error al editar la categoría',
+      errorMessage: CategoriaConstantes.errorUpdated,
     );
+    return CategoriaMapper.fromMap(response);
   }
 
   /// Elimina una categoría de la API
   Future<void> eliminarCategoria(String id) async {
     final url = '${ApiConfig.categoriaEndpoint}/$id';
-    await delete(url, errorMessage: 'Error al eliminar la categoría');
+    await delete(url, errorMessage: CategoriaConstantes.errorDelete);
   }
 }

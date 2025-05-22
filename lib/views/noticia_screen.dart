@@ -55,33 +55,24 @@ class _NoticiaScreenContent extends StatelessWidget {
     return BlocConsumer<NoticiaBloc, NoticiaState>(
       listener: (context, state) {
         if (state is NoticiaError) {
-          final mensajeError = switch (state.tipoOperacion) {
-            TipoOperacionNoticia.actualizar => 'Error al actualizar la noticia',
-            TipoOperacionNoticia.crear => 'Error al crear la noticia',
-            TipoOperacionNoticia.eliminar => 'Error al eliminar la noticia',
-            TipoOperacionNoticia.filtrar => 'Error al filtrar las noticias',
-            _ => 'Error al cargar las noticias'
-          };
-
           SnackBarHelper.manejarError(
             context,
             state.error,
-            mensajePredeterminado: mensajeError,
           );
         }else if (state is NoticiaCreated) {
           SnackBarHelper.mostrarExito(
             context,
-            mensaje: ConstantesNoticias.successCreated,
+            mensaje: NoticiasConstantes.successCreated,
           );
         }else if (state is NoticiaUpdated) {
           SnackBarHelper.mostrarExito(
             context,
-            mensaje: ConstantesNoticias.successUpdated,
+            mensaje: NoticiasConstantes.successUpdated,
           );
         }else if (state is NoticiaDeleted) {
           SnackBarHelper.mostrarExito(
             context,
-            mensaje: ConstantesNoticias.successDeleted,
+            mensaje: NoticiasConstantes.successDeleted,
           );
         }else if (state is NoticiaFiltered) {
           SnackBarHelper.mostrarExito(
@@ -92,7 +83,7 @@ class _NoticiaScreenContent extends StatelessWidget {
           if (state.noticias.isEmpty) {
             SnackBarHelper.mostrarInfo(
               context,
-              mensaje: ConstantesNoticias.listaVacia,
+              mensaje: NoticiasConstantes.listaVacia,
             );
           }else{
             SnackBarHelper.mostrarExito(
@@ -109,7 +100,7 @@ class _NoticiaScreenContent extends StatelessWidget {
         }
         return Scaffold(
           appBar: AppBar(
-            title: const Text(ConstantesNoticias.tituloApp),
+            title: const Text(NoticiasConstantes.tituloApp),
             centerTitle: true,
             actions: [              
               IconButton(
@@ -322,7 +313,7 @@ class _NoticiaScreenContent extends StatelessWidget {
               children: [
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.6,
-                  child: const Center(child: Text(ConstantesNoticias.listaVacia)),
+                  child: const Center(child: Text(NoticiasConstantes.listaVacia)),
                 ),
               ],
             ),
