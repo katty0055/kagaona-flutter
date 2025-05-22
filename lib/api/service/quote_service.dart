@@ -18,7 +18,7 @@ class QuoteService {
   // Método para obtener cotizaciones paginadas
   Future<List<Quote>> getPaginatedQuotes({
     required int pageNumber,
-    int pageSize = Constants.pageSize
+    int pageSize = CotizacionConstantes.pageSize
   }) async {
     // Validaciones
     if (pageNumber < 1) {

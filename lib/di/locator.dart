@@ -1,4 +1,3 @@
-import 'package:kgaona/api/service/category_cache_service.dart';
 import 'package:kgaona/bloc/reporte/reporte_bloc.dart';
 import 'package:kgaona/data/auth_repository.dart';
 import 'package:kgaona/data/categoria_repository.dart';
@@ -23,5 +22,4 @@ Future<void> initLocator() async {
   di.registerLazySingleton<ConnectivityService>(() => ConnectivityService());
   di.registerSingleton<ReporteRepository>(ReporteRepository());
   di.registerFactory<ReporteBloc>(() => ReporteBloc());
-  di.registerLazySingleton<CategoryCacheService>(() => CategoryCacheService());
 }

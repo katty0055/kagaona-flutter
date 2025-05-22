@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:kgaona/bloc/auth/auth_bloc.dart';
 import 'package:kgaona/bloc/comentario/comentario_bloc.dart';
 import 'package:kgaona/bloc/reporte/reporte_bloc.dart';
 import 'package:kgaona/di/locator.dart';
@@ -10,6 +11,9 @@ import 'package:kgaona/components/connectivity_wrapper.dart';
 import 'package:kgaona/helpers/secure_storage_service.dart';
 import 'package:kgaona/views/login_screen.dart';
 import 'package:watch_it/watch_it.dart';
+// Importaciones adicionales para el NoticiaBloc
+import 'package:kgaona/bloc/noticia/noticia_bloc.dart';
+import 'package:kgaona/bloc/noticia/noticia_event.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -26,8 +30,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
-  Widget build(BuildContext context) {
-    return MultiBlocProvider(
+  Widget build(BuildContext context) {    return MultiBlocProvider(
       providers: [
         BlocProvider<ContadorBloc>(
           create: (context) => ContadorBloc(),
@@ -37,11 +40,23 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(create: (context) => ComentarioBloc()),
         BlocProvider(create: (context) => ReporteBloc()),
-      ],      child: MaterialApp(
+        BlocProvider(create: (context) => AuthBloc()),
+        // Agregamos NoticiaBloc como un provider global para mantener el estado entre navegaciones
+        BlocProvider<NoticiaBloc>(
+          create: (context) {
+            final noticiaBloc = NoticiaBloc();
+            // Primero cargar todas las noticias
+            noticiaBloc.add(FetchNoticiasEvent());
+            
+            return noticiaBloc;
+          },
+        ),
+      ],child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.pinkAccent),
         ),
+        debugShowCheckedModeBanner: false,
         builder: (context, child) {
           // Envolvemos con nuestro ConnectivityWrapper 
           return ConnectivityWrapper(child: child ?? const SizedBox.shrink());

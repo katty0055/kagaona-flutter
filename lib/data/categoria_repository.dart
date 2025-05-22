@@ -1,87 +1,80 @@
 import 'package:kgaona/api/service/categoria_service.dart';
+import 'package:kgaona/constants/constantes.dart';
+import 'package:kgaona/data/base_repository.dart';
 import 'package:kgaona/domain/categoria.dart';
-import 'package:kgaona/exceptions/api_exception.dart';
 
-class CategoriaRepository {
+/// Repositorio de categorías con capacidad de caché
+class CategoriaRepository extends CacheableRepository<Categoria> {
   final CategoriaService _categoriaService = CategoriaService();
 
-  /// Método privado para validar una categoría
-  void _validarCategoria(Categoria categoria) {
-    if (categoria.nombre.isEmpty) {
-      throw ApiException(
-        'El nombre de la categoría no puede estar vacío.',
-        statusCode: 400,
-      );
-    }
-    if (categoria.descripcion.isEmpty) {
-      throw ApiException(
-        'La descripción de la categoría no puede estar vacía.',
-        statusCode: 400,
-      );
-    }
-    if (categoria.imagenUrl.isEmpty) {
-      throw ApiException(
-        'La URL de la imagen no puede estar vacía.',
-        statusCode: 400,
-      );
-    }
+  // Timestamp de la última actualización
+  DateTime? _lastRefreshed;
+
+  @override
+  void validarEntidad(Categoria categoria) {
+    validarNoVacio(categoria.nombre, ValidacionConstantes.nombreCategoria);
+    validarNoVacio(
+      categoria.descripcion,
+      ValidacionConstantes.descripcionCategoria,
+    );
+    validarNoVacio(categoria.imagenUrl, ValidacionConstantes.imagenUrl);
   }
 
+  /// Implementación del método abstracto de CacheableRepository
+  @override
+  Future<List<Categoria>> cargarDatos() async {
+    final categorias = await manejarExcepcion(
+      () => _categoriaService.obtenerCategorias(),
+      mensajeError: CategoriaConstantes.mensajeError,
+    );
+    _lastRefreshed = DateTime.now();
+    return categorias;
+  }
+
+  /// Obtiene el timestamp de la última actualización
+  DateTime? get lastRefreshed => _lastRefreshed;
+
   /// Obtiene todas las categorías desde el repositorio
-  Future<List<Categoria>> obtenerCategorias() async {
-    try {
-      return await _categoriaService.obtenerCategorias();
-    } catch (e) {
-      if (e is ApiException) {
-        // Propaga el mensaje contextual de ApiException
-        rethrow;
-      } else {
-        throw Exception('Error desconocido: $e');
-      }
-    }
+  /// Si hay caché, devolverá los datos en caché
+  Future<List<Categoria>> obtenerCategorias({
+    bool forzarRecarga = false,
+  }) async {
+    return obtenerDatos(forzarRecarga: forzarRecarga);
   }
 
   /// Crea una nueva categoría
-  Future<void> crearCategoria(Categoria categoria) async {
-    try {
-      _validarCategoria(categoria);
-      await _categoriaService.crearCategoria(categoria);
-    } catch (e) {
-      if (e is ApiException) {
-        rethrow;
-      } else {
-        throw Exception('Error desconocido: $e');
-      }
-    }
+  /// Retorna la categoría creada con su ID asignado por el servidor
+  Future<Categoria> crearCategoria(Categoria categoria) async {
+    return manejarExcepcion(() async {
+      validarEntidad(categoria);
+      final categoriaCreada = await _categoriaService.crearCategoria(categoria);
+      invalidarCache();
+      return categoriaCreada;
+    }, mensajeError: CategoriaConstantes.errorCreated);
   }
 
   /// Edita una categoría existente
-  Future<void> actualizarCategoria(Categoria categoria) async {
-    try {
-      _validarCategoria(categoria);
-      await _categoriaService.editarCategoria(categoria);
-    } catch (e) {
-      if (e is ApiException) {
-        rethrow;
-      } else {
-        throw Exception('Error desconocido: $e');
-      }
-    }
+  Future<Categoria> actualizarCategoria(Categoria categoria) async {
+    return manejarExcepcion(() async {
+      validarEntidad(categoria);
+      final categoriaActualizada = await _categoriaService.editarCategoria(categoria);
+      invalidarCache();
+      return categoriaActualizada;
+    }, mensajeError: CategoriaConstantes.errorUpdated);
   }
 
   /// Elimina una categoría
   Future<void> eliminarCategoria(String id) async {
-    try {
-      if (id.isEmpty) {
-        throw Exception('El ID de la categoría no puede estar vacío.');
-      }
+    return manejarExcepcion(() async {
+      validarId(id);
       await _categoriaService.eliminarCategoria(id);
-    } catch (e) {
-      if (e is ApiException) {
-        rethrow;
-      } else {
-        throw Exception('Error desconocido: $e');
-      }
-    }
+      invalidarCache();
+    }, mensajeError: CategoriaConstantes.errorDelete);
+  }
+
+  /// Limpia la caché de categorías (método público)
+  void limpiarCache() {
+    invalidarCache();
+    _lastRefreshed = null;
   }
 }

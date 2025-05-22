@@ -16,24 +16,24 @@ class CommentList extends StatelessWidget {
     required this.noticiaId,
     required this.onResponderComentario,
   });
-
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ComentarioBloc, ComentarioState>(      listener: (context, state) {
+    return BlocConsumer<ComentarioBloc, ComentarioState>(      
+      listener: (context, state) {
         if (state is ComentarioError) {
           SnackBarHelper.manejarError(
             context,
             state.error,
-            mensajePredeterminado: 'Error al cargar comentarios',
           );
         }
       },
       builder: (context, state) {
         if (state is ComentarioLoading) {
-          return const Center(child: CircularProgressIndicator());        } else if (state is ComentarioLoaded) {
-          return _buildList(context, state.comentarios); // Pasar context aquí
+          return const Center(child: CircularProgressIndicator());        
+        } else if (state is ComentarioLoaded) {
+          return _buildList(context, state.comentarios); 
         } else if (state is ComentarioError) {
-          return _buildErrorState(context); // Pasar context aquí
+          return _buildErrorState(context);
         }
         return const SizedBox.shrink();
       },
