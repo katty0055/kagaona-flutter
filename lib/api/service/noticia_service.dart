@@ -1,13 +1,12 @@
 import 'package:kgaona/api/service/base_service.dart';
 import 'package:kgaona/constants/constantes.dart';
-import 'package:kgaona/core/api_config.dart';
 import 'package:kgaona/domain/noticia.dart';
 
 class NoticiaService extends BaseService {
   /// Obtiene todas las noticias desde la API
   Future<List<Noticia>> obtenerNoticias() async {
     final List<dynamic> noticiasJson = await get<List<dynamic>>(
-      ApiConfig.noticiasEndpoint,
+      ApiConstantes.noticiasEndpoint,
       errorMessage: NoticiasConstantes.mensajeError,
     );
 
@@ -21,25 +20,25 @@ class NoticiaService extends BaseService {
   /// Crea una nueva noticia en la API
   Future<void> crearNoticia(Noticia noticia) async {
     await post(
-      ApiConfig.noticiasEndpoint,
+      ApiConstantes.noticiasEndpoint,
       data: noticia.toMap(),
-      errorMessage: 'Error al crear la noticia',
+      errorMessage: NoticiasConstantes.errorCreated,
     );
   }
 
   /// Edita una noticia existente en la API
   Future<void> editarNoticia(Noticia noticia) async {
-    final url = '${ApiConfig.noticiasEndpoint}/${noticia.id}';
+    final url = '${ApiConstantes.noticiasEndpoint}/${noticia.id}';
     await put(
       url,
       data: noticia.toMap(),
-      errorMessage: 'Error al editar la noticia',
+      errorMessage: NoticiasConstantes.errorUpdated,
     );
   }
 
   /// Elimina una noticia existente en la API
   Future<void> eliminarNoticia(String id) async {
-    final url = '${ApiConfig.noticiasEndpoint}/$id';
-    await delete(url, errorMessage: 'Error al eliminar la noticia');
+    final url = '${ApiConstantes.noticiasEndpoint}/$id';
+    await delete(url, errorMessage: NoticiasConstantes.errorDelete);
   }
 }

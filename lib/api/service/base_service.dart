@@ -44,18 +44,18 @@ class BaseService {
     String errorBadRequest = '';
     String errorServer = '';
 
-    if (endpoint.contains(ApiConfig.categoriaEndpoint)) {
+    if (endpoint.contains(ApiConstantes.categoriaEndpoint)) {
       errorNotFound = CategoriaConstantes.errorNocategoria;
       errorUnauthorized = CategoriaConstantes.errorUnauthorized;
       errorBadRequest = CategoriaConstantes.errorInvalidData;
       errorServer = CategoriaConstantes.errorServer;
-    } else if (endpoint.contains(ApiConfig.noticiasEndpoint)) {
+    } else if (endpoint.contains(ApiConstantes.noticiasEndpoint)) {
       errorNotFound = NoticiasConstantes.errorNotFound;
       errorUnauthorized = NoticiasConstantes.errorUnauthorized;
       errorBadRequest = NoticiasConstantes.errorInvalidData;
       errorServer = NoticiasConstantes.errorServer;
     }
-    //falta los otros endpoints
+    // falta los otros endpoints
     final statusCode = e.response?.statusCode;
     
     // Aplicar código de estado al tipo de recurso
@@ -64,11 +64,42 @@ class BaseService {
         return ApiException(errorBadRequest, statusCode: 400);
       case 401:
         return ApiException(errorUnauthorized, statusCode: 401);
+      case 403:
+        // Error de autorización - Problemas con API key o IP no autorizada
+        return ApiException(AppConstantes.errorAccesoDenegado, statusCode: 403);
       case 404:
-      //personalizacion
+        // Personalización para recurso no encontrado
         return ApiException(errorNotFound, statusCode: 404);
+      case 429:
+        // Límite de tasa alcanzado en Beeceptor
+        return ApiException(AppConstantes.limiteAlcanzado, statusCode: 429);
       case 500:
         return ApiException(errorServer, statusCode: 500);
+      case 561:
+        // Error en la plantilla de respuesta de Beeceptor
+        return ApiException(AppConstantes.errorServidorMock, statusCode: 561);
+      case 562:
+        // Necesita autorización en Beeceptor (x-beeceptor-auth)
+        return ApiException(AppConstantes.errorUnauthorized, statusCode: 562);
+      case 571:
+      case 572:
+      case 573:
+      case 574:
+      case 575:
+      case 576:
+      case 577:
+      case 578:
+        // Errores de conexión proxy de Beeceptor
+        return ApiException(AppConstantes.errorConexionProxy, statusCode: statusCode);
+      case 580:
+        // Cliente desconectado (socket hang up)
+        return ApiException(AppConstantes.conexionInterrumpida, statusCode: 580);
+      case 581:
+        // Error al recuperar archivo en Beeceptor
+        return ApiException(AppConstantes.errorRecuperarRecursos, statusCode: 581);
+      case 599:
+        // Error crítico en Beeceptor
+        return ApiException(AppConstantes.errorCriticoServidor, statusCode: 599);
       default:
         return ApiException('Error desconocido en $endpoint', statusCode: statusCode);
     }

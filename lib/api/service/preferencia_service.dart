@@ -1,11 +1,11 @@
 import 'package:kgaona/api/service/base_service.dart';
-import 'package:kgaona/core/api_config.dart';
+import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/domain/preferencia.dart';
 
 class PreferenciaService extends BaseService {
   /// Obtiene las preferencias del usuario identificadas por su email
   Future<Preferencia> obtenerPreferenciaPorEmail(String email) async {
-    final endpoint = '${ApiConfig.preferenciasEndpoint}/$email';
+    final endpoint = '${ApiConstantes.preferenciasEndpoint}/$email';
     final Map<String, dynamic> responseData = await get<Map<String, dynamic>>(
       endpoint,
       errorMessage: 'Error al obtener preferencias',
@@ -16,7 +16,7 @@ class PreferenciaService extends BaseService {
 
   /// Actualiza las preferencias del usuario en la API
   Future<void> guardarPreferencias(Preferencia preferencia) async {
-    final endpoint = '${ApiConfig.preferenciasEndpoint}/${preferencia.email}';
+    final endpoint = '${ApiConstantes.preferenciasEndpoint}/${preferencia.email}';
     final dataToSend = PreferenciaMapper.ensureInitialized().encodeMap(preferencia);
     
     await put(
@@ -33,7 +33,7 @@ class PreferenciaService extends BaseService {
     };
 
     await post(
-      ApiConfig.preferenciasEndpoint,
+      ApiConstantes.preferenciasEndpoint,
       data: preferenciasData,
       errorMessage: 'Error al crear preferencias',
     );

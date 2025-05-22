@@ -45,23 +45,30 @@ class AppConstantes {
   static const double espaciadoAlto = 10;
   static const String errorTimeOut = 'Tiempo de espera agotado';
   static const String usuarioDefault = 'Usuario anonimo';
-  static const String errorServer = 'Error del servidor';
-  static const String errorUnauthorized = 'No autorizado';
-  static const String errorNoInternet = 'Sin conexión a Internet';
-  static const String errorInvalidData = 'Datos inválidos';
+  static const String errorServer = 'Error del servidor';//
+  static const String errorUnauthorized = 'Se requiere autenticación';//
+  static const String errorNoInternet = 'Sin conexión a Internet';//
+  static const String errorInvalidData = 'Datos inválidos';//
   static const String tokenNoEncontrado = 'No se encontró el token de autenticación';
   static const String errorDeleteDefault = 'Error al eliminar el recurso';
   static const String errorUpdateDefault = 'Error al actualizar el recurso';
   static const String errorCreateDefault = 'Error al crear el recurso';  
   static const String errorGetDefault = 'Error al obtener el recurso';  
+  static const String errorAccesoDenegado = 'Acceso denegado. Verifique su API key o IP autorizada';
+  static const String limiteAlcanzado = 'Límite de peticiones alcanzado. Intente más tarde';
+  static const String errorServidorMock = 'Error en la configuración del servidor mock';
+  static const String errorConexionProxy = 'Error de conexión con el servidor proxy';
+  static const String conexionInterrumpida = 'La conexión fue interrumpida';
+  static const String errorRecuperarRecursos = 'Error al recuperar recursos del servidor';
+  static const String errorCriticoServidor = 'Error crítico en el servidor';
 }
 
 class ApiConstantes {
-  static const String endpointNoticias = '/noticias';
-  static const String endpointComentarios = '/comentarios';
-  static const String endpointCategorias = '/categorias';
-  static const String endpointPreferencias = '/preferencias';
-  static const String endpointReportes = '/reportes';
+  static const String categoriaEndpoint = '/categorias';
+  static const String noticiasEndpoint = '/noticias';
+  static const String preferenciasEndpoint = '/preferenciasEmail';
+  static const String comentariosEndpoint = '/comentarios';
+  static const String reportesEndpoint = '/reportes';
 }
 
 // Constantes para la pantalla de Tareas
@@ -113,6 +120,9 @@ class NoticiasConstantes {
   static const String errorUnauthorized = 'No autorizado para acceder a noticia';
   static const String errorInvalidData = 'Datos inválidos en noticia';
   static const String errorServer = 'Error del servidor en noticia';
+  static const String errorCreated = 'Error al crear la noticia';
+  static const String errorUpdated = 'Error al editar la noticia';
+  static const String errorDelete = 'Error al eliminar la noticia';
 }
 
 class ConectividadConstantes {

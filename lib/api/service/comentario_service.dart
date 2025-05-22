@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:kgaona/api/service/base_service.dart';
 import 'package:kgaona/constants/constantes.dart';
-import 'package:kgaona/core/api_config.dart';
 import 'package:kgaona/domain/comentario.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
 
@@ -11,7 +10,7 @@ class ComentarioService extends BaseService {
   Future<List<Comentario>> obtenerComentariosPorNoticia(
     String noticiaId,
   ) async {
-    final endpoint = ApiConfig.comentariosEndpoint;
+    final endpoint = ApiConstantes.comentariosEndpoint;
     final List<dynamic> comentariosJson = await get<List<dynamic>>(
       endpoint,
       errorMessage: ComentarioConstantes.mensajeError,
@@ -29,7 +28,7 @@ class ComentarioService extends BaseService {
   /// Agrega un nuevo comentario a una noticia
   Future<void> agregarComentario(Comentario comentario) async {
     await post(
-      ApiConfig.comentariosEndpoint,
+      ApiConstantes.comentariosEndpoint,
       data: comentario.toMap(),
       errorMessage: 'Error al agregar el comentario',
     );
