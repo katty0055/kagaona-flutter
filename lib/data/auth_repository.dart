@@ -7,8 +7,7 @@ import 'package:watch_it/watch_it.dart';
 
 class AuthRepository {
   final AuthService _authService = AuthService();
-  final SecureStorageService _secureStorage = SecureStorageService();
-  // Login user and store JWT token
+  final SecureStorageService _secureStorage = SecureStorageService();  // Login user and store JWT token
   Future<bool> login(String email, String password) async {
     try {
       if (email.isEmpty || password.isEmpty) {
@@ -27,14 +26,22 @@ class AuthRepository {
       final LoginResponse response = await _authService.login(loginRequest);
       await _secureStorage.saveJwt(response.sessionToken);
       await _secureStorage.saveUserEmail(email);
+      
+      // Cargar preferencias del usuario recién logueado
+      await preferenciaRepository.inicializarPreferenciasUsuario();
+      
       return true;
     } catch (e) {
       return false;
     }
   }
-  
-  // Logout user
+    // Logout user
   Future<void> logout() async {
+    // Limpiar la caché de preferencias antes de limpiar el token
+    final preferenciaRepository = di<PreferenciaRepository>();
+    preferenciaRepository.invalidarCache();
+    
+    // Limpiar tokens y datos de sesión
     await _secureStorage.clearJwt();
     await _secureStorage.clearUserEmail();
   }

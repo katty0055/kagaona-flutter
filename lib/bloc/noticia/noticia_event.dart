@@ -47,3 +47,5 @@ class FilterNoticiasByPreferenciasEvent extends NoticiaEvent {
   @override
   List<Object> get props => [categoriasIds];
 }
+
+class ResetNoticiaEvent extends NoticiaEvent {}

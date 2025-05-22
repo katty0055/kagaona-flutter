@@ -43,16 +43,21 @@ class PreferenciaScreen extends StatelessWidget {
             SnackBarHelper.manejarError(
               context,
               state.error,
-            );
-          } else if (state is PreferenciasSaved) {           
+            );          } else if (state is PreferenciasSaved) {           
             
-            // Emitimos evento para filtrar noticias
+            // Emitimos evento para filtrar noticias inmediatamente
             noticiaBloc.add(
               FilterNoticiasByPreferenciasEvent(state.categoriasSeleccionadas),
             );
             
+            // Mostramos mensaje de éxito
+            SnackBarHelper.mostrarExito(
+              context,
+              mensaje: 'Preferencias guardadas correctamente',
+            );
+            
             // Cerramos pantalla después de un breve delay
-            Future.delayed(const Duration(milliseconds: 600), () {
+            Future.delayed(const Duration(milliseconds: 800), () {
               if (context.mounted) {
                 Navigator.pop(context, state.categoriasSeleccionadas);
               }
@@ -249,7 +254,6 @@ class PreferenciaScreen extends StatelessWidget {
       );
     }
   }
-
   void _aplicarFiltros(BuildContext context, PreferenciaState state) {
     // Verificar que no sea un estado de error
     if (state is PreferenciaError) {
@@ -262,6 +266,11 @@ class PreferenciaScreen extends StatelessWidget {
     
     // Verificar que sea un estado que tenga categorías seleccionadas
     if (state is PreferenciasLoaded) {
+      // Obtener el NoticiaBloc para verificar que los filtros se apliquen inmediatamente
+      final noticiaBloc = BlocProvider.of<NoticiaBloc>(context, listen: false);
+      
+      // También aplicar filtro inmediatamente para actualizar la UI de fondo
+      noticiaBloc.add(FilterNoticiasByPreferenciasEvent(state.categoriasSeleccionadas));
       
       // Guardar preferencias
       context.read<PreferenciaBloc>().add(

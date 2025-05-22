@@ -25,8 +25,7 @@ import 'package:kgaona/views/categoria_screen.dart';
 import 'package:kgaona/views/preferencia_screen.dart';
 
 class NoticiaScreen extends StatelessWidget {
-  const NoticiaScreen({super.key});
-  @override
+  const NoticiaScreen({super.key});  @override
   Widget build(BuildContext context) {
     // Limpiar cualquier SnackBar existente al entrar a esta pantalla
     // pero solo si no está mostrándose el SnackBar de conectividad
@@ -34,16 +33,9 @@ class NoticiaScreen extends StatelessWidget {
       if (!SnackBarManager().isConnectivitySnackBarShowing) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
       }
-    });
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<NoticiaBloc>(
-          create: (context) => NoticiaBloc()..add(FetchNoticiasEvent()),
-        ),
-        BlocProvider<CategoriaBloc>(
-          create: (context) => CategoriaBloc()..add(CategoriaInitEvent()),
-        ),
-      ],      
+    });    // Usamos el NoticiaBloc global que viene del MultiBlocProvider en main.dart
+    return BlocProvider<CategoriaBloc>(
+      create: (context) => CategoriaBloc()..add(CategoriaInitEvent()),
       child: _NoticiaScreenContent(),
     );
   }
@@ -199,7 +191,7 @@ class _NoticiaScreenContent extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              state.message,
+              state.error.message,
               style: const TextStyle(color: Colors.red),
               textAlign: TextAlign.center,
             ),

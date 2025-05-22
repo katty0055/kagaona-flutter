@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kgaona/bloc/auth/auth_bloc.dart';
 import 'package:kgaona/bloc/auth/auth_event.dart';
 import 'package:kgaona/bloc/auth/auth_state.dart';
+import 'package:kgaona/bloc/noticia/noticia_bloc.dart';
+import 'package:kgaona/bloc/noticia/noticia_event.dart';
 import 'package:kgaona/components/snackbar_component.dart';
 import 'package:kgaona/views/welcome_screen.dart';
 
@@ -33,12 +35,13 @@ class LoginScreen extends StatelessWidget {
             // Cerrar diálogo de carga si está abierto
             Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
             
-            // Navegar a WelcomeScreen
-            Navigator.push(
+            // Cargar noticias para el nuevo usuario
+            context.read<NoticiaBloc>().add(FetchNoticiasEvent());
+            
+            // Navegar a la pantalla principal
+            Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (context) => const WelcomeScreen(),
-              ),
+              MaterialPageRoute(builder: (context) => const WelcomeScreen()),
             );
           } else if (state is AuthFailure) {
             // Cerrar diálogo de carga si está abierto

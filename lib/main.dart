@@ -11,6 +11,10 @@ import 'package:kgaona/components/connectivity_wrapper.dart';
 import 'package:kgaona/helpers/secure_storage_service.dart';
 import 'package:kgaona/views/login_screen.dart';
 import 'package:watch_it/watch_it.dart';
+// Importaciones adicionales para el NoticiaBloc
+import 'package:kgaona/bloc/noticia/noticia_bloc.dart';
+import 'package:kgaona/bloc/noticia/noticia_event.dart';
+import 'package:kgaona/data/preferencia_repository.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -38,6 +42,25 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => ComentarioBloc()),
         BlocProvider(create: (context) => ReporteBloc()),
         BlocProvider(create: (context) => AuthBloc()),
+        // Agregamos NoticiaBloc como un provider global para mantener el estado entre navegaciones
+        BlocProvider<NoticiaBloc>(
+          create: (context) {
+            final noticiaBloc = NoticiaBloc();
+            // Primero cargar todas las noticias
+            noticiaBloc.add(FetchNoticiasEvent());
+            
+            // Cargar las preferencias para aplicar el filtro inicial
+            final preferenciaRepo = di<PreferenciaRepository>();
+            preferenciaRepo.obtenerCategoriasSeleccionadas().then((categoriasIds) {
+              if (categoriasIds.isNotEmpty) {
+                // Si hay preferencias guardadas, filtrar las noticias
+                noticiaBloc.add(FilterNoticiasByPreferenciasEvent(categoriasIds));
+              }
+            });
+            
+            return noticiaBloc;
+          },
+        ),
       ],child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(

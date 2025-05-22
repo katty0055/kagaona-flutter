@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/core/api_config.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
@@ -128,6 +129,7 @@ class BaseService {
       }
     } on DioException catch (e) {
       final endpoint = e.requestOptions.path;
+      debugPrint('Error en la solicitud: ${e.message}');
       throw handleError(e, endpoint);
     } catch (e) {
       if (e is ApiException) {

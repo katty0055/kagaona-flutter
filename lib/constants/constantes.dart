@@ -111,7 +111,7 @@ class NoticiasConstantes {
   static const String tituloApp = 'Noticias Técnicas';
   static const String mensajeCargando = 'Cargando noticias...';
   static const String listaVacia = 'No hay noticias disponibles';
-  static const String mensajeError = 'Error al cargar noticias';
+  static const String mensajeError = 'Error al obtener noticias';
   static const String defaultCategoriaId = 'default';
   static const String errorNotFound = 'Noticia no encontrada';
   static const String successUpdated = 'Noticia actualizada exitosamente';
@@ -123,6 +123,7 @@ class NoticiasConstantes {
   static const String errorCreated = 'Error al crear la noticia';
   static const String errorUpdated = 'Error al editar la noticia';
   static const String errorDelete = 'Error al eliminar la noticia';
+  static const String errorFilter = "Error al filtrar noticias";
 }
 
 class ConectividadConstantes {
@@ -138,6 +139,7 @@ class ConectividadConstantes {
 class ValidacionConstantes {
   // Mensajes genéricos
   static const String campoVacio = ' no puede estar vacío';
+  static const String noFuturo = ' no puede estar en el futuro.';
   // static const String campoInvalido = 'no es válido';
   // static const String campoMuyCorto = 'es demasiado corto';
   // static const String campoMuyLargo = 'es demasiado largo';
@@ -157,6 +159,8 @@ class ValidacionConstantes {
   // Campos específicos
   static const String nombreCategoria = 'El nombre de la categoría';
   static const String descripcionCategoria = 'La descripción de la categoría';
-  // static const String nombreNoticia = 'nombre de la noticia';
-  // static const String contenidoNoticia = 'contenido de la noticia';
+  static const String tituloNoticia = 'El título de la noticia';
+  static const String descripcionNoticia = 'La descripción de la noticia';
+  static const String fuenteNoticia = 'La fuente de la noticia';
+  static const String fechaNoticia = 'La fecha de la publicación de la noticia';
 }

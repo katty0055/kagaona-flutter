@@ -111,7 +111,7 @@ class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
     try {
       await _categoriaRepository.eliminarCategoria(event.id);
 
-      // Filtrar la lista de categorías para eliminar la categoría eliminada
+      // Filtrar la lista de categorías para quitar la categoría eliminada
       final categoriasActualizadas =
           categoriasActuales
               .where((categoria) => categoria.id != event.id)

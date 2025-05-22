@@ -133,7 +133,6 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
       }
     }
   }
-
   Future<void> _onResetFilters(
     ResetFilters event,
     Emitter<PreferenciaState> emit,
@@ -147,9 +146,9 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
       // Guardar los cambios en la API inmediatamente
       await _preferenciaRepository.guardarCambiosEnAPI();
 
-      // Emitir estado de reseteo
+      // Emitir estado de reseteo con lista vacía para asegurar una UI consistente
       emit(
-        PreferenciasReset(lastUpdated: DateTime.now(), operacionExitosa: true),
+        PreferenciasSaved(categoriasSeleccionadas: [], lastUpdated: DateTime.now(), operacionExitosa: true),
       );
     } catch (e) {
       if (e is ApiException) {

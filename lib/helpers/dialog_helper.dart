@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kgaona/bloc/auth/auth_bloc.dart';
 import 'package:kgaona/bloc/auth/auth_event.dart';
+import 'package:kgaona/bloc/noticia/noticia_bloc.dart';
+import 'package:kgaona/bloc/noticia/noticia_event.dart';
 import 'package:kgaona/data/preferencia_repository.dart';
 import 'package:kgaona/views/login_screen.dart';
 import 'package:get_it/get_it.dart';
@@ -51,27 +53,39 @@ class DialogHelper {
               },
               child: const Text('Cancelar'),
             ),
-            ElevatedButton(
-              onPressed: () {
+            ElevatedButton(              onPressed: () async {
                 // Cerramos primero el diálogo
                 Navigator.of(context).pop();
-                
-                // Usar el BLoC para manejar el cierre de sesión
-                // Esto invocará internamente al AuthRepository.logout()
-                // que se encargará de limpiar los tokens y datos de sesión
-                BlocProvider.of<AuthBloc>(context).add(AuthLogoutRequested());
-                
-                // Redireccionar a la pantalla de login, eliminando todas las pantallas del stack
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                  (route) => false, // Elimina todas las rutas previas
-                );
                 
                 // Obtener instancia del PreferenciaRepository para limpiar la caché
                 final preferenciasRepo = GetIt.instance<PreferenciaRepository>();
                 
-                // Invalidamos la caché de preferencias
+                // Limpiar caché de preferencias ANTES del logout y redirección
                 preferenciasRepo.invalidarCache();
+                
+                // Obtener referencia al NoticiaBloc para reiniciar sus filtros
+                if (context.mounted) {
+                  try {
+                    final noticiaBloc = BlocProvider.of<NoticiaBloc>(context, listen: false);
+                    // Reiniciar los filtros del NoticiaBloc
+                    noticiaBloc.add(FetchNoticiasEvent());
+                  } catch (e) {
+                    // Ignorar si NoticiaBloc no está disponible
+                  }
+                }
+                
+                // Usar el BLoC para manejar el cierre de sesión
+                if (context.mounted) {
+                  BlocProvider.of<AuthBloc>(context).add(AuthLogoutRequested());
+                }
+                
+                // Redireccionar a la pantalla de login, eliminando todas las pantallas del stack
+                if (context.mounted) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                    (route) => false, // Elimina todas las rutas previas
+                  );
+                }
               },
               child: const Text('Cerrar Sesión'),
             ),

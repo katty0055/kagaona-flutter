@@ -18,22 +18,24 @@ class NoticiaService extends BaseService {
   }
 
   /// Crea una nueva noticia en la API
-  Future<void> crearNoticia(Noticia noticia) async {
-    await post(
+  Future<Noticia> crearNoticia(Noticia noticia) async {
+    final response = await post(
       ApiConstantes.noticiasEndpoint,
       data: noticia.toMap(),
       errorMessage: NoticiasConstantes.errorCreated,
     );
+    return NoticiaMapper.fromMap(response);
   }
 
   /// Edita una noticia existente en la API
-  Future<void> editarNoticia(Noticia noticia) async {
+  Future<Noticia> editarNoticia(Noticia noticia) async {
     final url = '${ApiConstantes.noticiasEndpoint}/${noticia.id}';
-    await put(
+    final response = await put(
       url,
       data: noticia.toMap(),
       errorMessage: NoticiasConstantes.errorUpdated,
     );
+    return NoticiaMapper.fromMap(response);
   }
 
   /// Elimina una noticia existente en la API

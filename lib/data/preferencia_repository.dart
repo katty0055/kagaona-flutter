@@ -145,11 +145,23 @@ class PreferenciaRepository extends CacheableRepository<Preferencia> {
   Future<void> limpiarFiltrosCategorias() async {
     return _actualizarCacheLocal([]);
   }
-
   /// Sobreescribe el método de la clase base para también limpiar la preferencia cacheada
   @override
   void invalidarCache() {
     super.invalidarCache();
     _cachedPreferencias = null;
+    
+    // // Asegurarnos de que se eliminen todos los rastros de preferencias anteriores
+    // try {
+    //   // No esperamos a que termine porque esto es solo una limpieza
+    //   _secureStorage.getUserEmail().then((email) {
+    //     if (email != null && email.isNotEmpty) {
+    //       // Crear preferencias vacías para el usuario actual
+    //       _preferenciaService.crearPreferencias(email, categorias: []);
+    //     }
+    //   });
+    // } catch (e) {
+    //   // Ignoramos cualquier error de limpieza, ya que esto es solo precaución adicional
+    // }
   }
 }
