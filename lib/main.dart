@@ -14,7 +14,6 @@ import 'package:watch_it/watch_it.dart';
 // Importaciones adicionales para el NoticiaBloc
 import 'package:kgaona/bloc/noticia/noticia_bloc.dart';
 import 'package:kgaona/bloc/noticia/noticia_event.dart';
-import 'package:kgaona/data/preferencia_repository.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -48,15 +47,6 @@ class MyApp extends StatelessWidget {
             final noticiaBloc = NoticiaBloc();
             // Primero cargar todas las noticias
             noticiaBloc.add(FetchNoticiasEvent());
-            
-            // Cargar las preferencias para aplicar el filtro inicial
-            final preferenciaRepo = di<PreferenciaRepository>();
-            preferenciaRepo.obtenerCategoriasSeleccionadas().then((categoriasIds) {
-              if (categoriasIds.isNotEmpty) {
-                // Si hay preferencias guardadas, filtrar las noticias
-                noticiaBloc.add(FilterNoticiasByPreferenciasEvent(categoriasIds));
-              }
-            });
             
             return noticiaBloc;
           },

@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kgaona/constants/constantes.dart';
+import 'package:kgaona/data/preferencia_repository.dart';
 import 'package:kgaona/domain/noticia.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
 import 'package:kgaona/data/noticia_repository.dart';
@@ -24,10 +24,13 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
     Emitter<NoticiaState> emit,
   ) async {
     emit(NoticiaLoading());
-
     try {
       final noticias = await _noticiaRepository.obtenerNoticias();
-      emit(NoticiaLoaded(noticias, DateTime.now()));
+      final preferenciaRepo = di<PreferenciaRepository>();
+      List<String> categoriasIds =await preferenciaRepo.obtenerCategoriasSeleccionadas();
+
+      List<Noticia> noticiasFiltradas=_filtrarNoticiasPorCategorias(noticias, categoriasIds);
+      emit(NoticiaLoaded(noticiasFiltradas, DateTime.now()));
     } catch (e) {
       if (e is ApiException) {
         emit(NoticiaError(e, TipoOperacionNoticia.cargar));
@@ -69,7 +72,9 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
     emit(NoticiaLoading());
 
     try {
-      final noticiaActualizada = await _noticiaRepository.editarNoticia(event.noticia);
+      final noticiaActualizada = await _noticiaRepository.editarNoticia(
+        event.noticia,
+      );
 
       // Reemplazar la noticia con el mismo ID por la versión actualizada
       final noticiasActualizadas =
@@ -105,9 +110,7 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
 
       // Filtrar la lista de noticias para quitar la noticia eliminada
       final noticiasActualizadas =
-          noticiasActuales
-              .where((noticia) => noticia.id != event.id)
-              .toList();
+          noticiasActuales.where((noticia) => noticia.id != event.id).toList();
 
       emit(NoticiaDeleted(noticiasActualizadas, DateTime.now()));
     } catch (e) {
@@ -123,27 +126,22 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
   ) async {
     List<Noticia> noticiasActuales = [];
     if (state is NoticiaLoaded) {
-      noticiasActuales = [...(state as NoticiaLoaded).noticias];
-    }
-    emit(NoticiaLoading());
-
-    try {
-      // Si no hay categorías seleccionadas, mostrar todas las noticias
-      if (event.categoriasIds.isEmpty) {
-        emit(NoticiaFiltered(noticiasActuales, DateTime.now(), event.categoriasIds));
-      } else {
-        // Si hay categorías seleccionadas, filtrar por ellas
-        final noticiasFiltradas =
-          noticiasActuales
-              .where((noticia) =>  event.categoriasIds.contains(noticia.categoriaId),)
-              .toList();
-        emit(NoticiaFiltered(noticiasFiltradas, DateTime.now(), event.categoriasIds));
+      try{
+        noticiasActuales = await _noticiaRepository.obtenerNoticias();
+        List<Noticia> noticiasFiltradas=_filtrarNoticiasPorCategorias(noticiasActuales, event.categoriasIds);
+          emit(
+            NoticiaFiltered(
+              noticiasFiltradas,
+              DateTime.now(),
+              event.categoriasIds,
+            ),
+          );
+      } catch (e) {
+        if (e is ApiException) {
+          emit(NoticiaError(e, TipoOperacionNoticia.cargar));
+        }
       }
-    } catch (e) {
-      if (e is ApiException) {
-        emit(NoticiaError(e, TipoOperacionNoticia.filtrar));
-      } 
-    }
+    }    
   }
 
   Future<void> _onResetNoticias(
@@ -153,4 +151,27 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
     // Reiniciar el estado a inicial
     emit(NoticiaInitial());
   }
+
+  /// Filtra una lista de noticias por las categorías especificadas.
+  ///
+  /// [noticias] es la lista de noticias a filtrar.
+  /// [categoriasIds] es la lista de IDs de categorías por las que filtrar.
+  /// Retorna una nueva lista con las noticias que pertenecen a las categorías especificadas.
+  List<Noticia> _filtrarNoticiasPorCategorias(
+    List<Noticia> noticias,
+    List<String> categoriasIds,
+  ) {
+    List<Noticia> noticiasRetornadas;
+    if (categoriasIds.isEmpty) {
+      // Si no hay categorías seleccionadas, devolver todas las noticias
+      noticiasRetornadas = noticias;
+    } else {
+      noticiasRetornadas =
+          noticias
+              .where((noticia) => categoriasIds.contains(noticia.categoriaId))
+              .toList();
+    }
+    return noticiasRetornadas;
+  }
+
 }
