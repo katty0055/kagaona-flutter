@@ -78,6 +78,28 @@ class ApiConstantes {
   static const String preferenciasEndpoint = '/preferenciasEmail';
   static const String comentariosEndpoint = '/comentarios';
   static const String reportesEndpoint = '/reportes';
+  static const String tareasCachePrefsEndpoint = '/tareasPreferencias';
+  static const String tareasEndpoint = '/tareas';
+}
+
+class TaskCachePrefsConstantes {
+  static const String tituloApp = 'Preferencias de Tareas';
+  static const String mensajeCargando = 'Cargando preferencias de tareas...';
+  static const String listaVacia = 'No hay preferencias de tareas disponibles';
+  static const String mensajeError = 'Error al obtener preferencias de tareas';
+  static const String errorNotFound = 'Preferencias de tareas no encontradas';
+  static const String successUpdated = 'Preferencias de tareas actualizadas exitosamente';
+  static const String errorUpdated = 'Error al editar las preferencias de tareas';
+  static const String successDeleted = 'Preferencias de tareas eliminadas exitosamente';
+  static const String errorDelete = 'Error al eliminar las preferencias de tareas';
+  static const String errorAdd = 'Error al agregar preferencias de tareas';
+  static const String successCreated = 'Preferencias de tareas creadas exitosamente';
+  static const String errorCreated = 'Error al crear las preferencias de tareas';
+  static const String errorUnauthorized = 'No autorizado para acceder a preferencias de tareas';
+  static const String errorInvalidData = 'Datos inválidos en preferencias de tareas';
+  static const String errorServer = 'Error del servidor en preferencias de tareas';
+  static const String errorSync = 'Error al sincronizar preferencias de tareas';
+  static const String successSync = 'Preferencias de tareas sincronizadas correctamente';
 }
 
 // Constantes para la pantalla de Tareas
