@@ -55,6 +55,21 @@ class BaseService {
       errorUnauthorized = NoticiasConstantes.errorUnauthorized;
       errorBadRequest = NoticiasConstantes.errorInvalidData;
       errorServer = NoticiasConstantes.errorServer;
+    }else if (endpoint.contains(ApiConstantes.preferenciasEndpoint)) {
+      errorNotFound = PreferenciaConstantes.errorNotFound;
+      errorUnauthorized = PreferenciaConstantes.errorUnauthorized;
+      errorBadRequest = PreferenciaConstantes.errorInvalidData;
+      errorServer = PreferenciaConstantes.errorServer;
+    } else if (endpoint.contains(ApiConstantes.reportesEndpoint)) {
+      errorNotFound = ReporteConstantes.errorNotFound;
+      errorUnauthorized = ReporteConstantes.errorUnauthorized;
+      errorBadRequest = ReporteConstantes.errorInvalidData;
+      errorServer = ReporteConstantes.errorServer;
+    } else if (endpoint.contains(ApiConstantes.comentariosEndpoint)) {
+      errorNotFound = ComentarioConstantes.errorNotFound;
+      errorUnauthorized = ComentarioConstantes.errorUnauthorized;
+      errorBadRequest = ComentarioConstantes.errorInvalidData;
+      errorServer = ComentarioConstantes.errorServer;
     }
     // falta los otros endpoints
     final statusCode = e.response?.statusCode;

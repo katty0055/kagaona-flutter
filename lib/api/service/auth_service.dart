@@ -22,7 +22,7 @@ class AuthService extends BaseService {
       if (e is ApiException) {
         rethrow;
       } else {
-        throw ApiException('Error de conexión: ${e.toString()}');
+        throw ApiException('Error en login');
       }
     }
   }

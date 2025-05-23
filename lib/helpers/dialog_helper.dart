@@ -62,13 +62,12 @@ class DialogHelper {
                 
                 // Limpiar caché de preferencias ANTES del logout y redirección
                 preferenciasRepo.invalidarCache();
-                
-                // Obtener referencia al NoticiaBloc para reiniciar sus filtros
+                  // Obtener referencia al NoticiaBloc para reiniciarlo
                 if (context.mounted) {
                   try {
                     final noticiaBloc = BlocProvider.of<NoticiaBloc>(context, listen: false);
-                    // Reiniciar los filtros del NoticiaBloc
-                    noticiaBloc.add(FetchNoticiasEvent());
+                    // Reiniciar el NoticiaBloc completamente en lugar de hacer fetch
+                    noticiaBloc.add(ResetNoticiaEvent());
                   } catch (e) {
                     // Ignorar si NoticiaBloc no está disponible
                   }
