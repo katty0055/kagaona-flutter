@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kgaona/api/service/tarea_service.dart';
+import 'package:kgaona/data/task_repository.dart';
 import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
 import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/constants/constantes.dart';

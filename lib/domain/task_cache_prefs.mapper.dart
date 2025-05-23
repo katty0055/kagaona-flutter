@@ -13,6 +13,7 @@ class TaskCachePrefsMapper extends ClassMapperBase<TaskCachePrefs> {
   static TaskCachePrefsMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = TaskCachePrefsMapper._());
+      TaskMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -91,7 +92,7 @@ extension TaskCachePrefsValueCopy<$R, $Out>
 
 abstract class TaskCachePrefsCopyWith<$R, $In extends TaskCachePrefs, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
-  ListCopyWith<$R, Task, ObjectCopyWith<$R, Task, Task>> get misTareas;
+  ListCopyWith<$R, Task, TaskCopyWith<$R, Task, Task>> get misTareas;
   $R call({String? email, List<Task>? misTareas});
   TaskCachePrefsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
       Then<$Out2, $R2> t);
@@ -106,8 +107,8 @@ class _TaskCachePrefsCopyWithImpl<$R, $Out>
   late final ClassMapperBase<TaskCachePrefs> $mapper =
       TaskCachePrefsMapper.ensureInitialized();
   @override
-  ListCopyWith<$R, Task, ObjectCopyWith<$R, Task, Task>> get misTareas =>
-      ListCopyWith($value.misTareas, (v, t) => ObjectCopyWith(v, $identity, t),
+  ListCopyWith<$R, Task, TaskCopyWith<$R, Task, Task>> get misTareas =>
+      ListCopyWith($value.misTareas, (v, t) => v.copyWith.$chain(t),
           (v) => call(misTareas: v));
   @override
   $R call({String? email, List<Task>? misTareas}) => $apply(FieldCopyWithData({

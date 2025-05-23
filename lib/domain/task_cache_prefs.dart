@@ -1,7 +1,7 @@
 import 'package:dart_mappable/dart_mappable.dart';
 import 'package:kgaona/domain/task.dart';
 
-part 'taskCachePrefs.mapper.dart';
+part 'task_cache_prefs.mapper.dart';
 
 @MappableClass()
 class TaskCachePrefs with TaskCachePrefsMappable {

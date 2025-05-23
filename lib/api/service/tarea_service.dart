@@ -1,124 +1,74 @@
-import 'dart:async';
-import 'package:kgaona/data/assistant_repository.dart';
-import 'package:kgaona/data/task_repository.dart';
 import 'package:kgaona/domain/task.dart';
 
-class TareasService {
-  final TaskRepository _taskRepository = TaskRepository();
-  final AssistantRepository _assistantRepository = AssistantRepository(); // Instancia del nuevo repositorio
+class TaskService {
+  final List<Task> _tasks = [
+    Task(
+      title: 'Tarea 1',
+      type: 'normal',
+      description: 'Descripción de la tarea 1',
+      date: DateTime(2025, 4, 9),
+      fechaLimite: DateTime.now().add(const Duration(days: 1)),
+      pasos: [],
+    ),
+    Task(
+      title: 'Tarea 2',
+      type: 'urgente',
+      description: 'Descripción de la tarea 2',
+      date: DateTime(2025, 4, 9),
+      fechaLimite: DateTime.now().add(const Duration(days: 2)),
+      pasos: [],
+    ),
+    Task(
+      title: 'Tarea 3',
+      type: 'normal',
+      description: 'Descripción de la tarea 3',
+      date: DateTime(2025, 4, 9),
+      fechaLimite: DateTime.now().add(const Duration(days: 3)),
+      pasos: [],
+    ),
+    Task(
+      title: 'Tarea 4',
+      type: 'uregente',
+      description: 'Descripción de la tarea 4',
+      date: DateTime(2025, 4, 9),
+      fechaLimite: DateTime.now().add(const Duration(days: 4)),
+      pasos: [],
+    ),
+    Task(
+      title: 'Tarea 5',
+      type: 'normal',
+      description: 'Descripción de la tarea 5',
+      date: DateTime(2025, 4, 9),
+      fechaLimite: DateTime.now().add(const Duration(days: 5)),
+      pasos: [],
+    ),
+  ];
 
-  // Método para obtener las tareas iniciales con pasos
-  Future<List<Task>> getTasksWithSteps({int limite = 4}) async {
-    // Simula un retraso para imitar una llamada a una API
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    // Obtiene las primeras tareas del repositorio
-    final tareas = _taskRepository.getTasks().take(limite).toList();
-
-    // Genera pasos para las tareas
-    return _addStepsToTasks(tareas);
+  List<Task> getTasks() {
+    while (_tasks.length < 100) {
+      final tipo = _tasks.length % 2 == 0 ? 'normal' : 'urgente';
+      _tasks.add(Task(
+        title: 'Tarea ${_tasks.length + 1}',
+        type: tipo,
+        description: 'Descripción de la tarea ${_tasks.length + 1}',
+        date: DateTime.now(),
+        fechaLimite: DateTime.now().add(Duration(days: _tasks.length % 5 + 1)),
+      ));
+    }
+    return _tasks;
   }
 
-  // Método para cargar más tareas con pasos (paginación)
-  Future<List<Task>> getMoreTasksWithSteps({required int inicio, int limite = 4}) async {
-    // Simula un retraso para imitar una llamada a una API
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    // Obtiene las tareas adicionales del repositorio
-    final tareas = _taskRepository.getTasks().skip(inicio).take(limite).toList();
-
-     // Itera sobre cada tarea y reemplaza la fecha límite
-    final tareasConFechaActualizada = tareas.map((tarea) {
-      return Task(
-        title: tarea.title,
-        type: tarea.type,
-        description: tarea.description,
-        date: tarea.date,
-        fechaLimite: DateTime.now().add(const Duration(days: 1)), // Reemplaza la fecha límite con el día actual + 1
-        pasos: tarea.pasos,
-      );
-    }).toList();
-
-    // Genera pasos para las tareas
-    return _addStepsToTasks(tareasConFechaActualizada);
+  void addTask(Task task) {
+    _tasks.add(task);
   }
 
-  // Método privado para agregar pasos a las tareas
-  Future<List<Task>> _addStepsToTasks(List<Task> tareas) async {
-    return await Future.wait(tareas.map((tarea) async {
-      if (tarea.pasos == null || tarea.pasos!.isEmpty) {
-        final pasos = await generarPasos(tarea.title, tarea.fechaLimite);
-        return Task(
-          title: tarea.title,
-          type: tarea.type,
-          description: tarea.description,
-          date: tarea.date,
-          fechaLimite: tarea.fechaLimite,
-          pasos: pasos,
-        );
-      }
-      return tarea;
-    }));
+  void removeTask(int index) {
+    _tasks.removeAt(index);
   }
 
-  Future<Task> agregarTarea(Task tarea) async {
-    // Simula un retraso para imitar una llamada a una API
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    // Genera pasos para la tarea
-    final pasos = await generarPasos(tarea.title, tarea.fechaLimite);
-
-    // Crea una nueva tarea con los pasos generados
-    final nuevaTarea = Task(
-      title: tarea.title,
-      type: tarea.type,
-      description: tarea.description,
-      date: tarea.date,
-      fechaLimite: tarea.fechaLimite,
-      pasos: pasos,
-    );
-
-    // Agrega la nueva tarea al repositorio
-    _taskRepository.addTask(nuevaTarea);
-
-    return nuevaTarea;
-  }
-
-  Future<void> eliminarTarea(int index) async {
-    // Simula un retraso para imitar una llamada a una API
-    await Future.delayed(const Duration(milliseconds: 500));
-    _taskRepository.removeTask(index);
-  }
-
-  Future<Task> actualizarTarea(int index, Task tareaActualizada) async {
-    // Simula un retraso para imitar una llamada a una API
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    // Genera pasos actualizados para la tarea
-    final pasos = await generarPasos(tareaActualizada.title, tareaActualizada.fechaLimite);
-
-    // Crea una tarea actualizada con los pasos generados
-    final tareaConPasos = Task(
-      title: tareaActualizada.title,
-      type: tareaActualizada.type,
-      description: tareaActualizada.description,
-      date: tareaActualizada.date,
-      fechaLimite: tareaActualizada.fechaLimite,
-      pasos: pasos,
-    );
-
-    // Actualiza la tarea en el repositorio
-    _taskRepository.updateTask(index, tareaConPasos);
-
-    return tareaConPasos;
-  }
-
-  Future<List<String>> generarPasos(String titulo, DateTime? fechaLimite) async {
-    List<String> pasos = [];
-
-    pasos = await _assistantRepository.generarPasos(titulo, fechaLimite);
-    // Retorna solo los dos primeros pasos
-    pasos = pasos.sublist(0, pasos.length > 2 ? 2 : pasos.length);
-    return pasos;
+  void updateTask(int index, Task updatedTask) {
+    if (index >= 0 && index < _tasks.length) {
+      _tasks[index] = updatedTask;
+    }
   }
 }
