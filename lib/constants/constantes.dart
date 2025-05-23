@@ -1,12 +1,14 @@
 class ComentarioConstantes {
   static const String mensajeCargando = 'Cargando comentarios...';
   static const String listaVacia = 'No hay comentarios disponibles';
-  static const String errorNoComentario = 'Comentario no encontrado';
+  static const String errorNotFound = 'Comentario no encontrado';
   static const String successCreated = 'Comentario agregado exitosamente';
   static const String successReaction = 'Reacción registrada exitosamente';
   static const String successSubcomentario = 'Subcomentario agregado exitosamente';
   static const String errorServer = 'Error del servidor en comentario';
   static const String mensajeError = 'Error al obtener comentarios';
+  static const String errorUnauthorized = 'No autorizado para acceder a comentario';
+  static const String errorInvalidData = 'Datos inválidos en comentario';
 }
 
 class CategoriaConstantes{
@@ -20,6 +22,7 @@ class CategoriaConstantes{
   static const String errorUpdated = 'Error al editar la categoría';
   static const String successDeleted = 'Categoria eliminada exitosamente';
   static const String errorDelete = 'Error al eliminar la categoría';
+  static const String errorAdd = 'Error al agregar categoría';
   static const String successCreated = 'Categoria creada exitosamente';
   static const String errorCreated = 'Error al crear la categoría';
   static const String errorUnauthorized = 'No autorizado para acceder a categoría';
@@ -34,6 +37,10 @@ class ReporteConstantes {
   static const String errorObtenerReportes = 'Error al obtener reportes';
   static const String listaVacia = 'No hay reportes disponibles';
   static const String mensajeCargando = 'Cargando reportes...';
+  static const String errorUnauthorized = 'No autorizado para acceder a reporte';
+  static const String errorInvalidData = 'Datos inválidos en reporte';
+  static const String errorServer = 'Error del servidor en reporte';
+  static const String errorNotFound = 'Reporte no encontrado';
 }
 
 
@@ -61,6 +68,8 @@ class AppConstantes {
   static const String conexionInterrumpida = 'La conexión fue interrumpida';
   static const String errorRecuperarRecursos = 'Error al recuperar recursos del servidor';
   static const String errorCriticoServidor = 'Error crítico en el servidor';
+  static const String notUser = 'No hay usuario autenticado';
+  static const String errorCache = 'Error al actualizar caché local';
 }
 
 class ApiConstantes {
@@ -152,7 +161,7 @@ class ValidacionConstantes {
   // static const String url = 'URL';
   // static const String titulo = 'título';
   // static const String fecha = 'fecha';
-  // static const String email = 'correo electrónico';
+  static const String email = 'email del usuario';
   // static const String precio = 'precio';
   // static const String cantidad = 'cantidad';
   
@@ -163,4 +172,20 @@ class ValidacionConstantes {
   static const String descripcionNoticia = 'La descripción de la noticia';
   static const String fuenteNoticia = 'La fuente de la noticia';
   static const String fechaNoticia = 'La fecha de la publicación de la noticia';
+}
+
+class PreferenciaConstantes {
+  static const String mensajeError = 'Error al obtener categorías';
+  // static const String mensajeCargando = 'Cargando preferencias...';
+  // static const String listaVacia = 'No hay preferencias disponibles';
+  // static const String errorNoPreferencia = 'Preferencia no encontrada';
+  // static const String successUpdated = 'Preferencia actualizada exitosamente';
+  static const String errorUpdated = 'Error al guardar preferencias';
+  // static const String successCreated = 'Preferencia creada exitosamente';
+  static const String errorCreated = 'Error al crear la preferencia';
+  static const String errorServer = 'Error del servidor en preferencia';
+  static const String errorUnauthorized = 'No autorizado para acceder a preferencia';
+  static const String errorInvalidData = 'Datos inválidos en preferencia';
+  static const String errorNotFound = 'Preferencia no encontrada';
+  static const String errorInit = 'Error al inicializar preferencias';
 }

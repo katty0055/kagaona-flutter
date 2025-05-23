@@ -1,10 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kgaona/bloc/noticia/noticia_bloc.dart';
-import 'package:kgaona/bloc/noticia/noticia_event.dart';
 import 'package:kgaona/data/auth_repository.dart';
 import 'package:kgaona/bloc/auth/auth_event.dart';
 import 'package:kgaona/bloc/auth/auth_state.dart';
 import 'package:kgaona/data/preferencia_repository.dart';
+import 'package:kgaona/exceptions/api_exception.dart';
 import 'package:watch_it/watch_it.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
@@ -23,7 +22,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       if (event.email.isEmpty || event.password.isEmpty) {
-        emit(const AuthFailure('El usuario y la contraseña son obligatorios'));
+        emit(AuthFailure(ApiException('El usuario y la contraseña son obligatorios')));
         return;
       }
       
@@ -34,10 +33,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (success) {
         emit(AuthAuthenticated());
       } else {
-        emit(const AuthFailure('Credenciales inválidas'));
+        emit(AuthFailure(ApiException('Credenciales inválidas')));
       }
     } catch (e) {
-      emit( AuthFailure( e.toString()));
+      emit( AuthFailure(ApiException('Error al iniciar sesión')));
     }
   }
 
@@ -49,15 +48,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       await _authRepository.logout();
       // Limpiar la caché de preferencias
-      di<PreferenciaRepository>().invalidarCache();
-      
-      // Reiniciar el NoticiaBloc para que no mantenga noticias del usuario anterior
-      final noticiaBloc = di<NoticiaBloc>();
-      noticiaBloc.add(ResetNoticiaEvent());
-      
+      di<PreferenciaRepository>().invalidarCache();      
       emit(AuthInitial());
     } catch (e) {
-      emit(AuthFailure('Error al cerrar sesión: ${e.toString()}'));
+      emit(AuthFailure(ApiException('Error al cerrar sesión')));
     }
   }
 
@@ -74,7 +68,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthUnauthenticated());
       }
     } catch (e) {
-      emit(AuthFailure(e.toString()));
+      emit(AuthFailure(ApiException('Error al realizar la verificación de sesión')));
     }
   }
 }

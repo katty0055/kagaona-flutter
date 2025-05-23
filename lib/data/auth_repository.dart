@@ -28,7 +28,7 @@ class AuthRepository {
       await _secureStorage.saveUserEmail(email);
       
       // Cargar preferencias del usuario recién logueado
-      await preferenciaRepository.inicializarPreferenciasUsuario();
+      await preferenciaRepository.cargarDatos();
       
       return true;
     } catch (e) {

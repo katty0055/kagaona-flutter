@@ -9,7 +9,7 @@ class CategoriaHelper {
     
     final categoria = categorias.firstWhere(
       (c) => c.id == categoriaId,
-      orElse: () => const Categoria(id: '', nombre: 'Desconocida', descripcion: '', imagenUrl: '')
+      orElse: () => const Categoria(id: '', nombre: CategoriaConstantes.defaultcategoriaId, descripcion: '', imagenUrl: '')
     );
     return categoria.nombre;
   }
