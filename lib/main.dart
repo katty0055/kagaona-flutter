@@ -9,6 +9,7 @@ import 'package:kgaona/bloc/contador/contador_bloc.dart';
 import 'package:kgaona/bloc/connectivity/connectivity_bloc.dart';
 import 'package:kgaona/components/connectivity_wrapper.dart';
 import 'package:kgaona/helpers/secure_storage_service.dart';
+import 'package:kgaona/helpers/shared_preferences_service.dart';
 import 'package:kgaona/views/login_screen.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:kgaona/bloc/noticia/noticia_bloc.dart';
@@ -16,6 +17,8 @@ import 'package:kgaona/bloc/noticia/noticia_bloc.dart';
 void main() async {
   await dotenv.load(fileName: ".env");
   await initLocator(); // Carga el archivo .env
+  // Inicializar el servicio/helper de SharedPreferences
+  await SharedPreferencesService().init();
 
   // Eliminar cualquier token guardado para forzar el inicio de sesión
   final secureStorage = di<SecureStorageService>();

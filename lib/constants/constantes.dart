@@ -79,10 +79,10 @@ class ApiConstantes {
   static const String comentariosEndpoint = '/comentarios';
   static const String reportesEndpoint = '/reportes';
   static const String tareasCachePrefsEndpoint = '/tareasPreferencias';
-  static const String tareasEndpoint = '/tareas';
+  static const String tareasEndpoint = '/tareaskatty';
 }
 
-class TaskCachePrefsConstantes {
+class TareasCachePrefsConstantes {
   static const String tituloApp = 'Preferencias de Tareas';
   static const String mensajeCargando = 'Cargando preferencias de tareas...';
   static const String listaVacia = 'No hay preferencias de tareas disponibles';
@@ -115,6 +115,11 @@ class TareasConstantes {
   static const String tareaEliminada = 'Tarea eliminada';
   static const int limitePasos = 2;
   static const int limiteTareas = 10;
+  static const String mensajeError = 'Error al obtener tareas';
+  static const String errorEliminar = 'Error al eliminar la tarea';
+  static const String errorActualizar = 'Error al actualizar la tarea';
+  static const String errorCrear = 'Error al crear la tarea';
+
 }
 
 // Constantes para el Juego de Preguntas
@@ -182,7 +187,7 @@ class ValidacionConstantes {
   // static const String imagen = 'imagen';
   // static const String url = 'URL';
   // static const String titulo = 'título';
-  // static const String fecha = 'fecha';
+  static const String fecha = 'La fecha';
   static const String email = 'email del usuario';
   // static const String precio = 'precio';
   // static const String cantidad = 'cantidad';
@@ -194,6 +199,7 @@ class ValidacionConstantes {
   static const String descripcionNoticia = 'La descripción de la noticia';
   static const String fuenteNoticia = 'La fuente de la noticia';
   static const String fechaNoticia = 'La fecha de la publicación de la noticia';
+  static const String tituloTarea = 'El título de la tarea';
 }
 
 class PreferenciaConstantes {

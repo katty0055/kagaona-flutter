@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:kgaona/data/task_repository.dart';
+import 'package:kgaona/data/tarea_repository.dart';
 import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
 import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/views/task_details_screen.dart';
-import 'package:kgaona/domain/task.dart';
+import 'package:kgaona/domain/tarea.dart';
 import 'package:kgaona/helpers/task_card_helper.dart';
 import 'package:kgaona/components/add_task_modal.dart'; // Importa el modal reutilizable
 

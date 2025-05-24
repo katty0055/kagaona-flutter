@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/constants/constantes.dart';
-import 'package:kgaona/domain/task.dart';
+import 'package:kgaona/domain/tarea.dart';
 
 class CommonWidgetsHelper {
   /// Construye un título en negrita con tamaño 20

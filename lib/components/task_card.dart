@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/helpers/task_card_helper.dart';
-import 'package:kgaona/domain/task.dart';
+import 'package:kgaona/domain/tarea.dart';
 import 'package:kgaona/constants/constantes.dart';
 
 class TaskCard extends StatelessWidget {

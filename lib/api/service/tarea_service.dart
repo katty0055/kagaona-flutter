@@ -1,74 +1,50 @@
-import 'package:kgaona/domain/task.dart';
+import 'package:kgaona/api/service/base_service.dart';
+import 'package:kgaona/constants/constantes.dart';
+import 'package:kgaona/domain/tarea.dart';
 
-class TaskService {
-  final List<Task> _tasks = [
-    Task(
-      title: 'Tarea 1',
-      type: 'normal',
-      description: 'Descripción de la tarea 1',
-      date: DateTime(2025, 4, 9),
-      fechaLimite: DateTime.now().add(const Duration(days: 1)),
-      pasos: [],
-    ),
-    Task(
-      title: 'Tarea 2',
-      type: 'urgente',
-      description: 'Descripción de la tarea 2',
-      date: DateTime(2025, 4, 9),
-      fechaLimite: DateTime.now().add(const Duration(days: 2)),
-      pasos: [],
-    ),
-    Task(
-      title: 'Tarea 3',
-      type: 'normal',
-      description: 'Descripción de la tarea 3',
-      date: DateTime(2025, 4, 9),
-      fechaLimite: DateTime.now().add(const Duration(days: 3)),
-      pasos: [],
-    ),
-    Task(
-      title: 'Tarea 4',
-      type: 'uregente',
-      description: 'Descripción de la tarea 4',
-      date: DateTime(2025, 4, 9),
-      fechaLimite: DateTime.now().add(const Duration(days: 4)),
-      pasos: [],
-    ),
-    Task(
-      title: 'Tarea 5',
-      type: 'normal',
-      description: 'Descripción de la tarea 5',
-      date: DateTime(2025, 4, 9),
-      fechaLimite: DateTime.now().add(const Duration(days: 5)),
-      pasos: [],
-    ),
-  ];
 
-  List<Task> getTasks() {
-    while (_tasks.length < 100) {
-      final tipo = _tasks.length % 2 == 0 ? 'normal' : 'urgente';
-      _tasks.add(Task(
-        title: 'Tarea ${_tasks.length + 1}',
-        type: tipo,
-        description: 'Descripción de la tarea ${_tasks.length + 1}',
-        date: DateTime.now(),
-        fechaLimite: DateTime.now().add(Duration(days: _tasks.length % 5 + 1)),
-      ));
-    }
-    return _tasks;
+class TareaService extends BaseService {
+  final String _endpoint = ApiConstantes.tareasEndpoint;
+
+  /// Obtiene la lista de tareas
+  Future<List<Tarea>> obtenerTareas() async {
+    final List<dynamic> tareasJson = await get<List<dynamic>>(
+      _endpoint,
+      errorMessage: 'Error al obtener las tareas',
+    );
+
+    return tareasJson
+        .map<Tarea>((json) => TareaMapper.fromMap(json as Map<String, dynamic>))
+        .toList();
   }
 
-  void addTask(Task task) {
-    _tasks.add(task);
+  /// Crea una nueva tarea
+  Future<Tarea> crearTarea(Tarea task) async {
+    final json = await post(
+      _endpoint,
+      data: task.toMap(),
+      errorMessage: 'Error al crear la tarea',
+    );
+
+    return TareaMapper.fromMap(json);
   }
 
-  void removeTask(int index) {
-    _tasks.removeAt(index);
+  /// Elimina una tarea existente
+  Future<void> eliminarTarea(String taskId) async {
+    final url = '$_endpoint/$taskId';
+    await delete(url, errorMessage: 'Error al eliminar la tarea');
   }
 
-  void updateTask(int index, Task updatedTask) {
-    if (index >= 0 && index < _tasks.length) {
-      _tasks[index] = updatedTask;
-    }
+  /// Actualiza una tarea existente
+  Future<Tarea> actualizarTarea(Tarea task) async {
+    final taskId = task.id;
+    final url = '$_endpoint/$taskId';
+    final json = await put(
+      url,
+      data: task.toMap(),
+      errorMessage: 'Error al actualizar la tarea',
+    );
+
+    return TareaMapper.fromMap(json);
   }
 }
