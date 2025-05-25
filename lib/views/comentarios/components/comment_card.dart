@@ -122,16 +122,8 @@ class CommentCard extends StatelessWidget {
         comentario.id ?? '', 
         tipoReaccion, 
         true, // incrementar = true
-        null // comentarioPadreId null para comentarios principales
+        null
       ),
     );
-    
-    // Luego forzamos la recarga de comentarios para actualizar la UI
-    // No usamos context dentro del Future.delayed
-    Future.delayed(const Duration(milliseconds: 500), () {
-      comentarioBloc.add(
-        LoadComentarios(currentNoticiaId),
-      );
-    });
   }
 }
