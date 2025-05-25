@@ -228,6 +228,26 @@ class BaseService {
     );
   }
 
+  /// Método genérico para realizar solicitudes PATCH (actualización parcial)
+  Future<dynamic> patch(
+    String endpoint, {
+    required dynamic data,
+    Map<String, dynamic>? queryParameters,
+    String errorMessage = AppConstantes.errorUpdateDefault,
+    bool requireAuthToken = false,
+  }) async {
+    final options = await _getRequestOptions(requireAuthToken: requireAuthToken);
+    return _executeRequest<dynamic>(
+      () => _dio.patch(
+        endpoint,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+      ),
+      errorMessage,
+    );
+  }
+
   /// Obtiene opciones de solicitud con token de autenticación si es requerido
   Future<Options> _getRequestOptions({bool requireAuthToken = false}) async {
     final options = Options();

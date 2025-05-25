@@ -20,10 +20,10 @@ class CustomBottomNavigationBar extends StatelessWidget {
         );
         break;
       case 1: // Añadir Tarea
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const TareaScreen()),
-        );
+        // Navigator.pushReplacement(
+        //   context,
+        //   // MaterialPageRoute(builder: (context) => const TareaScreen()),
+        // );
         break;
       case 2: // Salir
         DialogHelper.mostrarDialogoCerrarSesion(context); // Llama al diálogo reutilizable
