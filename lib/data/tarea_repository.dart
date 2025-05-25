@@ -71,14 +71,12 @@ class TareasRepository extends BaseRepository<Tarea> {
     );
   }
 
-  /// Obtiene todas las tareas del usuario, filtrando por el usuario las obtenidas desde la API
+  /// Obtiene todas las tareas del usuario desde la API
   Future<List<Tarea>> obtenerTareasUsuario(String usuario) async {
     List<Tarea> tareasUsuario = await manejarExcepcion(
-      () => _tareaService.obtenerTareas(),
+      () => _tareaService.obtenerTareasUsuario(usuario),
       mensajeError: TareasConstantes.mensajeError,
     );
-    tareasUsuario =
-        tareasUsuario.where((tarea) => tarea.usuario == usuario).toList();
     return tareasUsuario;
   }
 
