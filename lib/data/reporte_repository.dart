@@ -50,4 +50,12 @@ class ReporteRepository extends BaseRepository<Reporte> {
       return estadisticas;
     }, mensajeError: 'Error al obtener estadísticas por noticia');
   }
+
+  /// Elimina todos los reportes asociados a una noticia
+  Future<void> eliminarReportesPorNoticia(String noticiaId) async {
+    return manejarExcepcion(() async {
+      validarNoVacio(noticiaId, 'ID de la noticia');
+      await _reporteService.eliminarReportesPorNoticia(noticiaId);
+    }, mensajeError: ReporteConstantes.errorEliminarReportes);
+  }
 }

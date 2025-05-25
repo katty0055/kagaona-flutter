@@ -33,6 +33,7 @@ class CategoriaConstantes{
 class ReporteConstantes {
   static const String reporteCreado = 'Reporte enviado con éxito';
   static const String noticiaNoExiste = 'La noticia reportada no existe';
+  static const String errorEliminarReportes = 'Error al eliminar los reportes de la noticia';
   static const String errorCrear = 'Error al crear el reporte';
   static const String errorObtenerReportes = 'Error al obtener reportes';
   static const String listaVacia = 'No hay reportes disponibles';
