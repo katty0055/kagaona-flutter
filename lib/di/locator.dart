@@ -5,6 +5,7 @@ import 'package:kgaona/data/comentario_repository.dart';
 import 'package:kgaona/data/noticia_repository.dart';
 import 'package:kgaona/data/preferencia_repository.dart';
 import 'package:kgaona/data/reporte_repository.dart';
+import 'package:kgaona/data/tarea_repository.dart';
 import 'package:kgaona/helpers/connectivity_service.dart';
 import 'package:kgaona/helpers/secure_storage_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,4 +23,6 @@ Future<void> initLocator() async {
   di.registerLazySingleton<ConnectivityService>(() => ConnectivityService());
   di.registerSingleton<ReporteRepository>(ReporteRepository());
   di.registerFactory<ReporteBloc>(() => ReporteBloc());
+
+
 }

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:kgaona/domain/tarea.dart';
 
 class AddTaskModal extends StatefulWidget {
-  final Function(Task) onTaskAdded;
-  final Task? taskToEdit; // Tarea opcional para editar
+  final Function(Tarea) onTaskAdded;
+  final Tarea? taskToEdit; // Tarea opcional para editar
 
   const AddTaskModal({super.key, required this.onTaskAdded, this.taskToEdit});
 
@@ -23,16 +23,16 @@ class AddTaskModalState extends State<AddTaskModal> {
   
   @override
   void initState() {
-    super.initState();
-    // Inicializa los controladores con los datos de la tarea a editar (si existe)
-    tituloController = TextEditingController(text: widget.taskToEdit?.title ?? '');
-    descripcionController = TextEditingController(text: widget.taskToEdit?.description ?? '');
-    fechaSeleccionada = widget.taskToEdit?.date;
-    fechaController = TextEditingController(
-      text: fechaSeleccionada != null
-          ? '${fechaSeleccionada!.day}/${fechaSeleccionada!.month}/${fechaSeleccionada!.year}'
-          : '',
-    );
+    // super.initState();
+    // // Inicializa los controladores con los datos de la tarea a editar (si existe)
+    // tituloController = TextEditingController(text: widget.taskToEdit?.title ?? '');
+    // descripcionController = TextEditingController(text: widget.taskToEdit?.description ?? '');
+    // fechaSeleccionada = widget.taskToEdit?.date;
+    // fechaController = TextEditingController(
+    //   text: fechaSeleccionada != null
+    //       ? '${fechaSeleccionada!.day}/${fechaSeleccionada!.month}/${fechaSeleccionada!.year}'
+    //       : '',
+    // );
 
     fechaLimiteSeleccionada = widget.taskToEdit?.fechaLimite;
     fechaLimiteController = TextEditingController(
@@ -41,11 +41,11 @@ class AddTaskModalState extends State<AddTaskModal> {
           : '',
     );
 
-    // Inicializa la lista de pasos
-    pasos = widget.taskToEdit?.pasos ?? [];
+    // // Inicializa la lista de pasos
+    // pasos = widget.taskToEdit?.pasos ?? [];
 
-    // Inicializa el tipo de tarea
-    tipoSeleccionado = widget.taskToEdit?.type ?? 'normal';
+    // // Inicializa el tipo de tarea
+    // tipoSeleccionado = widget.taskToEdit?.type ?? 'normal';
 
   }
 
@@ -162,14 +162,14 @@ class AddTaskModalState extends State<AddTaskModal> {
             }
 
             // Crear la tarea sin el campo 'type'
-            final nuevaTarea = Task(
-              title: titulo,
-              description: descripcion,
-              date: fechaSeleccionada,
-              fechaLimite: fechaLimiteSeleccionada,
+            final nuevaTarea = Tarea(
+              // title: titulo,
+              // description: descripcion,
+              // date: fechaSeleccionada,
+              fechaLimite: fechaLimiteSeleccionada, usuario: '', titulo: '',
               // Mantiene el type si está editando
-              type: tipoSeleccionado,
-              pasos: pasos, 
+              // type: tipoSeleccionado,
+              // pasos: pasos, 
             );
 
             widget.onTaskAdded(nuevaTarea); // Llama al callback para agregar la tarea

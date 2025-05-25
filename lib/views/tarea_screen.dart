@@ -1,0 +1,198 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kgaona/bloc/tarea/tarea_bloc.dart';
+import 'package:kgaona/bloc/tarea/tarea_event.dart';
+import 'package:kgaona/bloc/tarea/tarea_state.dart';
+import 'package:kgaona/components/add_task_modal.dart';
+import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
+import 'package:kgaona/components/last_updated_header.dart';
+import 'package:kgaona/components/side_menu.dart';
+import 'package:kgaona/constants/constantes.dart';
+import 'package:kgaona/domain/tarea.dart';
+import 'package:kgaona/helpers/dialog_helper.dart';
+import 'package:kgaona/helpers/snackbar_helper.dart';
+import 'package:kgaona/helpers/snackbar_manager.dart';
+import 'package:kgaona/helpers/task_card_helper.dart';
+
+class TareaScreen extends StatelessWidget {
+  const TareaScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Limpiar cualquier SnackBar existente al entrar a esta pantalla
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!SnackBarManager().isConnectivitySnackBarShowing) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      }
+    });
+
+    return BlocProvider(
+      create: (context) => TareaBloc()..add(LoadTareasEvent()),
+      child: const _TareaScreenContent(),
+    );
+  }
+}
+
+class _TareaScreenContent extends StatelessWidget {
+  const _TareaScreenContent();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<TareaBloc, TareaState>(
+      listener: (context, state) {
+        if (state is TareaError) {
+          SnackBarHelper.manejarError(context, state.error);
+        } else if (state is TareaOperationSuccess) {
+          SnackBarHelper.mostrarExito(context, mensaje: state.mensaje);
+        } else if (state is TareaLoaded && state.tareas.isEmpty) {
+          SnackBarHelper.mostrarInfo(
+            context,
+            mensaje: TareasConstantes.listaVacia,
+          );
+        }
+      },
+      builder: (context, state) {
+        DateTime? lastUpdated;
+        if (state is TareaLoaded) {
+          lastUpdated = state.lastUpdated;
+        }
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              state is TareaLoaded
+                  ? '${TareasConstantes.tituloAppBar} - Total: ${state.tareas.length}'
+                  : TareasConstantes.tituloAppBar,
+            ),
+            centerTitle: true,
+          ),
+          drawer: const SideMenu(),
+          backgroundColor: Colors.grey[200],
+          body: Column(
+            children: [
+              LastUpdatedHeader(lastUpdated: lastUpdated),
+              Expanded(child: _construirCuerpoTareas(context, state)),
+            ],
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () => _mostrarModalAgregarTarea(context),
+            tooltip: 'Agregar Tarea',
+            child: const Icon(Icons.add),
+          ),
+          bottomNavigationBar: const CustomBottomNavigationBar(
+            selectedIndex: 0,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _construirCuerpoTareas(BuildContext context, TareaState state) {
+    if (state is TareaLoading) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (state is TareaError) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              state.error.message,
+              style: const TextStyle(color: Colors.red),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => context.read<TareaBloc>().add(LoadTareasEvent()),
+              child: const Text('Reintentar'),
+            ),
+          ],
+        ),
+      );
+    } else if (state is TareaLoaded) {
+      return RefreshIndicator(
+        onRefresh: () async {
+          await Future.delayed(const Duration(milliseconds: 1200));
+          if (context.mounted) {
+            context.read<TareaBloc>().add(LoadTareasEvent(forzarRecarga: true));
+          }
+        },
+        child:
+            state.tareas.isEmpty
+                ? ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.6,
+                      child: const Center(
+                        child: Text(TareasConstantes.listaVacia),
+                      ),
+                    ),
+                  ],
+                )
+                : ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: state.tareas.length,
+                  itemBuilder: (context, index) {
+                    final tarea = state.tareas[index];
+                    return Dismissible(
+                      key: Key(tarea.id.toString()),
+                      background: Container(
+                        color: Colors.red,
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: const Icon(Icons.delete, color: Colors.white),
+                      ),
+                      direction: DismissDirection.startToEnd,
+                      confirmDismiss: (direction) async {
+                        return await DialogHelper.mostrarConfirmacion(
+                          context: context,
+                          titulo: 'Confirmar eliminación',
+                          mensaje:
+                              '¿Estás seguro de que deseas eliminar esta tarea?',
+                          textoCancelar: 'Cancelar',
+                          textoConfirmar: 'Eliminar',
+                        );
+                      },
+                      onDismissed: (_) {
+                        context.read<TareaBloc>().add(
+                          DeleteTareaEvent(tarea.id!),
+                        );
+                      },
+                      child: construirTarjetaDeportiva(
+                        tarea,
+                        tarea.id!,
+                        () => _mostrarModalEditarTarea(context, tarea)
+                      ),
+                    );
+                  },
+                ),
+      );
+    }
+    return const SizedBox.shrink();
+  }
+
+  void _mostrarModalEditarTarea(BuildContext context, Tarea tarea) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AddTaskModal(
+            taskToEdit: tarea,
+            onTaskAdded: (Tarea tareaEditada) {
+              context.read<TareaBloc>().add(UpdateTareaEvent(tareaEditada));
+            },
+          ),
+    );
+  }
+
+  void _mostrarModalAgregarTarea(BuildContext context) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AddTaskModal(
+            onTaskAdded: (Tarea nuevaTarea) {
+              context.read<TareaBloc>().add(CreateTareaEvent(nuevaTarea));
+            },
+          ),
+    );
+  }
+}

@@ -4,14 +4,14 @@ import 'package:kgaona/helpers/task_card_helper.dart';
 import 'package:kgaona/domain/tarea.dart';
 
 class TaskDetailsScreen extends StatelessWidget {
-  final List<Task> tareas;
+  final List<Tarea> tareas;
   final int indice;
 
   const TaskDetailsScreen({super.key, required this.tareas, required this.indice});
 
   @override
   Widget build(BuildContext context) {
-    final Task tarea = tareas[indice];
+    final Tarea tarea = tareas[indice];
     final String imageUrl = 'https://picsum.photos/200/300?random=$indice';
     final String fechaLimiteDato = tarea.fechaLimite != null
         ? '${tarea.fechaLimite!.day}/${tarea.fechaLimite!.month}/${tarea.fechaLimite!.year}'

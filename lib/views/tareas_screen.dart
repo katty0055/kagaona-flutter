@@ -16,14 +16,14 @@ class TareaScreen extends StatefulWidget {
 }
 
 class TareaScreenState extends State<TareaScreen> {
-  final TareasService _tareasService = TareasService();
+  final TareasRepository _tareasService = TareasRepository();
   final ScrollController _scrollController = ScrollController();
   bool _cargando = false;
   // bool _hayMasTareas = true;
   // int _paginaActual = 0;
   final int _limitePorPagina = 5;
   final int _selectedIndex = 0; // Índice del elemento seleccionado en el navbar
-  List<Task> _tareas = []; // Lista persistente de tareas
+  List<Tarea> _tareas = []; // Lista persistente de tareas
 
   @override
   void initState() {
@@ -45,10 +45,10 @@ class TareaScreenState extends State<TareaScreen> {
       _cargando = true;
     });
 
-    final tareas = await _tareasService.getTasksWithSteps(limite: _limitePorPagina);
+    // final tareas = await _tareasService.getTasksWithSteps(limite: _limitePorPagina);
 
     setState(() {
-      _tareas = tareas;
+      // _tareas = tareas;
       _cargando = false;
     });
 
@@ -74,13 +74,13 @@ class TareaScreenState extends State<TareaScreen> {
         _cargando = true;
       });
 
-      final nuevasTareas = await _tareasService.getMoreTasksWithSteps(
-        inicio: _tareas.length,
-        limite: _limitePorPagina,
-      );
+      // final nuevasTareas = await _tareasService.getMoreTasksWithSteps(
+      //   inicio: _tareas.length,
+      //   limite: _limitePorPagina,
+      // );
 
       setState(() {
-        _tareas.addAll(nuevasTareas);
+        // _tareas.addAll(nuevasTareas);
         _cargando = false;
       });
     }
@@ -98,8 +98,8 @@ class TareaScreenState extends State<TareaScreen> {
     showDialog(
       context: context,
       builder: (context) => AddTaskModal(
-        onTaskAdded: (Task nuevaTarea) async {
-          Task tareaActualizada = await _tareasService.agregarTarea(nuevaTarea); // El servicio define el tipo
+        onTaskAdded: (Tarea nuevaTarea) async {
+          Tarea tareaActualizada = await _tareasService.agregarTarea(nuevaTarea); // El servicio define el tipo
           setState(() {
             _tareas.insert(0, tareaActualizada); // Agrega la nueva tarea al inicio de la lista
           });
@@ -109,7 +109,7 @@ class TareaScreenState extends State<TareaScreen> {
   }
 
   Future<void> _eliminarTarea(int index) async {
-    await _tareasService.eliminarTarea(index);
+    // await _tareasService.eliminarTarea(index);
     setState(() {
       _tareas.removeAt(index); // Elimina la tarea de la lista persistente
     });
@@ -127,15 +127,15 @@ class TareaScreenState extends State<TareaScreen> {
     );
   }
 
-  void _mostrarModalEditarTarea(Task tarea, int index) {
+  void _mostrarModalEditarTarea(Tarea tarea, int index) {
     showDialog(
       context: context,
       builder: (context) => AddTaskModal(
         taskToEdit: tarea,
-        onTaskAdded: (Task tareaEditada) async {
-          Task tareaActualizada = await _tareasService.actualizarTarea(index, tareaEditada);
+        onTaskAdded: (Tarea tareaEditada) async {
+          // Tarea tareaActualizada = await _tareasService.actualizarTarea(index, tareaEditada);
           setState(() {
-            _tareas[index] = tareaActualizada; // Actualiza la tarea en la lista persistente
+            // _tareas[index] = tareaActualizada; // Actualiza la tarea en la lista persistente
           });
         },
       ),
@@ -174,7 +174,7 @@ class TareaScreenState extends State<TareaScreen> {
           return GestureDetector(
             onTap: () => _mostrarDetallesTarea(index), // Muestra los detalles al tocar la tarjeta
             child:Dismissible(
-              key: Key(tarea.title),
+              key: Key(tarea.id.toString()), // Usa el ID de la tarea como clave
               direction: DismissDirection.endToStart,
               background: Container(
                 color: Colors.red,
@@ -191,7 +191,7 @@ class TareaScreenState extends State<TareaScreen> {
               // Usa la nueva tarjeta deportiva,
                 child: construirTarjetaDeportiva(
                 tarea, 
-                index,
+                index as String,
                 () => _mostrarModalEditarTarea(tarea, index), // Pasa la función de edición
                 ), 
               // child: buildTaskCard(
