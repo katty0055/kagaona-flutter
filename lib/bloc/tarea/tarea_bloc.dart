@@ -3,13 +3,14 @@ import 'package:kgaona/bloc/tarea/tarea_event.dart';
 import 'package:kgaona/bloc/tarea/tarea_state.dart';
 import 'package:kgaona/data/tarea_repository.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
+import 'package:watch_it/watch_it.dart';
 
 class TareaBloc extends Bloc<TareaEvent, TareaState> {
-  final TareasRepository _tareaRepository = TareasRepository();
+  final TareasRepository _tareaRepository;
 
-  TareaBloc() : super(TareaInitial()) {
+   TareaBloc() : _tareaRepository = di<TareasRepository>(), super(TareaInitial()) {
     on<LoadTareasEvent>(_onLoadTareas);
-    // on<LoadMoreTareasEvent>(_onLoadMoreTareas);
+     // on<LoadMoreTareasEvent>(_onLoadMoreTareas);
     // on<CreateTareaEvent>(_onCreateTarea);
     // on<UpdateTareaEvent>(_onUpdateTarea);
     // on<DeleteTareaEvent>(_onDeleteTarea);

@@ -1,3 +1,4 @@
+import 'package:kgaona/api/service/tarea_service.dart';
 import 'package:kgaona/bloc/reporte/reporte_bloc.dart';
 import 'package:kgaona/data/auth_repository.dart';
 import 'package:kgaona/data/categoria_repository.dart';
@@ -8,6 +9,7 @@ import 'package:kgaona/data/reporte_repository.dart';
 import 'package:kgaona/data/tarea_repository.dart';
 import 'package:kgaona/helpers/connectivity_service.dart';
 import 'package:kgaona/helpers/secure_storage_service.dart';
+import 'package:kgaona/helpers/shared_preferences_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -23,6 +25,7 @@ Future<void> initLocator() async {
   di.registerLazySingleton<ConnectivityService>(() => ConnectivityService());
   di.registerSingleton<ReporteRepository>(ReporteRepository());
   di.registerFactory<ReporteBloc>(() => ReporteBloc());
-
-
+  di.registerSingleton<SharedPreferencesService>(SharedPreferencesService());
+  di.registerSingleton<TareaService>(TareaService());
+  di.registerSingleton<TareasRepository>(TareasRepository());
 }

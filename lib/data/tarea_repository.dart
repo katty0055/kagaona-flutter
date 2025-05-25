@@ -5,27 +5,49 @@ import 'package:kgaona/domain/tarea.dart';
 import 'package:kgaona/domain/tarea_cache_prefs.dart';
 import 'package:kgaona/helpers/secure_storage_service.dart';
 import 'package:kgaona/helpers/shared_preferences_service.dart';
+import 'package:watch_it/watch_it.dart';
 
 class TareasRepository extends BaseRepository<Tarea> {
-  final TareaService _tareaService = TareaService();
-  final SecureStorageService _secureStorage = SecureStorageService();
-  final _sharedPreferences = SharedPreferencesService();
+  final TareaService _tareaService;
+  final SecureStorageService _secureStorage;
+  final SharedPreferencesService _sharedPreferences;
+
+  TareasRepository({
+    TareaService? tareaService,
+    SecureStorageService? secureStorage,
+    SharedPreferencesService? sharedPreferences,
+  }) : _tareaService = tareaService ?? di<TareaService>(),
+       _secureStorage = secureStorage ?? di<SecureStorageService>(),
+       _sharedPreferences = sharedPreferences ?? di<SharedPreferencesService>() {
+    _initUsuarioAutenticado();
+  }
+
   // Definimos una clave constante para almacenar/recuperar las tareas en caché
   static const String _tareasCacheKey = 'tareas_cache_prefs';
-  String? usuarioAutenticado;
+  String? _usuarioAutenticado;
 
   // Funciones auxiliares para mapear objetos
   TareaCachePrefs _fromJson(Map<String, dynamic> json) =>
       TareaCachePrefsMapper.fromMap(json);
   Map<String, dynamic> _toJson(TareaCachePrefs cache) => cache.toMap();
 
-  TareasRepository() {
-    _initUsuarioAutenticado();
+  Future<String> get usuarioAutenticado async {
+    if (_usuarioAutenticado == null) {
+      _usuarioAutenticado = await _secureStorage.getUserEmail();
+      if (_usuarioAutenticado == null) {
+        throw Exception('Usuario no autenticado');
+      }
+    }
+    return _usuarioAutenticado!;
   }
 
   //Trae el usuario autenticado desde el secure storage
   Future<void> _initUsuarioAutenticado() async {
-    usuarioAutenticado = await _secureStorage.getUserEmail();
+    try {
+      await usuarioAutenticado; // Esto inicializará el usuario
+    } catch (e) {
+      // Manejar el error si es necesario
+    }
   }
 
   /// Valida los campos de la entidad Tarea
@@ -50,7 +72,7 @@ class TareasRepository extends BaseRepository<Tarea> {
   Future<bool> _guardarEnCache(List<Tarea> tareas) async {
     return _sharedPreferences.saveObject<TareaCachePrefs>(
       key: _tareasCacheKey,
-      value: TareaCachePrefs(usuario: usuarioAutenticado!, misTareas: tareas),
+      value: TareaCachePrefs(usuario: _usuarioAutenticado!, misTareas: tareas),
       toJson: _toJson,
     );
   }
@@ -88,13 +110,13 @@ class TareasRepository extends BaseRepository<Tarea> {
       // Obtenemos el objeto desde SharedPreferences con un valor por defecto
       TareaCachePrefs? tareasCache = await _obtenerCache(
         defaultValue: TareaCachePrefs(
-          usuario: usuarioAutenticado!,
+          usuario: _usuarioAutenticado!,
           misTareas: tareas,
         ),
       );
 
       // Si no coincide el usuario actual con el de la caché, invalidamos la caché
-      if (usuarioAutenticado != tareasCache?.usuario) {
+      if (_usuarioAutenticado != tareasCache?.usuario) {
         await _sharedPreferences.remove(_tareasCacheKey);
         tareasCache = null;
       }
@@ -105,7 +127,7 @@ class TareasRepository extends BaseRepository<Tarea> {
         tareas = tareasCache.misTareas;
       } else {
         // Si no hay caché, cargamos desde la API
-        tareas = await obtenerTareasUsuario(usuarioAutenticado!);
+        tareas = await obtenerTareasUsuario(_usuarioAutenticado!);
         await _guardarEnCache(tareas);
       }
       return tareas;
@@ -120,7 +142,7 @@ class TareasRepository extends BaseRepository<Tarea> {
       // Verificamos si ya tiene email, de lo contrario lo obtenemos
       final tareaConEmail =
           (tarea.usuario.isEmpty)
-              ? tarea.copyWith(usuario: usuarioAutenticado!)
+              ? tarea.copyWith(usuario: _usuarioAutenticado!)
               : tarea;
 
       // Enviamos la tarea a la API
