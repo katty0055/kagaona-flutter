@@ -31,6 +31,7 @@ class NoticiaRepository extends BaseRepository<Noticia> {
       mensajeError: NoticiasConstantes.mensajeError,
     );
   }
+
   /// Crea una nueva noticia
   Future<Noticia> crearNoticia(Noticia noticia) async {
     return manejarExcepcion(() {
@@ -53,5 +54,12 @@ class NoticiaRepository extends BaseRepository<Noticia> {
       validarId(id);
       return _noticiaService.eliminarNoticia(id);
     }, mensajeError: NoticiasConstantes.errorDelete);
+  }
+  /// Incrementa el contador de reportes de una noticia y devuelve solo los campos actualizados
+  Future<Map<String, dynamic>> incrementarContadorReportes(String noticiaId, int valor) async {
+    return manejarExcepcion(() {
+      validarId(noticiaId);
+      return _noticiaService.incrementarContadorReportes(noticiaId, valor);
+    }, mensajeError: NoticiasConstantes.errorActualizarContadorReportes);
   }
 }

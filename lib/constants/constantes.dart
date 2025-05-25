@@ -33,7 +33,7 @@ class CategoriaConstantes{
 class ReporteConstantes {
   static const String reporteCreado = 'Reporte enviado con éxito';
   static const String noticiaNoExiste = 'La noticia reportada no existe';
-  static const String errorCrearReporte = 'Error al crear el reporte';
+  static const String errorCrear = 'Error al crear el reporte';
   static const String errorObtenerReportes = 'Error al obtener reportes';
   static const String listaVacia = 'No hay reportes disponibles';
   static const String mensajeCargando = 'Cargando reportes...';
@@ -160,6 +160,8 @@ class NoticiasConstantes {
   static const String errorUpdated = 'Error al editar la noticia';
   static const String errorDelete = 'Error al eliminar la noticia';
   static const String errorFilter = "Error al filtrar noticias";
+  static const String errorVerificarNoticiaExiste = 'Error al verificar si la noticia existe';
+  static const String errorActualizarContadorReportes = 'Error al actualizar el contador de reportes';
 }
 
 class ConectividadConstantes {
