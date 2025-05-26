@@ -103,7 +103,7 @@ class TareasRepository extends BaseRepository<Tarea> {
 
       // Si se fuerza la recarga, ignoramos la caché
       // Si no esta forzada la recarga y tenemos datos en caché, los usamos
-      if (forzarRecarga != true && tareasCache != null) {
+      if (forzarRecarga != true && tareasCache != null && tareasCache.misTareas.isNotEmpty) {
         tareas = tareasCache.misTareas;
       } else {
         // Si no hay caché, cargamos desde la API

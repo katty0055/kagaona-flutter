@@ -10,12 +10,12 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
   static const int _limitePorPagina = 5;
 
   TareaBloc() : super(TareaInitial()) {
-
     on<LoadTareasEvent>(_onLoadTareas);
     on<LoadMoreTareasEvent>(_onLoadMoreTareas);
     on<CreateTareaEvent>(_onCreateTarea);
     on<UpdateTareaEvent>(_onUpdateTarea);
     on<DeleteTareaEvent>(_onDeleteTarea);
+    on<CompletarTareaEvent>(_onCompletarTarea);
   }
 
   Future<void> _onLoadTareas(
@@ -166,6 +166,43 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
             paginaActual: currentState.paginaActual,
           ),
         );
+      }
+    } catch (e) {
+      if (e is ApiException) {
+        emit(TareaError(e));
+      }
+    }
+  }
+
+  Future<void> _onCompletarTarea(
+    CompletarTareaEvent event,
+    Emitter<TareaState> emit,
+  ) async {
+    try {
+      final tareaActualizada = event.tarea.copyWith(completado: event.completada);
+
+
+      if (state is TareaLoaded) {
+        final currentState = state as TareaLoaded;
+        final tareas = currentState.tareas.map((tarea) {
+          return tarea.id == event.tarea.id ? tareaActualizada : tarea;
+        }).toList();
+
+        // Emitimos solo el estado de completado una vez
+        emit(TareaCompletada(
+          tarea: tareaActualizada,
+          completada: event.completada,
+          tareas: tareas,
+          mensaje: event.completada ? 'Tarea completada' : 'Tarea pendiente',
+        ));
+
+        // Actualizamos el estado de la lista
+        emit(TareaLoaded(
+          tareas: tareas,
+          lastUpdated: DateTime.now(),
+          hayMasTareas: currentState.hayMasTareas,
+          paginaActual: currentState.paginaActual,
+        ));
       }
     } catch (e) {
       if (e is ApiException) {
