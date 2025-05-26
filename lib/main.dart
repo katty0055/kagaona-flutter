@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:kgaona/bloc/auth/auth_bloc.dart';
 import 'package:kgaona/bloc/comentario/comentario_bloc.dart';
 import 'package:kgaona/bloc/reporte/reporte_bloc.dart';
+import 'package:kgaona/bloc/tarea/tarea_bloc.dart';
 import 'package:kgaona/di/locator.dart';
 import 'package:kgaona/bloc/contador/contador_bloc.dart';
 import 'package:kgaona/bloc/connectivity/connectivity_bloc.dart';
@@ -41,6 +42,10 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => AuthBloc()),
         // Agregamos NoticiaBloc como un provider global para mantener el estado entre navegaciones
         BlocProvider<NoticiaBloc>(create: (context) => NoticiaBloc()),
+                BlocProvider<TareaBloc>(
+          create: (context) => TareaBloc(),
+          lazy: false, // Esto asegura que el bloc se cree inmediatamente
+        ),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

@@ -5,11 +5,12 @@ import 'package:kgaona/domain/tarea.dart';
 import 'package:kgaona/domain/tarea_cache_prefs.dart';
 import 'package:kgaona/helpers/secure_storage_service.dart';
 import 'package:kgaona/helpers/shared_preferences_service.dart';
+import 'package:watch_it/watch_it.dart';
 
 class TareasRepository extends BaseRepository<Tarea> {
-  final TareaService _tareaService = TareaService();
-  final SecureStorageService _secureStorage = SecureStorageService();
-  final _sharedPreferences = SharedPreferencesService();
+  final  _tareaService = di<TareaService>();
+  final  _secureStorage = di<SecureStorageService>();
+  final _sharedPreferences = di<SharedPreferencesService>();
   // Definimos una clave constante para almacenar/recuperar las tareas en caché
   static const String _tareasCacheKey = 'tareas_cache_prefs';
   String? usuarioAutenticado;
@@ -19,13 +20,12 @@ class TareasRepository extends BaseRepository<Tarea> {
       TareaCachePrefsMapper.fromMap(json);
   Map<String, dynamic> _toJson(TareaCachePrefs cache) => cache.toMap();
 
-  TareasRepository() {
-    _initUsuarioAutenticado();
-  }
+  TareasRepository();
 
   //Trae el usuario autenticado desde el secure storage
-  Future<void> _initUsuarioAutenticado() async {
-    usuarioAutenticado = await _secureStorage.getUserEmail();
+  Future<String> _obtenerUsuarioAutenticado() async {
+    usuarioAutenticado ??= await _secureStorage.getUserEmail();
+    return usuarioAutenticado!;
   }
 
   /// Valida los campos de la entidad Tarea
@@ -48,9 +48,10 @@ class TareasRepository extends BaseRepository<Tarea> {
 
   /// Guarda una lista de tareas en la caché
   Future<bool> _guardarEnCache(List<Tarea> tareas) async {
+    final usuario= await _obtenerUsuarioAutenticado();
     return _sharedPreferences.saveObject<TareaCachePrefs>(
       key: _tareasCacheKey,
-      value: TareaCachePrefs(usuario: usuarioAutenticado!, misTareas: tareas),
+      value: TareaCachePrefs(usuario: usuario, misTareas: tareas),
       toJson: _toJson,
     );
   }
@@ -84,17 +85,18 @@ class TareasRepository extends BaseRepository<Tarea> {
   Future<List<Tarea>> obtenerTareas({bool forzarRecarga = false}) async {
     return manejarExcepcion(() async {
       List<Tarea> tareas = [];
+      final usuario= await _obtenerUsuarioAutenticado();
 
       // Obtenemos el objeto desde SharedPreferences con un valor por defecto
       TareaCachePrefs? tareasCache = await _obtenerCache(
         defaultValue: TareaCachePrefs(
-          usuario: usuarioAutenticado!,
+          usuario: usuario,
           misTareas: tareas,
         ),
       );
 
       // Si no coincide el usuario actual con el de la caché, invalidamos la caché
-      if (usuarioAutenticado != tareasCache?.usuario) {
+      if (usuario != tareasCache?.usuario) {
         await _sharedPreferences.remove(_tareasCacheKey);
         tareasCache = null;
       }
@@ -105,7 +107,7 @@ class TareasRepository extends BaseRepository<Tarea> {
         tareas = tareasCache.misTareas;
       } else {
         // Si no hay caché, cargamos desde la API
-        tareas = await obtenerTareasUsuario(usuarioAutenticado!);
+        tareas = await obtenerTareasUsuario(usuario);
         await _guardarEnCache(tareas);
       }
       return tareas;
@@ -116,11 +118,12 @@ class TareasRepository extends BaseRepository<Tarea> {
   Future<Tarea> agregarTarea(Tarea tarea) async {
     return manejarExcepcion(() async {
       validarEntidad(tarea);
+      final usuario= await _obtenerUsuarioAutenticado();
 
       // Verificamos si ya tiene email, de lo contrario lo obtenemos
       final tareaConEmail =
           (tarea.usuario.isEmpty)
-              ? tarea.copyWith(usuario: usuarioAutenticado!)
+              ? tarea.copyWith(usuario: usuario)
               : tarea;
 
       // Enviamos la tarea a la API

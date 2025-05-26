@@ -26,15 +26,17 @@ class TareaLoaded extends TareaState {
   final List<Tarea> tareas;
   final DateTime lastUpdated;
   final bool hayMasTareas;
-
+  final int paginaActual;
+  
   TareaLoaded({
     required this.tareas,
     required this.lastUpdated,
     this.hayMasTareas = true,
+    this.paginaActual = 0,
   });
 
   @override
-  List<Object?> get props => [tareas, lastUpdated, hayMasTareas];
+  List<Object?> get props => [tareas, lastUpdated, hayMasTareas, paginaActual];
 }
 
 class TareaOperationSuccess extends TareaState {

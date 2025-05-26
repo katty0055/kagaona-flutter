@@ -15,14 +15,15 @@ class LoadTareasEvent extends TareaEvent {
   List<Object?> get props => [forzarRecarga];
 }
 
+// Events para paginación y scroll infinito
 class LoadMoreTareasEvent extends TareaEvent {
-  final int inicio;
+  final int pagina;
   final int limite;
   
-  LoadMoreTareasEvent(this.inicio, this.limite);
-  
-  @override
-  List<Object?> get props => [inicio, limite];
+  LoadMoreTareasEvent({
+    required this.pagina,
+    required this.limite,
+  });
 }
 
 class CreateTareaEvent extends TareaEvent {

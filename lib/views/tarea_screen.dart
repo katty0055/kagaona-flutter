@@ -13,6 +13,7 @@ import 'package:kgaona/helpers/dialog_helper.dart';
 import 'package:kgaona/helpers/snackbar_helper.dart';
 import 'package:kgaona/helpers/snackbar_manager.dart';
 import 'package:kgaona/helpers/task_card_helper.dart';
+import 'package:kgaona/views/task_details_screen.dart';
 
 class TareaScreen extends StatelessWidget {
   const TareaScreen({super.key});
@@ -26,15 +27,49 @@ class TareaScreen extends StatelessWidget {
       }
     });
 
-    return BlocProvider(
-      create: (context) => TareaBloc()..add(LoadTareasEvent()),
-      child: const _TareaScreenContent(),
-    );
+    // Cargar las tareas al entrar a la pantalla
+    context.read<TareaBloc>().add(LoadTareasEvent());
+
+    return const _TareaScreenContent();
   }
 }
 
-class _TareaScreenContent extends StatelessWidget {
+class _TareaScreenContent extends StatefulWidget {
   const _TareaScreenContent();
+
+  @override
+  _TareaScreenContentState createState() => _TareaScreenContentState();
+}
+
+class _TareaScreenContentState extends State<_TareaScreenContent> {
+  final ScrollController _scrollController = ScrollController();
+  static const int _limitePorPagina = 5;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+      final state = context.read<TareaBloc>().state;
+      if (state is TareaLoaded && state.hayMasTareas) {
+        context.read<TareaBloc>().add(
+          LoadMoreTareasEvent(
+            pagina: state.paginaActual + 1,
+            limite: _limitePorPagina,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +79,6 @@ class _TareaScreenContent extends StatelessWidget {
           SnackBarHelper.manejarError(context, state.error);
         } else if (state is TareaOperationSuccess) {
           SnackBarHelper.mostrarExito(context, mensaje: state.mensaje);
-        } else if (state is TareaLoaded && state.tareas.isEmpty) {
-          SnackBarHelper.mostrarInfo(
-            context,
-            mensaje: TareasConstantes.listaVacia,
-          );
         }
       },
       builder: (context, state) {
@@ -88,9 +118,11 @@ class _TareaScreenContent extends StatelessWidget {
   }
 
   Widget _construirCuerpoTareas(BuildContext context, TareaState state) {
-    if (state is TareaLoading) {
+    if (state is TareaInitial || (state is TareaLoading && state is! TareaLoaded)) {
       return const Center(child: CircularProgressIndicator());
-    } else if (state is TareaError) {
+    }
+    
+    if (state is TareaError && state is! TareaLoaded) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -108,91 +140,111 @@ class _TareaScreenContent extends StatelessWidget {
           ],
         ),
       );
-    } else if (state is TareaLoaded) {
+    }
+
+    if (state is TareaLoaded) {
       return RefreshIndicator(
         onRefresh: () async {
-          await Future.delayed(const Duration(milliseconds: 1200));
-          if (context.mounted) {
-            context.read<TareaBloc>().add(LoadTareasEvent(forzarRecarga: true));
-          }
+          context.read<TareaBloc>().add(LoadTareasEvent(forzarRecarga: true));
         },
-        child:
-            state.tareas.isEmpty
-                ? ListView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.6,
-                      child: const Center(
-                        child: Text(TareasConstantes.listaVacia),
-                      ),
+        child: state.tareas.isEmpty
+            ? ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.6,
+                    child: const Center(
+                      child: Text(TareasConstantes.listaVacia),
                     ),
-                  ],
-                )
-                : ListView.builder(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  itemCount: state.tareas.length,
-                  itemBuilder: (context, index) {
-                    final tarea = state.tareas[index];
-                    return Dismissible(
-                      key: Key(tarea.id.toString()),
-                      background: Container(
-                        color: Colors.red,
-                        alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: const Icon(Icons.delete, color: Colors.white),
+                  ),
+                ],
+              )
+            : ListView.builder(
+                controller: _scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: state.tareas.length + (state.hayMasTareas ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == state.tareas.length) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: CircularProgressIndicator(),
                       ),
-                      direction: DismissDirection.startToEnd,
-                      confirmDismiss: (direction) async {
-                        return await DialogHelper.mostrarConfirmacion(
-                          context: context,
-                          titulo: 'Confirmar eliminación',
-                          mensaje:
-                              '¿Estás seguro de que deseas eliminar esta tarea?',
-                          textoCancelar: 'Cancelar',
-                          textoConfirmar: 'Eliminar',
-                        );
-                      },
-                      onDismissed: (_) {
-                        context.read<TareaBloc>().add(
-                          DeleteTareaEvent(tarea.id!),
-                        );
-                      },
+                    );
+                  }
+
+                  final tarea = state.tareas[index];
+                  return Dismissible(
+                    key: Key(tarea.id.toString()),
+                    background: Container(
+                      color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: const Icon(Icons.delete, color: Colors.white),
+                    ),
+                    direction: DismissDirection.startToEnd,
+                    confirmDismiss: (direction) async {
+                      return await DialogHelper.mostrarConfirmacion(
+                        context: context,
+                        titulo: 'Confirmar eliminación',
+                        mensaje: '¿Estás seguro de que deseas eliminar esta tarea?',
+                        textoCancelar: 'Cancelar',
+                        textoConfirmar: 'Eliminar',
+                      );
+                    },
+                    onDismissed: (_) {
+                      context.read<TareaBloc>().add(DeleteTareaEvent(tarea.id!));
+                    },
+                    child: GestureDetector(
+                      onTap: () => _mostrarDetallesTarea(context, index, state.tareas),
                       child: construirTarjetaDeportiva(
                         tarea,
                         tarea.id!,
-                        () => _mostrarModalEditarTarea(context, tarea)
+                        () => _mostrarModalEditarTarea(context, tarea),
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
+              ),
       );
     }
     return const SizedBox.shrink();
   }
 
+  void _mostrarDetallesTarea(BuildContext context, int indice, List<Tarea> tareas) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TaskDetailsScreen(
+          tareas: tareas,
+          indice: indice,
+        ),
+      ),
+    );
+  }
+
   void _mostrarModalEditarTarea(BuildContext context, Tarea tarea) {
     showDialog(
       context: context,
-      builder:
-          (context) => AddTaskModal(
-            taskToEdit: tarea,
-            onTaskAdded: (Tarea tareaEditada) {
-              context.read<TareaBloc>().add(UpdateTareaEvent(tareaEditada));
-            },
-          ),
+      barrierDismissible: false,
+      builder: (dialogContext) => AddTaskModal(
+        taskToEdit: tarea,
+        onTaskAdded: (Tarea tareaEditada) {
+          context.read<TareaBloc>().add(UpdateTareaEvent(tareaEditada));
+        },
+      ),
     );
   }
 
   void _mostrarModalAgregarTarea(BuildContext context) {
     showDialog(
       context: context,
-      builder:
-          (context) => AddTaskModal(
-            onTaskAdded: (Tarea nuevaTarea) {
-              context.read<TareaBloc>().add(CreateTareaEvent(nuevaTarea));
-            },
-          ),
+      barrierDismissible: false,
+      builder: (dialogContext) => AddTaskModal(
+        onTaskAdded: (Tarea nuevaTarea) {
+          context.read<TareaBloc>().add(CreateTareaEvent(nuevaTarea));
+        },
+      ),
     );
   }
 }
