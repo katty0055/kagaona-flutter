@@ -5,6 +5,7 @@ import 'package:kgaona/domain/tarea.dart';
 import 'package:kgaona/domain/tarea_cache_prefs.dart';
 import 'package:kgaona/helpers/secure_storage_service.dart';
 import 'package:kgaona/helpers/shared_preferences_service.dart';
+import 'package:watch_it/watch_it.dart';
 
 class TareasRepository extends BaseRepository<Tarea> {
   final  _tareaService = di<TareaService>();
@@ -12,7 +13,6 @@ class TareasRepository extends BaseRepository<Tarea> {
   final _sharedPreferences = di<SharedPreferencesService>();
   // Definimos una clave constante para almacenar/recuperar las tareas en caché
   static const String _tareasCacheKey = 'tareas_cache_prefs';
-  String? usuarioAutenticado;
   String? usuarioAutenticado;
 
   // Funciones auxiliares para mapear objetos
