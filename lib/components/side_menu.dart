@@ -6,7 +6,7 @@ import 'package:kgaona/views/noticia_screen.dart';
 import 'package:kgaona/views/quote_screen.dart';
 import 'package:kgaona/views/start_screen.dart';
 import 'package:kgaona/views/welcome_screen.dart';
-import 'package:kgaona/views/tareas_screen.dart';
+import 'package:kgaona/views/tarea_screen.dart';
 
 class SideMenu extends StatelessWidget {
   const SideMenu({super.key});
