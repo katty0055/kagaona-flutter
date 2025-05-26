@@ -3,12 +3,12 @@ import 'package:kgaona/bloc/tarea/tarea_event.dart';
 import 'package:kgaona/bloc/tarea/tarea_state.dart';
 import 'package:kgaona/data/tarea_repository.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
-import 'package:watch_it/watch_it.dart';
 
 class TareaBloc extends Bloc<TareaEvent, TareaState> {
   final TareasRepository _tareaRepository = di<TareasRepository>();
   static const int _limitePorPagina = 5;
 
+  TareaBloc() : super(TareaInitial()) {
   TareaBloc() : super(TareaInitial()) {
     on<LoadTareasEvent>(_onLoadTareas);
     on<LoadMoreTareasEvent>(_onLoadMoreTareas);
