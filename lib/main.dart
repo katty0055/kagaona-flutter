@@ -16,17 +16,32 @@ import 'package:watch_it/watch_it.dart';
 import 'package:kgaona/bloc/noticia/noticia_bloc.dart';
 
 void main() async {
-  await dotenv.load(fileName: ".env");
-  await initLocator(); // Carga el archivo .env
-  // Inicializar el servicio/helper de SharedPreferences
-  await SharedPreferencesService().init();
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    
+    // Cargar variables de entorno
+    await dotenv.load(fileName: ".env");
+    
+    // Inicializar servicios y dependencias
+    await initLocator();
+    await SharedPreferencesService().init();
+    
+    // Limpiar datos de sesión anterior
+    final secureStorage = di<SecureStorageService>();
+    await secureStorage.clearJwt();
+    await secureStorage.clearUserEmail();
 
-  // Eliminar cualquier token guardado para forzar el inicio de sesión
-  final secureStorage = di<SecureStorageService>();
-  await secureStorage.clearJwt();
-  await secureStorage.clearUserEmail();
-
-  runApp(const MyApp());
+    runApp(const MyApp());
+  } catch (e) {
+    debugPrint('Error durante la inicialización: $e');
+    runApp(MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Text('Error al iniciar la aplicación: $e'),
+        ),
+      ),
+    ));
+  }
 }
 
 class MyApp extends StatelessWidget {
