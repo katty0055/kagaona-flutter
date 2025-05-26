@@ -178,4 +178,9 @@ class TareasRepository extends BaseRepository<Tarea> {
       return tareaActualizada;
     }, mensajeError: TareasConstantes.errorActualizar);
   }
+
+  /// Limpia la caché del repositorio
+  Future<void> limpiarCache() async {
+    usuarioAutenticado = null;
+  }
 }

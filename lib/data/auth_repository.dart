@@ -1,5 +1,6 @@
 import 'package:kgaona/api/service/auth_service.dart';
 import 'package:kgaona/data/preferencia_repository.dart';
+import 'package:kgaona/data/tarea_repository.dart';
 import 'package:kgaona/domain/login_request.dart';
 import 'package:kgaona/domain/login_response.dart';
 import 'package:kgaona/helpers/secure_storage_service.dart';
@@ -8,6 +9,7 @@ import 'package:watch_it/watch_it.dart';
 class AuthRepository {
   final AuthService _authService = AuthService();
   final  _secureStorage = di<SecureStorageService>();  // Login user and store JWT token
+  final  _tareaRepository = di<TareasRepository>();
   Future<bool> login(String email, String password) async {
     try {
       if (email.isEmpty || password.isEmpty) {
@@ -40,7 +42,7 @@ class AuthRepository {
     // Limpiar la caché de preferencias antes de limpiar el token
     final preferenciaRepository = di<PreferenciaRepository>();
     preferenciaRepository.invalidarCache();
-    
+    _tareaRepository.limpiarCache();
     // Limpiar tokens y datos de sesión
     await _secureStorage.clearJwt();
     await _secureStorage.clearUserEmail();

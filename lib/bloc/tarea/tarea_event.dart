@@ -9,7 +9,7 @@ abstract class TareaEvent extends Equatable {
 class LoadTareasEvent extends TareaEvent {
   final bool forzarRecarga;
   
-  LoadTareasEvent({this.forzarRecarga = true});
+  LoadTareasEvent({this.forzarRecarga = false});
   
   @override
   List<Object?> get props => [forzarRecarga];
