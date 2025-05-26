@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/helpers/dialog_helper.dart';
 import 'package:kgaona/views/welcome_screen.dart';
-import 'package:kgaona/views/tareas_screen.dart';
+import 'package:kgaona/views/tarea_screen.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
   final int selectedIndex;
@@ -10,21 +10,22 @@ class CustomBottomNavigationBar extends StatelessWidget {
     super.key,
     required this.selectedIndex,
   });
-
   void _onItemTapped(BuildContext context, int index) {
     switch (index) {
       case 0: // Inicio
-        if (ModalRoute.of(context)?.settings.name != '/') {
-          Navigator.pushReplacementNamed(context, '/');
-        }
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+        );
         break;
       case 1: // Añadir Tarea
-        if (ModalRoute.of(context)?.settings.name != '/tareas') {
-          Navigator.pushReplacementNamed(context, '/tareas');
-        }
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const TareaScreen()),
+        );
         break;
       case 2: // Salir
-        DialogHelper.mostrarDialogoCerrarSesion(context); // Llama al diálogo reutilizable
+        DialogHelper.mostrarDialogoCerrarSesion(context);
         break;
     }
   }

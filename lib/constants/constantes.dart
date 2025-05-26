@@ -80,7 +80,7 @@ class ApiConstantes {
   static const String comentariosEndpoint = '/comentarios';
   static const String reportesEndpoint = '/reportes';
   static const String tareasCachePrefsEndpoint = '/tareasPreferencias';
-  static const String tareasEndpoint = '/tareaskatty';
+  static const String tareasEndpoint = '/tareas';
 }
 
 class TareasCachePrefsConstantes {

@@ -18,7 +18,7 @@ class AddTaskModalState extends State<AddTaskModal> {
   late TextEditingController fechaLimiteController;
   DateTime? fechaSeleccionada;
   DateTime? fechaLimiteSeleccionada;
-  late List<String> pasos; //Lista para los pasos
+  late List<String> pasos; 
   late String tipoSeleccionado; 
   
   @override
@@ -40,11 +40,6 @@ class AddTaskModalState extends State<AddTaskModal> {
           ? '${fechaLimiteSeleccionada!.day}/${fechaLimiteSeleccionada!.month}/${fechaLimiteSeleccionada!.year}'
           : '',
     );
-
-    // // Inicializa la lista de pasos
-    // pasos = widget.taskToEdit?.pasos ?? [];
-
-    // Inicializa el tipo de tarea
     tipoSeleccionado = widget.taskToEdit?.tipo ?? 'normal';
 
   }

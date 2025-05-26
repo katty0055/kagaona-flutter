@@ -1,6 +1,5 @@
 import 'package:kgaona/api/service/tarea_service.dart';
 import 'package:kgaona/bloc/reporte/reporte_bloc.dart';
-import 'package:kgaona/bloc/tarea/tarea_bloc.dart';
 import 'package:kgaona/data/auth_repository.dart';
 import 'package:kgaona/data/categoria_repository.dart';
 import 'package:kgaona/data/comentario_repository.dart';

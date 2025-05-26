@@ -10,7 +10,7 @@ import 'package:watch_it/watch_it.dart' show di;
 /// Clase base para servicios API que proporciona funcionalidad común
 class BaseService {
   late final Dio _dio;
-  final SecureStorageService _secureStorage = SecureStorageService();
+  final  _secureStorage = di<SecureStorageService>();
 
   
   /// Constructor que inicializa la configuración de Dio con los parámetros base

@@ -7,7 +7,7 @@ import 'package:watch_it/watch_it.dart';
 
 class AuthRepository {
   final AuthService _authService = AuthService();
-  final SecureStorageService _secureStorage = SecureStorageService();  // Login user and store JWT token
+  final  _secureStorage = di<SecureStorageService>();  // Login user and store JWT token
   Future<bool> login(String email, String password) async {
     try {
       if (email.isEmpty || password.isEmpty) {

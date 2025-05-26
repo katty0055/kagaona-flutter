@@ -13,7 +13,7 @@ import 'package:kgaona/helpers/dialog_helper.dart';
 import 'package:kgaona/helpers/snackbar_helper.dart';
 import 'package:kgaona/helpers/snackbar_manager.dart';
 import 'package:kgaona/helpers/task_card_helper.dart';
-import 'package:kgaona/views/task_details_screen.dart';
+import 'package:kgaona/views/tarea_detalles_screen.dart';
 
 class TareaScreen extends StatelessWidget {
   const TareaScreen({super.key});

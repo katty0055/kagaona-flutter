@@ -7,7 +7,7 @@ class CommonWidgetsHelper {
     return Text(
       title,
       style: const TextStyle(
-        fontSize: 22,
+        fontSize: 16,
         fontWeight: FontWeight.bold,
       ),
     );
@@ -56,7 +56,7 @@ class CommonWidgetsHelper {
     return Icon(
       type == 'normal' ? Icons.task : Icons.warning,
       color: type == 'normal' ? Colors.blue : Colors.red,
-      size: 32,
+      size: 22,
     );
   }
 
@@ -82,20 +82,7 @@ Widget construirTarjetaDeportiva(Tarea tarea, String tareaId, VoidCallback onEdi
     tileColor: Colors.white, // Fondo blanco para el ListTile
     shape: CommonWidgetsHelper.buildRoundedBorder(),
     leading: CommonWidgetsHelper.buildLeadingIcon(tarea.tipo), // Ícono dinámico
-    title: CommonWidgetsHelper.buildBoldTitle(tarea.id!), // Título en negrita
-      // subtitle: Column(
-      //   crossAxisAlignment: CrossAxisAlignment.start,
-      //   children: [
-      //     // Text('${TareasConstantes.tipoTarea} ${tarea.type}'), // Muestra el tipo de tarea
-      //     // CommonWidgetsHelper.buildSpacing(),
-      //     // if (tarea.pasos != null && tarea.pasos!.isNotEmpty)
-      //     //     CommonWidgetsHelper.buildInfoLines(
-      //     //       '${TareasConstantes.pasosTitulo} ${tarea.pasos![0]}',
-      //     //     ) // Muestra el primer paso
-      //     // else
-      //       CommonWidgetsHelper.buildNoStepsText(), // Mensaje si no hay pasos
-      //   ],
-      // ),
+    title: CommonWidgetsHelper.buildBoldTitle(tarea.titulo), // Título en negrita
       trailing: IconButton(
         onPressed: onEdit, // Llama a la función de edición
         icon: const Icon(Icons.edit, size: 16),
