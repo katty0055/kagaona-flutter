@@ -24,6 +24,7 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
   ) async {
     emit(TareaLoading());
     try {
+      await Future.delayed(const Duration(seconds: 2));
       final tareas = await _tareaRepository.obtenerTareas(
         forzarRecarga: event.forzarRecarga,
       );
@@ -179,30 +180,36 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
     Emitter<TareaState> emit,
   ) async {
     try {
-      final tareaActualizada = event.tarea.copyWith(completado: event.completada);
-
+      final tareaActualizada = event.tarea.copyWith(
+        completado: event.completada,
+      );
 
       if (state is TareaLoaded) {
         final currentState = state as TareaLoaded;
-        final tareas = currentState.tareas.map((tarea) {
-          return tarea.id == event.tarea.id ? tareaActualizada : tarea;
-        }).toList();
+        final tareas =
+            currentState.tareas.map((tarea) {
+              return tarea.id == event.tarea.id ? tareaActualizada : tarea;
+            }).toList();
 
         // Emitimos solo el estado de completado una vez
-        emit(TareaCompletada(
-          tarea: tareaActualizada,
-          completada: event.completada,
-          tareas: tareas,
-          mensaje: event.completada ? 'Tarea completada' : 'Tarea pendiente',
-        ));
+        emit(
+          TareaCompletada(
+            tarea: tareaActualizada,
+            completada: event.completada,
+            tareas: tareas,
+            mensaje: event.completada ? 'Tarea completada' : 'Tarea pendiente',
+          ),
+        );
 
         // Actualizamos el estado de la lista
-        emit(TareaLoaded(
-          tareas: tareas,
-          lastUpdated: DateTime.now(),
-          hayMasTareas: currentState.hayMasTareas,
-          paginaActual: currentState.paginaActual,
-        ));
+        emit(
+          TareaLoaded(
+            tareas: tareas,
+            lastUpdated: DateTime.now(),
+            hayMasTareas: currentState.hayMasTareas,
+            paginaActual: currentState.paginaActual,
+          ),
+        );
       }
     } catch (e) {
       if (e is ApiException) {

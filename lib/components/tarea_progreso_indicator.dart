@@ -13,20 +13,55 @@ class TareaProgresoIndicator extends StatelessWidget {
         previous.completadas != current.completadas || 
         previous.total != current.total,
       builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
+        final theme = Theme.of(context);
+        
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+          decoration: BoxDecoration(
+            color: theme.chipTheme.backgroundColor, // Usamos el color de fondo del chip
+            // Eliminamos el borderRadius y las sombras
+          ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '${state.completadas}/${state.total} tareas completadas',
-                style: Theme.of(context).textTheme.titleMedium,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Progreso',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  Text(
+                    '${state.completadas}/${state.total}',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: LinearProgressIndicator(
+                  value: state.progreso,
+                  minHeight: 12, // Un poco más alta para mejor visibilidad
+                  backgroundColor: theme.colorScheme.onTertiary, // Usamos el color secundario para contraste
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    theme.colorScheme.secondaryFixed, // Usando el color secundario para más contraste
+                  ),
+                ),
               ),
               const SizedBox(height: 8),
-              LinearProgressIndicator(
-                value: state.progreso,
-                minHeight: 10,
-                backgroundColor: Colors.grey[200],
-                valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+              Text(
+                'Tareas completadas',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
               ),
             ],
           ),

@@ -147,7 +147,7 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
           body: Column(
             children: [
               LastUpdatedHeader(lastUpdated: lastUpdated),
-              const TareaProgresoIndicator(),
+              if (state is TareaLoaded) const TareaProgresoIndicator(),
               Expanded(child: _construirCuerpoTareas(context, state)),
             ],
           ),
@@ -177,8 +177,17 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
 
   // Nuevo método para el contenido
   Widget _construirContenidoTareas(BuildContext context, TareaState state) {
-    if (state is TareaInitial) {
-      return const Center(child: CircularProgressIndicator());
+    if (state is TareaInitial || state is TareaLoading) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text('Cargando tareas...'),
+          ],
+        ),
+      );
     }
 
     if (state is TareaError && state is! TareaLoaded) {
