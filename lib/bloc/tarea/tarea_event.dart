@@ -52,3 +52,13 @@ class DeleteTareaEvent extends TareaEvent {
   @override
   List<Object?> get props => [id];
 }
+
+class CompletarTareaEvent extends TareaEvent {
+  final Tarea tarea;
+  final bool completada;
+
+  CompletarTareaEvent({
+    required this.tarea,
+    required this.completada,
+  });
+}
