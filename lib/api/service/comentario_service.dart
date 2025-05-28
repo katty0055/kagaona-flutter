@@ -1,3 +1,4 @@
+import 'package:dart_mappable/dart_mappable.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:kgaona/api/service/base_service.dart';
@@ -52,12 +53,11 @@ class ComentarioService extends BaseService {
   }
 
   /// Registra una reacción (like o dislike) a un comentario o subcomentario
-  Future<void> reaccionarComentario({
+  Future<Comentario> reaccionarComentario({
     required String comentarioId,
     required String tipoReaccion,
   }) async {
     try {
-      // Obtenemos todos los comentarios
       final data = await get('/comentarios', requireAuthToken: false);
 
       if (data is! List) {
@@ -66,12 +66,10 @@ class ComentarioService extends BaseService {
 
       final List<dynamic> comentarios = data;
 
-      // Primero, buscamos si es un comentario principal
       final comentarioIndex = comentarios.indexWhere(
         (c) => c['id'] == comentarioId,
       );
 
-      // Si lo encontramos como comentario principal
       if (comentarioIndex != -1) {
         Map<String, dynamic> comentarioActualizado = Map<String, dynamic>.from(
           comentarios[comentarioIndex],
@@ -80,15 +78,13 @@ class ComentarioService extends BaseService {
         int currentLikes = comentarioActualizado['likes'] ?? 0;
         int currentDislikes = comentarioActualizado['dislikes'] ?? 0;
 
-        // Actualizar contadores
         if (tipoReaccion == 'like') {
           currentLikes += 1;
         } else if (tipoReaccion == 'dislike') {
           currentDislikes += 1;
         }
 
-        // Enviar actualización
-        await put(
+        final response = await put(
           '/comentarios/$comentarioId',
           data: {
             'noticiaId': comentarioActualizado['noticiaId'],
@@ -104,9 +100,9 @@ class ComentarioService extends BaseService {
           requireAuthToken: true,
         );
 
-        // Respuesta exitosa, retornamos
-        return;
-      }      // Recorrer todos los comentarios principales
+        return MapperContainer.globals.fromMap<Comentario>(response);
+      }
+
       for (int i = 0; i < comentarios.length; i++) {
         final comentarioPrincipal = comentarios[i];
 
@@ -143,7 +139,7 @@ class ComentarioService extends BaseService {
               // Actualizar la lista de subcomentarios
               subcomentarios[j] = subcomentarioActualizado;
               // Actualizar el comentario principal con la nueva lista de subcomentarios
-              await put(
+              final response = await put(
                 '/comentarios/${comentarioPrincipal['id']}',
                 data: {
                   'noticiaId': comentarioPrincipal['noticiaId'],
@@ -159,15 +155,12 @@ class ComentarioService extends BaseService {
                 requireAuthToken: true,
               );
 
-              return;
+              return MapperContainer.globals.fromMap<Comentario>(response);
             }
           }
         }
       }
-
       throw ApiException(ComentarioConstantes.errorServer, statusCode: 404);
-    } on DioException catch (e) {
-      debugPrint('❌ DioException en reaccionarComentario: ${e.toString()}');
     } catch (e) {
       if (e is ApiException) {
         rethrow;
