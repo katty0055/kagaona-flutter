@@ -11,15 +11,11 @@ class ComentarioService extends BaseService {
   Future<List<Comentario>> obtenerComentariosPorNoticia(
     String noticiaId,
   ) async {
-    final endpoint = ApiConstantes.comentariosEndpoint;
     final List<dynamic> comentariosJson = await get<List<dynamic>>(
-      endpoint,
+      '${ApiConstantes.comentariosEndpoint}?noticiaId=$noticiaId',
       errorMessage: ComentarioConstantes.mensajeError,
     );
-
-    // Filtrar solo los comentarios para la noticia específica
     return comentariosJson
-        .where((json) => json['noticiaId'] == noticiaId)
         .map<Comentario>(
           (json) => ComentarioMapper.fromMap(json as Map<String, dynamic>),
         )
@@ -36,20 +32,28 @@ class ComentarioService extends BaseService {
   }
 
   /// Calcula el número de comentarios para una noticia específica
+  /// Suma también los subcomentarios
   Future<int> obtenerNumeroComentarios(String noticiaId) async {
-    // Obtenemos todos los comentarios de la noticia
     final comentarios = await obtenerComentariosPorNoticia(noticiaId);
-
     int contador = comentarios.length;
-
-    // Sumamos también los subcomentarios
     for (var comentario in comentarios) {
       if (comentario.subcomentarios != null) {
         contador += comentario.subcomentarios!.length;
       }
     }
-
     return contador;
+  }
+
+  Future<Comentario> reaccionarComentario2({
+    required String comentarioId,
+    required String tipoReaccion,
+  }) async {
+    final url = '${ApiConstantes.comentariosEndpoint}/$comentarioId';
+    final response = await get(
+      url,
+      errorMessage: "Error al obtener el comentarios de una noticia",
+    );
+    return MapperContainer.globals.fromMap<Comentario>(response);
   }
 
   /// Registra una reacción (like o dislike) a un comentario o subcomentario
@@ -115,7 +119,8 @@ class ComentarioService extends BaseService {
 
           // Buscar en los subcomentarios si alguno coincide con el ID
           for (int j = 0; j < subcomentarios.length; j++) {
-            final subcomentario = subcomentarios[j];            // Si encontramos el ID en el subcomentario
+            final subcomentario =
+                subcomentarios[j]; // Si encontramos el ID en el subcomentario
             if (subcomentario['id'] == comentarioId ||
                 subcomentario['idSubComentario'] == comentarioId) {
               // Crear una copia del subcomentario para actualizarlo
@@ -125,14 +130,14 @@ class ComentarioService extends BaseService {
               // Actualizar los contadores según el tipo de reacción
               int currentLikes = subcomentarioActualizado['likes'] ?? 0;
               int currentDislikes = subcomentarioActualizado['dislikes'] ?? 0;
-              
+
               // Incrementar el contador adecuado
               if (tipoReaccion == 'like') {
                 currentLikes += 1;
               } else if (tipoReaccion == 'dislike') {
                 currentDislikes += 1;
               }
-              
+
               // Asignar los valores actualizados
               subcomentarioActualizado['likes'] = currentLikes;
               subcomentarioActualizado['dislikes'] = currentDislikes;
@@ -210,7 +215,7 @@ class ComentarioService extends BaseService {
         //   'success': false,
         //   'message': 'Este comentario ya contiene un subcomentario, no es posible agregar otro'
         // };
-      }      // Crear el nuevo subcomentario explícitamente SIN campo de subcomentarios
+      } // Crear el nuevo subcomentario explícitamente SIN campo de subcomentarios
       final nuevoSubcomentario = Comentario(
         id: subcomentarioId, // Asignamos un ID único para este subcomentario
         noticiaId: comentarioData['noticiaId'],
