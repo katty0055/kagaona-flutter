@@ -113,7 +113,6 @@ class CommentCard extends StatelessWidget {
     );
   }  void _handleReaction(BuildContext context, String tipoReaccion) {
     final comentarioBloc = context.read<ComentarioBloc>();
-    final String currentNoticiaId = noticiaId;
     
     // Primero enviamos el evento de reacción
     comentarioBloc.add(
