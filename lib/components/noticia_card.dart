@@ -137,23 +137,52 @@ class NoticiaCard extends StatelessWidget {
                     onPressed: () {
                       // Acción para marcar como favorito
                     },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.comment),
-                    onPressed: () {
-                      // Navegar a la vista de comentarios
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder:
-                              (context) => ComentariosScreen(
-                                noticiaId: noticia.id!,
-                                noticiaTitulo: noticia.titulo,
+                  ),                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.comment),
+                        onPressed: () {
+                          // Navegar a la vista de comentarios
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => ComentariosScreen(
+                                    noticiaId: noticia.id!,
+                                    noticiaTitulo: noticia.titulo,
+                                  ),
+                            ),
+                          );
+                        },
+                        tooltip: 'Ver comentarios',
+                      ),
+                      if (noticia.contadorComentarios != null && noticia.contadorComentarios! > 0)
+                        Positioned(
+                          right: 8,
+                          top: 8,
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Text(
+                              noticia.contadorComentarios! > 99 ? '99+' : noticia.contadorComentarios.toString(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
                               ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
-                      );
-                    },
-                    tooltip: 'Ver comentarios',
-                  ),                  IconButton(
+                    ],
+                  ),IconButton(
                     icon: const Icon(Icons.share),
                     onPressed: () {
                       // Acción para compartir
