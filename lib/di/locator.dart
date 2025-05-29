@@ -1,4 +1,5 @@
 import 'package:kgaona/api/service/comentario_service.dart';
+import 'package:kgaona/api/service/noticia_service.dart';
 import 'package:kgaona/api/service/tarea_service.dart';
 import 'package:kgaona/bloc/reporte/reporte_bloc.dart';
 import 'package:kgaona/data/auth_repository.dart';
@@ -25,6 +26,7 @@ Future<void> initLocator() async {
   // Servicios de API
   di.registerLazySingleton<TareaService>(() => TareaService());
   di.registerLazySingleton<ComentarioService>(() => ComentarioService());
+  di.registerLazySingleton<NoticiaService>(() => NoticiaService());
   
   // Repositorios
   di.registerSingleton<CategoriaRepository>(CategoriaRepository());
@@ -34,6 +36,8 @@ Future<void> initLocator() async {
   di.registerLazySingleton<AuthRepository>(() => AuthRepository());
   di.registerSingleton<ReporteRepository>(ReporteRepository());
   di.registerLazySingleton<TareasRepository>(() => TareasRepository());
+
+
   
   // BLoCs
   di.registerFactory<ReporteBloc>(() => ReporteBloc());

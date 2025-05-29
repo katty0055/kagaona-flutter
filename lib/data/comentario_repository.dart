@@ -88,4 +88,12 @@ class ComentarioRepository extends BaseRepository<Comentario> {
       return response;
     }, mensajeError: 'Error al agregar subcomentario');
   }
+
+  /// Elimina todos los reportes asociados a una noticia
+  Future<void> eliminarComentariosPorNoticia(String noticiaId) async {
+    return manejarExcepcion(() async {
+      validarNoVacio(noticiaId, 'ID de la noticia');
+      await _comentarioService.eliminarComentariosPorNoticia(noticiaId);
+    }, mensajeError: "Error al eliminar comentarios");
+  }
 }

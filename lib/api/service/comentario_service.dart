@@ -152,13 +152,28 @@ class ComentarioService extends BaseService {
       ...?comentario.subcomentarios,
       subComentario,
     ];
-    comentario.copyWith(subcomentarios: subComentariosActualizados);
+    final comentarioActualizado =comentario.copyWith(subcomentarios: subComentariosActualizados);
 
     final response = await put(
      '$_url/$comentarioId',
-      data: comentario.toMap(),
+      data: comentarioActualizado.toMap(),
       errorMessage: "Error al agregar el subcomentario",
     );
     return ComentarioMapper.fromMap(response);
+  }
+
+  Future<void> eliminarComentariosPorNoticia(String noticiaId) async {
+    // 1. Primero obtenemos todos los reportes de la noticia
+    final comentarios = await obtenerComentariosPorNoticia(noticiaId);
+    
+    // 2. Eliminamos cada reporte individualmente
+    for (final comentario in comentarios) {
+      if (comentario.id != null) {
+        await delete(
+          '$_url/${comentario.id}',
+          errorMessage: ReporteConstantes.errorEliminarReportes,
+        );
+      }
+    }
   }
 }

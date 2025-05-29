@@ -1,14 +1,17 @@
 import 'package:kgaona/api/service/noticia_service.dart';
 import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/data/base_repository.dart';
+import 'package:kgaona/data/comentario_repository.dart';
 import 'package:kgaona/data/reporte_repository.dart';
 import 'package:kgaona/domain/noticia.dart';
+import 'package:watch_it/watch_it.dart';
 
 /// Repositorio para gestionar operaciones relacionadas con las noticias.
 /// Extiende BaseRepository para aprovechar la gestión de errores estandarizada.
 class NoticiaRepository extends BaseRepository<Noticia> {
-  final NoticiaService _noticiaService = NoticiaService();
-  final reporteRepo = ReporteRepository();
+  final NoticiaService _noticiaService = di<NoticiaService>();
+  final reporteRepo = di<ReporteRepository>();
+  final _comentarioRepositorio = di<ComentarioRepository>();
 
   @override
   void validarEntidad(Noticia noticia) {
@@ -55,6 +58,7 @@ class NoticiaRepository extends BaseRepository<Noticia> {
     return manejarExcepcion(() async {
       validarId(id);
       await reporteRepo.eliminarReportesPorNoticia(id);
+      await _comentarioRepositorio.eliminarComentariosPorNoticia(id);
       await _noticiaService.eliminarNoticia(id);
     }, mensajeError: NoticiasConstantes.errorDelete);
   }
