@@ -164,7 +164,7 @@ class NoticiaCard extends StatelessWidget {
                         },
                         tooltip: 'Ver comentarios',
                       ),
-                      if (noticia.contadorComentarios != null && noticia.contadorComentarios! > 0)
+                      if ((noticia.contadorComentarios ?? 0) > 0)
                         Positioned(
                           right: 8,
                           top: 8,
@@ -179,7 +179,9 @@ class NoticiaCard extends StatelessWidget {
                               minHeight: 16,
                             ),
                             child: Text(
-                              noticia.contadorComentarios! > 99 ? '99+' : noticia.contadorComentarios.toString(),
+                              (noticia.contadorComentarios ?? 0) > 99
+                                  ? '99+'
+                                  : (noticia.contadorComentarios ?? 0).toString(),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 8,
@@ -190,12 +192,8 @@ class NoticiaCard extends StatelessWidget {
                           ),
                         ),
                     ],
-                  ),IconButton(
-                    icon: const Icon(Icons.share),
-                    onPressed: () {
-                      // Acción para compartir
-                    },
-                  ),                  Stack(
+                  ),
+                  Stack(
                     alignment: Alignment.center,
                     children: [
                       IconButton(
@@ -229,7 +227,9 @@ class NoticiaCard extends StatelessWidget {
                               minHeight: 16,
                             ),
                             child: Text(
-                              noticia.contadorReportes! > 99 ? '99+' : noticia.contadorReportes.toString(),
+                              noticia.contadorReportes! > 99
+                                  ? '99+'
+                                  : noticia.contadorReportes.toString(),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 8,
