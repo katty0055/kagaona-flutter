@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kgaona/bloc/noticia/noticia_bloc.dart';
+import 'package:kgaona/bloc/noticia/noticia_event.dart';
 import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/domain/noticia.dart';
 import 'package:intl/intl.dart';
@@ -137,14 +140,15 @@ class NoticiaCard extends StatelessWidget {
                     onPressed: () {
                       // Acción para marcar como favorito
                     },
-                  ),                  Stack(
+                  ),
+                  Stack(
                     alignment: Alignment.center,
                     children: [
                       IconButton(
                         icon: const Icon(Icons.comment),
-                        onPressed: () {
+                        onPressed: () async {
                           // Navegar a la vista de comentarios
-                          Navigator.of(context).push(
+                          await Navigator.of(context).push(
                             MaterialPageRoute(
                               builder:
                                   (context) => ComentariosScreen(
@@ -153,6 +157,10 @@ class NoticiaCard extends StatelessWidget {
                                   ),
                             ),
                           );
+                          // Al volver, actualiza las noticias
+                          if (context.mounted) {
+                            context.read<NoticiaBloc>().add(FetchNoticiasEvent());
+                          }
                         },
                         tooltip: 'Ver comentarios',
                       ),
