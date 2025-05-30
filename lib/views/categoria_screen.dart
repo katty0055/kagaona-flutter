@@ -11,7 +11,6 @@ import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
 import 'package:kgaona/components/formulario_categoria.dart';
 import 'package:kgaona/domain/categoria.dart';
-import 'package:kgaona/helpers/dialog_helper.dart';
 import 'package:kgaona/helpers/modal_helper.dart';
 import 'package:kgaona/helpers/snackbar_helper.dart';
 import 'package:kgaona/helpers/snackbar_manager.dart';
@@ -196,7 +195,6 @@ class _CategoriaScreenContent extends StatelessWidget {
               return CategoriaCard(
                 categoria: categoria,
                 onEdit: () => _editarCategoria(context, categoria),
-                onDelete: () => _eliminarCategoria(context, categoria),
               );
             },
           ),
@@ -230,22 +228,6 @@ class _CategoriaScreenContent extends StatelessWidget {
       
       // Usar el BLoC para actualizar la categoría
       context.read<CategoriaBloc>().add(CategoriaUpdateEvent(categoriaActualizada));
-    }
-  }
-  
-  // Extraer la lógica de eliminación a un método separado para mejorar la legibilidad
-  Future<void> _eliminarCategoria(BuildContext context, Categoria categoria) async {
-    // Mostrar diálogo de confirmación
-    final confirmar = await DialogHelper.mostrarConfirmacion(
-      context: context,
-      titulo: 'Confirmar eliminación',
-      mensaje: '¿Estás seguro de eliminar la categoría "${categoria.nombre}"?',
-      textoCancelar: 'Cancelar',
-      textoConfirmar: 'Eliminar',
-    );
-    
-    if (confirmar == true && context.mounted) {
-      context.read<CategoriaBloc>().add(CategoriaDeleteEvent(categoria.id!));
     }
   }
 }

@@ -132,12 +132,7 @@ class NoticiaCard extends StatelessWidget {
                 mainAxisAlignment:
                     MainAxisAlignment.end, // Alinea los botones al final
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.star_border),
-                    onPressed: () {
-                      // Acción para marcar como favorito
-                    },
-                  ),                  Stack(
+                  Stack(
                     alignment: Alignment.center,
                     children: [
                       IconButton(
@@ -156,7 +151,7 @@ class NoticiaCard extends StatelessWidget {
                         },
                         tooltip: 'Ver comentarios',
                       ),
-                      if (noticia.contadorComentarios != null && noticia.contadorComentarios! > 0)
+                      if ((noticia.contadorComentarios ?? 0) > 0)
                         Positioned(
                           right: 8,
                           top: 8,
@@ -171,7 +166,9 @@ class NoticiaCard extends StatelessWidget {
                               minHeight: 16,
                             ),
                             child: Text(
-                              noticia.contadorComentarios! > 99 ? '99+' : noticia.contadorComentarios.toString(),
+                              (noticia.contadorComentarios ?? 0) > 99
+                                  ? '99+'
+                                  : (noticia.contadorComentarios ?? 0).toString(),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 8,
@@ -182,12 +179,8 @@ class NoticiaCard extends StatelessWidget {
                           ),
                         ),
                     ],
-                  ),IconButton(
-                    icon: const Icon(Icons.share),
-                    onPressed: () {
-                      // Acción para compartir
-                    },
-                  ),                  Stack(
+                  ),
+                  Stack(
                     alignment: Alignment.center,
                     children: [
                       IconButton(
@@ -206,7 +199,8 @@ class NoticiaCard extends StatelessWidget {
                         },
                         tooltip: 'Reportar noticia',
                       ),
-                      if (noticia.contadorReportes != null && noticia.contadorReportes! > 0)
+                      if (noticia.contadorReportes != null &&
+                          noticia.contadorReportes! > 0)
                         Positioned(
                           right: 8,
                           top: 8,
@@ -221,7 +215,9 @@ class NoticiaCard extends StatelessWidget {
                               minHeight: 16,
                             ),
                             child: Text(
-                              noticia.contadorReportes! > 99 ? '99+' : noticia.contadorReportes.toString(),
+                              noticia.contadorReportes! > 99
+                                  ? '99+'
+                                  : noticia.contadorReportes.toString(),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 8,
