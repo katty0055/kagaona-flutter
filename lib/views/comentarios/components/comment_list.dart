@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kgaona/bloc/comentario/comentario_bloc.dart';
 import 'package:kgaona/bloc/comentario/comentario_event.dart';
 import 'package:kgaona/bloc/comentario/comentario_state.dart';
+import 'package:kgaona/bloc/noticia/noticia_bloc.dart';
 import 'package:kgaona/domain/comentario.dart';
 import 'package:kgaona/helpers/snackbar_helper.dart';
 import 'package:kgaona/views/comentarios/components/comment_card.dart';
@@ -53,7 +54,7 @@ class _CommentListState extends State<CommentList> {
             ],
           );      
         } else if (state is ComentarioLoaded) {
-          return _buildList(context, state.comentarios); 
+          return _buildList(context, state.comentarios);
         } else if (state is ComentarioError) {
           return _buildErrorState(context);
         }

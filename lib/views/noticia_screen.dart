@@ -25,7 +25,9 @@ import 'package:kgaona/views/categoria_screen.dart';
 import 'package:kgaona/views/preferencia_screen.dart';
 
 class NoticiaScreen extends StatelessWidget {
-  const NoticiaScreen({super.key});  @override
+  const NoticiaScreen({super.key});
+
+  @override
   Widget build(BuildContext context) {
     // Limpiar cualquier SnackBar existente al entrar a esta pantalla
     // pero solo si no está mostrándose el SnackBar de conectividad
@@ -103,7 +105,8 @@ class _NoticiaScreenContent extends StatelessWidget {
                   final noticiaBloc = context.read<NoticiaBloc>();
                   // Navegar a la pantalla de preferencias proporcionando el NoticiaBloc actual
                   await Navigator.push(
-                    context,                    MaterialPageRoute(
+                    context,
+                    MaterialPageRoute(
                       builder: (context) => BlocProvider.value(
                         value: noticiaBloc,
                         child: const PreferenciaScreen(),
@@ -170,10 +173,6 @@ class _NoticiaScreenContent extends StatelessWidget {
               );              
             },            
           ),
-          bottomNavigationBar: const CustomBottomNavigationBar(
-            selectedIndex: 0,
-          ),
-
         );        
       }
     );
@@ -245,7 +244,8 @@ class _NoticiaScreenContent extends StatelessWidget {
                 },
                 onDismissed: (direction) {
                   context.read<NoticiaBloc>().add(DeleteNoticiaEvent(noticia.id!));
-                },                child: NoticiaCard(
+                },
+                child: NoticiaCard(
                   noticia: noticia,
                   onReport: () {                    // Mostrar el diálogo de reportes
                     ReporteDialog.mostrarDialogoReporte(
