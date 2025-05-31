@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/helpers/dialog_helper.dart';
+import 'package:kgaona/views/acerca_screen.dart';
 import 'package:kgaona/views/contador_screen.dart';
 import 'package:kgaona/views/mi_app_screen.dart';
 import 'package:kgaona/views/noticia_screen.dart';
@@ -20,9 +21,13 @@ class SideMenu extends StatelessWidget {
           const SizedBox(
             height: 80, // To change the height of DrawerHeader
             child: DrawerHeader(
-              decoration:  BoxDecoration(color: Color.fromARGB(255, 217, 162, 180)),
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 217, 162, 180),
+              ),
               margin: EdgeInsets.zero, // Elimina el margen predeterminado
-              padding: EdgeInsets.symmetric(horizontal: 18.0), // Elimina el padding interno
+              padding: EdgeInsets.symmetric(
+                horizontal: 18.0,
+              ), // Elimina el padding interno
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -68,17 +73,21 @@ class SideMenu extends StatelessWidget {
             onTap: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const NoticiaScreen()), // Navega a MiAppScreen
+                MaterialPageRoute(
+                  builder: (context) => const NoticiaScreen(),
+                ), // Navega a MiAppScreen
               );
             },
-          ),      
+          ),
           ListTile(
             leading: const Icon(Icons.apps), // Ícono para la nueva opción
             title: const Text('Mi App'),
             onTap: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const MiAppScreen()), // Navega a MiAppScreen
+                MaterialPageRoute(
+                  builder: (context) => const MiAppScreen(),
+                ), // Navega a MiAppScreen
               );
             },
           ),
@@ -100,12 +109,20 @@ class SideMenu extends StatelessWidget {
             onTap: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const StartScreen(),
-                ),
+                MaterialPageRoute(builder: (context) => const StartScreen()),
               );
             },
-          ),          
+          ),
+          ListTile(
+            leading: const Icon(Icons.stars), // Ícono para el contador
+            title: const Text('Acerca de'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const AcercaScreen()),
+              );
+            },
+          ),
           ListTile(
             leading: const Icon(Icons.exit_to_app),
             title: const Text('Cerrar Sesión'),

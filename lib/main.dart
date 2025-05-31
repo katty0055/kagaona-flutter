@@ -11,6 +11,7 @@ import 'package:kgaona/bloc/connectivity/connectivity_bloc.dart';
 import 'package:kgaona/components/connectivity_wrapper.dart';
 import 'package:kgaona/helpers/secure_storage_service.dart';
 import 'package:kgaona/helpers/shared_preferences_service.dart';
+import 'package:kgaona/theme/theme.dart';
 import 'package:kgaona/views/login_screen.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:kgaona/bloc/noticia/noticia_bloc.dart';
@@ -64,9 +65,8 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.pinkAccent),
-        ),
+        theme:  AppTheme.bootcampTheme,
+
         debugShowCheckedModeBanner: false,
         builder: (context, child) {
           // Envolvemos con nuestro ConnectivityWrapper
