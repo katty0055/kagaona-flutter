@@ -295,7 +295,7 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (dialogContext) => AddTaskModal(
+      builder: (dialogContext) => TareaModal(
         taskToEdit: tarea,
         onTaskAdded: (Tarea tareaEditada) {
           context.read<TareaBloc>().add(UpdateTareaEvent(tareaEditada));
@@ -308,7 +308,7 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (dialogContext) => AddTaskModal(
+      builder: (dialogContext) => TareaModal(
         onTaskAdded: (Tarea nuevaTarea) {
           context.read<TareaBloc>().add(CreateTareaEvent(nuevaTarea));
         },

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/components/tarea_card.dart';
-import 'package:kgaona/helpers/common_widgets_helper.dart';
 import 'package:kgaona/domain/tarea.dart';
 import 'package:kgaona/helpers/snackbar_helper.dart';
 
@@ -19,7 +18,8 @@ class TaskDetailsScreen extends StatelessWidget {
 
     final theme = Theme.of(context);
     final Tarea tarea = tareas[indice];
-    final String imageUrl = 'https://picsum.photos/200/300?random=$indice';
+    // Aumentar dimensiones y agregar parámetros de calidad
+    final String imageUrl = 'https://picsum.photos/seed/${tarea.id}/${1080}/${720}?quality=100';
     final String fechaLimiteDato = tarea.fechaLimite != null
         ? '${tarea.fechaLimite!.day}/${tarea.fechaLimite!.month}/${tarea.fechaLimite!.year}'
         : 'Sin fecha límite';
