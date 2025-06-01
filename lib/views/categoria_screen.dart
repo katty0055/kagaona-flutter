@@ -8,7 +8,6 @@ import 'package:kgaona/components/last_updated_header.dart';
 import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/components/categoria_card.dart';
 import 'package:kgaona/components/side_menu.dart';
-import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
 import 'package:kgaona/components/formulario_categoria.dart';
 import 'package:kgaona/domain/categoria.dart';
 import 'package:kgaona/helpers/modal_helper.dart';
@@ -130,9 +129,6 @@ class _CategoriaScreenContent extends StatelessWidget {
             tooltip: 'Agregar Categoría',
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          bottomNavigationBar: const CustomBottomNavigationBar(
-            selectedIndex: 0,
-          ),
         );
       },
     );

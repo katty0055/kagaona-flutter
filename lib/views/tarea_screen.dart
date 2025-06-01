@@ -6,7 +6,6 @@ import 'package:kgaona/bloc/tarea/tarea_state.dart';
 import 'package:kgaona/bloc/tarea_contador/tarea_contador_bloc.dart';
 import 'package:kgaona/bloc/tarea_contador/tarea_contador_event.dart';
 import 'package:kgaona/components/add_task_modal.dart';
-import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
 import 'package:kgaona/components/last_updated_header.dart';
 import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/components/tarea_progreso_indicator.dart';
@@ -155,9 +154,6 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
             onPressed: () => _mostrarModalAgregarTarea(context),
             tooltip: 'Agregar Tarea',
             child: const Icon(Icons.add),
-          ),
-          bottomNavigationBar: const CustomBottomNavigationBar(
-            selectedIndex: 0,
           ),
         );
       },

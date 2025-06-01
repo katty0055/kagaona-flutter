@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/api/service/question_service.dart';
-import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
 import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/domain/question.dart';
 import 'package:kgaona/views/result_screen.dart';
@@ -17,7 +16,6 @@ class GameScreenState extends State<GameScreen> {
   List<Question> questionsList = [];
   int currentQuestionIndex = 0;
   int userScore = 0;
-  final int _selectedIndex = 0;
   int? selectedAnswerIndex; // Índice de la respuesta seleccionada
   bool? isCorrectAnswer; // Estado para manejar si la respuesta es correcta
 
@@ -184,7 +182,6 @@ class GameScreenState extends State<GameScreen> {
             ),
           ),
         ),
-      bottomNavigationBar:  CustomBottomNavigationBar(selectedIndex: _selectedIndex),
     );
   }
 }

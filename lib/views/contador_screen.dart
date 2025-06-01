@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kgaona/bloc/contador/contador_bloc.dart';
 import 'package:kgaona/bloc/contador/contador_event.dart';
 import 'package:kgaona/bloc/contador/contador_state.dart';
-import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
 import 'package:kgaona/components/side_menu.dart';
 
 class ContadorScreen extends StatelessWidget {
@@ -24,7 +23,6 @@ class _ContadorView extends StatelessWidget {
   const _ContadorView({required this.title});
 
   final String title;
-  final int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +90,6 @@ class _ContadorView extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: _selectedIndex),
     );
   }
 }

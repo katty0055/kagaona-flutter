@@ -20,6 +20,25 @@ class AppTheme {
         fontFamily: 'Inter',
       ),
     ),
+    // Configuración de ListTile (para elementos del menú)
+    listTileTheme: ListTileThemeData(
+      iconColor: AppColors.gray01,
+      textColor: AppColors.gray01,
+      titleTextStyle: AppTextStyles.bodyMdMedium.copyWith(color: AppColors.gray01),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      tileColor: Colors.transparent,
+      selectedTileColor: AppColors.blue02.withAlpha(77),
+      selectedColor: AppColors.gray01,
+    ),
+    
+    // Configuración para el DrawerHeader (para eliminar la barra horizontal)
+    dividerTheme: const DividerThemeData(
+      color: Colors.transparent, // Hace invisible el divisor
+      space: 0, // Minimiza el espacio del divisor
+      thickness: 0, // Sin grosor
+    ),
+
     //botones de radio y checkbox
     radioTheme: RadioThemeData(
       fillColor: WidgetStateProperty.resolveWith<Color>((

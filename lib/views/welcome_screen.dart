@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
 import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/helpers/secure_storage_service.dart';
 import 'package:kgaona/views/login_screen.dart'; // Añadimos la importación de LoginScreen
@@ -13,7 +12,6 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class WelcomeScreenState extends State<WelcomeScreen> {
-  final int _selectedIndex = 0;
   String _userEmail = '';
   @override
   void initState() {
@@ -68,7 +66,6 @@ class WelcomeScreenState extends State<WelcomeScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: _selectedIndex),
     );
   }
 }
