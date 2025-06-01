@@ -1,24 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ModalHelper {
-  /// Muestra un modal bottom sheet con configuración estandarizada
-  static Future<T?> mostrarModal<T>({
-    required BuildContext context,
-    required Widget child,
-    bool isScrollControlled = true,
-    BorderRadius? borderRadius,
-  }) {
-    return showModalBottomSheet<T>(
-      context: context,
-      isScrollControlled: isScrollControlled,
-      shape: borderRadius != null 
-          ? RoundedRectangleBorder(borderRadius: borderRadius) 
-          : null,
-      builder: (context) => child,
-    );
-  }
-
-  /// Muestra un diálogo de alerta con configuración estandarizada
+  /// Muestra un diálogo directamente sin envolverlo en AlertDialog adicional
   static Future<T?> mostrarDialogo<T>({
     required BuildContext context,
     required Widget child,
@@ -28,17 +11,7 @@ class ModalHelper {
     return showDialog<T>(
       context: context,
       barrierDismissible: barrierDismissible,
-      builder: (BuildContext context) {
-        if (title != null) {
-          return AlertDialog(
-            title: Text(title),
-            content: child,
-          );
-        }
-        return AlertDialog(
-          content: child,
-        );
-      },
+      builder: (BuildContext context) => child,
     );
   }
 }

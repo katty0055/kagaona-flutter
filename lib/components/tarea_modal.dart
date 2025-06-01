@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:kgaona/domain/tarea.dart';
 import 'package:kgaona/theme/theme.dart';
 
-class AddTaskModal extends StatefulWidget {
+class TareaModal extends StatefulWidget {
   final Function(Tarea) onTaskAdded;
   final Tarea? taskToEdit; // Tarea opcional para editar
 
-  const AddTaskModal({super.key, required this.onTaskAdded, this.taskToEdit});
+  const TareaModal({super.key, required this.onTaskAdded, this.taskToEdit});
 
   @override
-  AddTaskModalState createState() => AddTaskModalState();
+  TareaModalState createState() => TareaModalState();
 }
 
-class AddTaskModalState extends State<AddTaskModal> {
+class TareaModalState extends State<TareaModal> {
   late TextEditingController tituloController;
   late TextEditingController descripcionController;
   late TextEditingController fechaController;
@@ -48,11 +48,25 @@ class AddTaskModalState extends State<AddTaskModal> {
     final titulo = tituloController.text.trim();
     final descripcion = descripcionController.text.trim();
 
+    // Validar título vacío
     if (titulo.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Por favor, ingresa el título de la tarea')),
       );
       return;
+    }
+
+    // Validar que la fecha límite no sea anterior a la fecha de la tarea
+    if (fechaLimiteSeleccionada != null && fechaSeleccionada != null) {
+      if (fechaLimiteSeleccionada!.isBefore(fechaSeleccionada!)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('La fecha límite no puede ser anterior a la fecha de la tarea'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
     }
 
     // Crear o actualizar la tarea
@@ -68,6 +82,24 @@ class AddTaskModalState extends State<AddTaskModal> {
 
     Navigator.of(context).pop(); // Primero cerramos el modal
     widget.onTaskAdded(tarea); // Luego llamamos al callback
+  }
+
+  // También podemos agregar una validación al seleccionar la fecha límite
+  Future<void> _seleccionarFechaLimite() async {
+    DateTime? nuevaFechaLimite = await showDatePicker(
+      context: context,
+      initialDate: fechaLimiteSeleccionada ?? fechaSeleccionada ?? DateTime.now(),
+      firstDate: fechaSeleccionada ?? DateTime.now(), // La fecha mínima será la fecha de la tarea
+      lastDate: DateTime(2100),
+    );
+
+    if (nuevaFechaLimite != null) {
+      setState(() {
+        fechaLimiteSeleccionada = nuevaFechaLimite;
+        fechaLimiteController.text =
+            '${nuevaFechaLimite.day}/${nuevaFechaLimite.month}/${nuevaFechaLimite.year}';
+      });
+    }
   }
 
   @override
@@ -130,21 +162,7 @@ class AddTaskModalState extends State<AddTaskModal> {
                 suffixIcon: Icon(Icons.calendar_today),
                 hintText: 'Seleccionar Fecha Límite',
               ),
-              onTap: () async {
-                DateTime? nuevaFechaLimite = await showDatePicker(
-                  context: context,
-                  initialDate: fechaLimiteSeleccionada ?? DateTime.now(),
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2100),
-                );
-                if (nuevaFechaLimite != null) {
-                  setState(() {
-                    fechaLimiteSeleccionada = nuevaFechaLimite;
-                    fechaLimiteController.text =
-                        '${nuevaFechaLimite.day}/${nuevaFechaLimite.month}/${nuevaFechaLimite.year}';
-                  });
-                }
-              },
+              onTap: _seleccionarFechaLimite,
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
