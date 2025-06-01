@@ -17,6 +17,7 @@ class SideMenu extends StatelessWidget {
     final theme = Theme.of(context);
     
     return Drawer(
+      backgroundColor: theme.colorScheme.primary,
             child: Column(
         children: [
           // Header que simula el AppBar

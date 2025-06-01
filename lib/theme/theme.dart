@@ -160,7 +160,7 @@ class AppTheme {
       surface: AppColors.surface,
       onPrimary: AppColors.gray01,
       onSecondary: AppColors.gray01,
-      onError: AppColors.gray01,
+      onError: AppColors.gray01,      
     ),
     // Configuración para inputs de formularios
     inputDecorationTheme: InputDecorationTheme(

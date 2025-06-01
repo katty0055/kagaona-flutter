@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/theme/colors.dart';
+import 'dart:math' as math;
 
 /// Widget de animación para la pantalla de inicio de sesión con icono de usuario
 class LoginAnimation extends StatefulWidget {
@@ -12,6 +13,7 @@ class LoginAnimation extends StatefulWidget {
 class _LoginAnimationState extends State<LoginAnimation> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _pulseAnimation;
+  late Animation<double> _rotateAnimation;
   
   @override
   void initState() {
@@ -20,13 +22,21 @@ class _LoginAnimationState extends State<LoginAnimation> with SingleTickerProvid
     // Configuración del controlador de animación
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 2500),
     )..repeat(reverse: true); // Con reverse para un efecto más suave
     
     // Animación de pulsación más pronunciada
     _pulseAnimation = Tween<double>(begin: 0.9, end: 1.1).animate(
       CurvedAnimation(
         parent: _controller, 
+        curve: Curves.easeInOut,
+      ),
+    );
+    
+    // Añadimos una rotación muy sutil para más dinamismo
+    _rotateAnimation = Tween<double>(begin: -0.05, end: 0.05).animate(
+      CurvedAnimation(
+        parent: _controller,
         curve: Curves.easeInOut,
       ),
     );
@@ -44,23 +54,44 @@ class _LoginAnimationState extends State<LoginAnimation> with SingleTickerProvid
       animation: _controller,
       builder: (context, child) {
         return Center(
-          child: Transform.scale(
-            scale: _pulseAnimation.value,
-            child: Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: AppColors.gray01,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primaryDarkBlue.withAlpha(40),
-                    blurRadius: 10,
-                    spreadRadius: 1,
+          child: Transform.rotate(
+            angle: _rotateAnimation.value,
+            child: Transform.scale(
+              scale: _pulseAnimation.value,
+              child: Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  // Cambiamos de color sólido a gradiente sutil para más profundidad
+                  gradient: const RadialGradient(
+                    colors: [
+                      AppColors.gray01,
+                      AppColors.gray01,
+                      AppColors.gray02,
+                    ],
+                    stops: [0.0, 0.7, 1.0],
+                    center: Alignment(0.1, 0.1), // Descentramos ligeramente para efecto 3D
+                    focal: Alignment(0.1, 0.1),
+                    radius: 1.0,
                   ),
-                ],
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    // Sombra principal
+                    BoxShadow(
+                      color: AppColors.primaryDarkBlue.withAlpha(40),
+                      blurRadius: 15,
+                      spreadRadius: 1,
+                    ),
+                    // Resplandor sutil en el borde
+                    BoxShadow(
+                      color: AppColors.primaryLightBlue.withAlpha(20),
+                      blurRadius: 20,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: const UserIconAnimated(),
               ),
-              child: const UserIconAnimated(),
             ),
           ),
         );
@@ -89,15 +120,40 @@ class UserIconPainter extends CustomPainter {
     final width = size.width;
     final height = size.height;
     
-    // Color primario para el icono
-    final Paint primaryPaint = Paint()
-      ..color = AppColors.primaryDarkBlue
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 2.5;
-    
     // Centro de la pantalla
     final centerX = width / 2;
     final centerY = height / 2;
+    
+    // Fondo circular sutil para el icono
+    final backgroundPaint = Paint()
+      ..shader = RadialGradient(
+        colors: [
+          AppColors.blue03.withAlpha(10),
+          AppColors.primaryLightBlue.withAlpha(5)
+        ],
+        center: Alignment.center,
+        radius: 0.8
+      ).createShader(Rect.fromLTWH(0, 0, width, height))
+      ..style = PaintingStyle.fill;
+    
+    canvas.drawCircle(
+      Offset(centerX, centerY),
+      width * 0.45,
+      backgroundPaint
+    );
+
+    // Color primario para el icono con gradiente
+    final Paint primaryPaint = Paint()
+      ..shader = const LinearGradient(
+        colors: [
+          AppColors.primaryDarkBlue,
+          AppColors.primaryLightBlue,
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ).createShader(Rect.fromLTWH(0, 0, width, height))
+      ..style = PaintingStyle.fill
+      ..strokeWidth = 2.5;
     
     // Dibujar cabeza (círculo) - Parte superior del icono de usuario
     final headRadius = width * 0.2;
@@ -107,7 +163,7 @@ class UserIconPainter extends CustomPainter {
       primaryPaint
     );
     
-    // Dibujar cuerpo (medio círculo/forma de usuario) - INVERTIDO
+    // Dibujar cuerpo (medio círculo/forma de usuario)
     final bodyPath = Path();
     
     // Crear la forma del cuerpo como un semicírculo orientado hacia arriba
@@ -120,8 +176,8 @@ class UserIconPainter extends CustomPainter {
     // Cambiamos el ángulo inicial y sweep para invertir el arco
     bodyPath.addArc(
       bodyRect,
-      3.14, // PI radianes = 180 grados (comienza desde abajo)
-      3.14, // PI radianes = 180 grados (termina arriba)
+      math.pi, // PI radianes = 180 grados (comienza desde abajo)
+      math.pi, // PI radianes = 180 grados (termina arriba)
     );
     
     // Cerrar el path para formar una figura completa (invertida)
@@ -130,10 +186,11 @@ class UserIconPainter extends CustomPainter {
     bodyPath.close();
     
     canvas.drawPath(bodyPath, primaryPaint);
+
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false; // Estático, no necesita repintarse por cambios en propiedades
+    return false;
   }
 }
