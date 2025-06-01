@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/components/welcome_animation.dart';
-import 'package:kgaona/helpers/common_widgets_helper.dart';
 import 'package:kgaona/helpers/secure_storage_service.dart';
 import 'package:kgaona/views/login_screen.dart'; 
 import 'package:watch_it/watch_it.dart';
