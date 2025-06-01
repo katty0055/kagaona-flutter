@@ -143,20 +143,64 @@ class AppTheme {
       onSecondary: AppColors.gray01,
       onError: AppColors.gray01,
     ),
+    // Configuración para inputs de formularios
+    inputDecorationTheme: InputDecorationTheme(
+      // Colores y relleno
+      filled: true,
+      fillColor: AppColors.gray01,
+      
+      // Espaciado interno
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      
+      // Bordes
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: AppColors.gray05),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: AppColors.gray05),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: AppColors.primary, width: 2),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: AppColors.error),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: AppColors.error, width: 2),
+      ),
+      
+      // Estilos de texto
+      labelStyle: AppTextStyles.bodyMd.copyWith(color: AppColors.gray14),
+      floatingLabelStyle: AppTextStyles.bodyMdMedium.copyWith(color: AppColors.primary),
+      hintStyle: AppTextStyles.bodyMd.copyWith(color: AppColors.gray08),
+      errorStyle: AppTextStyles.bodySm.copyWith(color: AppColors.error),
+  
+      
+      // Otras propiedades
+      isDense: false,
+      isCollapsed: false,
+      floatingLabelBehavior: FloatingLabelBehavior.auto,
+      alignLabelWithHint: true,
+    ),
   );
   //decoraciones reutilizables
-  static final BoxDecoration sectionBorderGray05 = BoxDecoration(
-    borderRadius: BorderRadius.circular(10),
-    border: Border.all(color: AppColors.gray05),
-    color: Colors.white, // Fondo blanco
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withAlpha(51), // Sombra suave
-        blurRadius: 4,
-        offset: const Offset(0, 2),
-      ),
-    ],
-  );
+  // static final BoxDecoration sectionBorderGray05 = BoxDecoration(
+  //   borderRadius: BorderRadius.circular(10),
+  //   border: Border.all(color: AppColors.gray05),
+  //   color: Colors.white, // Fondo blanco
+  //   boxShadow: [
+  //     BoxShadow(
+  //       color: Colors.black.withAlpha(51), // Sombra suave
+  //       blurRadius: 4,
+  //       offset: const Offset(0, 2),
+  //     ),
+  //   ],
+  // );
 
   // Estilo para iconos con fondo pequeño
   static BoxDecoration iconDecoration(BuildContext context) {
