@@ -6,7 +6,6 @@ import 'package:kgaona/bloc/categoria/categoria_state.dart';
 import 'package:kgaona/bloc/noticia/noticia_bloc.dart';
 import 'package:kgaona/bloc/noticia/noticia_event.dart';
 import 'package:kgaona/bloc/noticia/noticia_state.dart';
-import 'package:kgaona/components/custom_bottom_navigation_bar.dart';
 import 'package:kgaona/components/floating_add_button.dart';
 import 'package:kgaona/components/formulario_noticia.dart';
 import 'package:kgaona/components/last_updated_header.dart';
