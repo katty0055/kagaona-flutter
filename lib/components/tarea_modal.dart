@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/domain/tarea.dart';
+import 'package:kgaona/theme/theme.dart';
 
 class AddTaskModal extends StatefulWidget {
   final Function(Tarea) onTaskAdded;
@@ -18,9 +19,9 @@ class AddTaskModalState extends State<AddTaskModal> {
   late TextEditingController fechaLimiteController;
   DateTime? fechaSeleccionada;
   DateTime? fechaLimiteSeleccionada;
-  late List<String> pasos; 
-  late String tipoSeleccionado; 
-  
+  late List<String> pasos;
+  late String tipoSeleccionado;
+
   @override
   void initState() {
     super.initState();
@@ -41,13 +42,12 @@ class AddTaskModalState extends State<AddTaskModal> {
           : '',
     );
     tipoSeleccionado = widget.taskToEdit?.tipo ?? 'normal';
-
   }
 
   void _guardarTarea() {
     final titulo = tituloController.text.trim();
     final descripcion = descripcionController.text.trim();
-                   
+
     if (titulo.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Por favor, ingresa el título de la tarea')),
@@ -72,6 +72,8 @@ class AddTaskModalState extends State<AddTaskModal> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return AlertDialog(
       title: Text(widget.taskToEdit == null ? 'Agregar Tarea' : 'Editar Tarea'),
       content: SingleChildScrollView(
@@ -82,15 +84,16 @@ class AddTaskModalState extends State<AddTaskModal> {
               controller: tituloController,
               decoration: const InputDecoration(
                 labelText: 'Título',
-                border: OutlineInputBorder(),
+                // No es necesario definir el border aquí, ya se aplica el tema
               ),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: descripcionController,
+              maxLines: 3, // Permitir múltiples líneas para la descripción
               decoration: const InputDecoration(
                 labelText: 'Descripción',
-                border: OutlineInputBorder(),
+                // El tema se aplica automáticamente
               ),
             ),
             const SizedBox(height: 16),
@@ -99,7 +102,7 @@ class AddTaskModalState extends State<AddTaskModal> {
               readOnly: true,
               decoration: const InputDecoration(
                 labelText: 'Fecha',
-                border: OutlineInputBorder(),
+                suffixIcon: Icon(Icons.calendar_today), // Icono para indicar selección
                 hintText: 'Seleccionar Fecha',
               ),
               onTap: () async {
@@ -124,7 +127,7 @@ class AddTaskModalState extends State<AddTaskModal> {
               readOnly: true,
               decoration: const InputDecoration(
                 labelText: 'Fecha Límite',
-                border: OutlineInputBorder(),
+                suffixIcon: Icon(Icons.calendar_today),
                 hintText: 'Seleccionar Fecha Límite',
               ),
               onTap: () async {
@@ -148,11 +151,29 @@ class AddTaskModalState extends State<AddTaskModal> {
               value: tipoSeleccionado,
               decoration: const InputDecoration(
                 labelText: 'Tipo de Tarea',
-                border: OutlineInputBorder(),
+                // Tema aplicado automáticamente
               ),
-              items: const [
-                DropdownMenuItem(value: 'normal', child: Text('Normal')),
-                DropdownMenuItem(value: 'urgente', child: Text('Urgente')),
+              items: [
+                DropdownMenuItem(
+                  value: 'normal',
+                  child: Row(
+                    children: [
+                      Icon(Icons.check_circle_outline, color: theme.colorScheme.primary),
+                      const SizedBox(width: 8),
+                      const Text('Normal'),
+                    ],
+                  ),
+                ),
+                DropdownMenuItem(
+                  value: 'urgente',
+                  child: Row(
+                    children: [
+                      Icon(Icons.priority_high, color: theme.colorScheme.error),
+                      const SizedBox(width: 8),
+                      Text('Urgente', style: TextStyle(color: theme.colorScheme.error)),
+                    ],
+                  ),
+                ),
               ],
               onChanged: (String? nuevoValor) {
                 setState(() {
@@ -166,10 +187,12 @@ class AddTaskModalState extends State<AddTaskModal> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
+          style: AppTheme.modalSecondaryButtonStyle(),
           child: const Text('Cancelar'),
         ),
         ElevatedButton(
           onPressed: _guardarTarea,
+          style: AppTheme.modalActionButtonStyle(),
           child: const Text('Guardar'),
         ),
       ],

@@ -3,6 +3,28 @@ import 'package:kgaona/theme/colors.dart';
 import 'package:kgaona/theme/text.style.dart';
 
 class AppTheme {
+  // Estilo para barras de progreso
+  static ProgressIndicatorThemeData progressIndicatorTheme() {
+    return const ProgressIndicatorThemeData(
+      color: AppColors.primaryLightBlue,
+      linearTrackColor: Colors.transparent,
+      linearMinHeight: 16.0,
+      refreshBackgroundColor: AppColors.gray05,
+      circularTrackColor: Colors.transparent,
+    );
+  }
+  
+  // Estilo personalizado para barras de progreso con borde
+  static BoxDecoration progressBarDecoration() {
+    return BoxDecoration(
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(
+        color: AppColors.gray14.withAlpha(77),
+        width: 1.0,
+      ),
+    );
+  }
+  
   static ThemeData bootcampTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
@@ -159,8 +181,8 @@ class AppTheme {
       error: AppColors.error,
       surface: AppColors.surface,
       onPrimary: AppColors.gray01,
-      onSecondary: AppColors.gray01,
-      onError: AppColors.gray01,      
+      onSecondary: AppColors.success,
+      onError: AppColors.warning,      
     ),
     // Configuración para inputs de formularios
     inputDecorationTheme: InputDecorationTheme(
@@ -206,6 +228,8 @@ class AppTheme {
       floatingLabelBehavior: FloatingLabelBehavior.auto,
       alignLabelWithHint: true,
     ),
+    // Agregar tema de diálogo
+    dialogTheme: dialogTheme(),
   );
   //decoraciones reutilizables
   // static final BoxDecoration sectionBorderGray05 = BoxDecoration(
@@ -240,6 +264,99 @@ class AppTheme {
   // Estilo para copyright
   static Color copyrightColor(BuildContext context) {
     return Theme.of(context).colorScheme.onSurface.withAlpha(51);
+  }
+
+  // Estilo para tarjetas con imágenes
+  static CardTheme imageCardTheme() {
+    return CardTheme(
+      color: AppColors.gray01,
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+        side: const BorderSide(color: AppColors.gray05, width: 1),
+      ),
+      clipBehavior: Clip.antiAlias, // Importante para imágenes que pueden sobrepasar bordes
+    );
+  }
+  
+  // Decoración para contenedor de imagen en tarjetas
+  static BoxDecoration imageContainerDecoration() {
+    return BoxDecoration(
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(12),
+        topRight: Radius.circular(12),
+      ),
+      border: Border.all(
+        color: AppColors.gray05.withAlpha(127),
+        width: 0.5,
+      ),
+    );
+  }
+  
+  // Estilo para botones de acción en tarjetas
+  static ButtonStyle cardActionButtonStyle() {
+    return FilledButton.styleFrom(
+      backgroundColor: AppColors.primary,
+      foregroundColor: AppColors.gray01,
+      textStyle: AppTextStyles.bodyLgMedium.copyWith(
+        fontWeight: FontWeight.w600,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      minimumSize: const Size(44, 36),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+    );
+  }
+  
+  // Estilo para contenido de tarjetas con padding consistente
+  static EdgeInsets cardContentPadding() {
+    return const EdgeInsets.all(16);
+  }
+
+  // Estilo para diálogos y modales
+  static DialogTheme dialogTheme() {
+    return DialogTheme(
+      backgroundColor: AppColors.gray01,
+      elevation: 8,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      titleTextStyle: AppTextStyles.headingMd.copyWith(
+        color: AppColors.gray14, 
+        fontWeight: FontWeight.bold
+      ),
+      contentTextStyle: AppTextStyles.bodyMd.copyWith(
+        color: AppColors.gray14
+      ),
+    );
+  }
+  
+  // Espaciado estándar para formularios
+  static const EdgeInsets formFieldSpacing = EdgeInsets.symmetric(vertical: 16);
+  
+  // Estilo para botones de acción en modales
+  static ButtonStyle modalActionButtonStyle() {
+    return ElevatedButton.styleFrom(
+      backgroundColor: AppColors.primary,
+      foregroundColor: AppColors.gray01,
+      textStyle: AppTextStyles.bodyMdSemiBold,
+      elevation: 2,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+    );
+  }
+  
+  // Estilo para botones secundarios en modales
+  static ButtonStyle modalSecondaryButtonStyle() {
+    return TextButton.styleFrom(
+      foregroundColor: AppColors.gray14,
+      textStyle: AppTextStyles.bodyMdSemiBold,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    );
   }
 }
 

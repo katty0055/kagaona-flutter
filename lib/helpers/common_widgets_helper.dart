@@ -87,7 +87,6 @@ class CommonWidgetsHelper {
     );
   }
 
-  // Nuevo método para iconos de estado de error
   static Widget iconoTitulo({required IconData icon}) {
     return Builder(
       builder: (context) {

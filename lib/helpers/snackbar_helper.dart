@@ -16,7 +16,9 @@ class SnackBarHelper {
     _mostrarSnackBar(
       context,
       mensaje: mensaje,
-      color: Colors.green,
+      color: Theme.of(context)
+              .colorScheme
+              .onSecondary,
       duracion: const Duration(seconds: 3),
     );
     return Future.delayed(const Duration(milliseconds: 1500));
@@ -53,7 +55,9 @@ class SnackBarHelper {
     _mostrarSnackBar(
       context,
       mensaje: mensaje,
-      color: Colors.orange,
+      color: Theme.of(context)
+              .colorScheme
+              .onError,
       duracion: const Duration(seconds: 4),
     );
   }
