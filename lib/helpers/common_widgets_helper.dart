@@ -24,6 +24,10 @@ class CommonWidgetsHelper {
     return const SizedBox(height: 32);
   }
 
+  static Widget horizontalSpace(double width) {
+    return SizedBox(width: width);
+  }
+
   //containers o secciones
   static Widget paddingContainer32({
     required Widget child,
@@ -52,7 +56,17 @@ class CommonWidgetsHelper {
       builder: (context) {
         final theme = Theme.of(context);
 
-        return Text(title, style: theme.textTheme.headlineLarge);
+        return Text(title, style: theme.textTheme.displaySmall);
+      },
+    );
+  }
+
+    static Widget seccionTitulo({required String title}) {
+    return Builder(
+      builder: (context) {
+        final theme = Theme.of(context);
+
+        return Text(title, style: theme.textTheme.displayLarge);
       },
     );
   }
@@ -64,12 +78,8 @@ class CommonWidgetsHelper {
         final iconTheme = AppTheme.infoIconTheme(context);
         return Row(
           children: [
-            Icon(
-              icon,
-              color: iconTheme.color,
-              size: iconTheme.size,
-            ),
-            const SizedBox(width: 12),
+            Icon(icon, color: iconTheme.color, size: iconTheme.size),
+            horizontalSpace(16),
             Expanded(child: Text(text, style: theme.textTheme.titleMedium)),
           ],
         );
@@ -78,32 +88,26 @@ class CommonWidgetsHelper {
   }
 
   // Nuevo método para iconos de estado de error
-  static Widget iconoNoConexion() {
+  static Widget iconoTitulo({
+    required IconData icon}) {
     return Builder(
       builder: (context) {
         final theme = Theme.of(context);
         return Container(
           padding: padding16,
           decoration: AppTheme.iconDecoration(context),
-          child: Icon(Icons.wifi_off, color: theme.colorScheme.primary, size: 64),
+          child: Icon(
+            icon,
+            color: theme.colorScheme.primary,
+            size: 64,
+          ),
         );
       },
     );
   }
 
-  static Widget verticalSpace(double height) {
-    return SizedBox(height: height);
-  }
-
-  static Widget horizontalSpace(double width) {
-    return SizedBox(width: width);
-  }
-
   // Nuevo método para mensajes de error
-  static Widget mensaje({
-    required String titulo,
-    required String mensaje,
-  }) {
+  static Widget mensaje({required String titulo, required String mensaje}) {
     return Builder(
       builder: (context) {
         final theme = Theme.of(context);
@@ -129,6 +133,7 @@ class CommonWidgetsHelper {
       },
     );
   }
+
   static Widget seccionValoresSodep({
     required IconData icon,
     required String title,
@@ -145,7 +150,7 @@ class CommonWidgetsHelper {
               decoration: AppTheme.iconDecoration(context),
               child: Icon(icon, color: theme.colorScheme.primary, size: 24),
             ),
-            buildSpacing16(),
+            horizontalSpace(16), // Espacio horizontal en lugar de vertical
             Expanded(child: Text(title, style: theme.textTheme.bodyMedium)),
           ],
         );
