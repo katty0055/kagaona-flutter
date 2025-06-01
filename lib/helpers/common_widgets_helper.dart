@@ -23,7 +23,6 @@ class CommonWidgetsHelper {
   static Widget buildSpacing32() {
     return const SizedBox(height: 32);
   }
-  
 
   //containers o secciones
   static Widget paddingContainer32({
@@ -62,13 +61,31 @@ class CommonWidgetsHelper {
     return Builder(
       builder: (context) {
         final theme = Theme.of(context);
+        final iconTheme = AppTheme.infoIconTheme(context);
+        return Row(
+          children: [
+            Icon(
+              icon,
+              color: iconTheme.color,
+              size: iconTheme.size,
+            ),
+            const SizedBox(width: 12),
+            Expanded(child: Text(text, style: theme.textTheme.titleMedium)),
+          ],
+        );
+      },
+    );
+  }
 
-        return  Row(
-            children: [
-              Icon(icon, color: theme.colorScheme.primary, size: 20),
-              const SizedBox(width: 12),
-              Expanded(child: Text(text, style: theme.textTheme.titleMedium)),
-            ],
+  // Nuevo método para iconos de estado de error
+  static Widget iconoNoConexion() {
+    return Builder(
+      builder: (context) {
+        final theme = Theme.of(context);
+        return Container(
+          padding: padding16,
+          decoration: AppTheme.iconDecoration(context),
+          child: Icon(Icons.wifi_off, color: theme.colorScheme.primary, size: 64),
         );
       },
     );
@@ -82,6 +99,36 @@ class CommonWidgetsHelper {
     return SizedBox(width: width);
   }
 
+  // Nuevo método para mensajes de error
+  static Widget mensaje({
+    required String titulo,
+    required String mensaje,
+  }) {
+    return Builder(
+      builder: (context) {
+        final theme = Theme.of(context);
+
+        return Column(
+          children: [
+            Text(
+              titulo,
+              style: theme.textTheme.displaySmall,
+              textAlign: TextAlign.center,
+            ),
+            buildSpacing16(),
+            Padding(
+              padding: paddingHorizontal32,
+              child: Text(
+                mensaje,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
   static Widget seccionValoresSodep({
     required IconData icon,
     required String title,
@@ -94,16 +141,12 @@ class CommonWidgetsHelper {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(AppTheme.spacing.sm),
-              decoration: AppTheme.valueIconDecoration(context),
-              child: Icon(icon, 
-                color: theme.colorScheme.primary, 
-                size: 24),
+              padding: padding8,
+              decoration: AppTheme.iconDecoration(context),
+              child: Icon(icon, color: theme.colorScheme.primary, size: 24),
             ),
-            horizontalSpace(AppTheme.spacing.md),
-            Expanded(
-              child: Text(title, style: theme.textTheme.bodyMedium),
-            ),
+            buildSpacing16(),
+            Expanded(child: Text(title, style: theme.textTheme.bodyMedium)),
           ],
         );
       },
@@ -116,32 +159,32 @@ class CommonWidgetsHelper {
     final Color copyrightColor = theme.colorScheme.onSurface.withAlpha(51);
 
     return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Fila de copyright
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.copyright_rounded, color: copyrightColor, size: 16),
-              buildSpacing8(),
-              Text(
-                '2025 SODEP S.A.',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: copyrightColor,
-                ),
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Fila de copyright
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.copyright_rounded, color: copyrightColor, size: 16),
+            buildSpacing8(),
+            Text(
+              '2025 SODEP S.A.',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: copyrightColor,
               ),
-            ],
-          ),
-
-          buildSpacing8(),
-          Center(
-            child: Text(
-              'Software Development & Products',
-              style: theme.textTheme.bodySmall?.copyWith(color: copyrightColor),
             ),
+          ],
+        ),
+
+        buildSpacing8(),
+        Center(
+          child: Text(
+            'Software Development & Products',
+            style: theme.textTheme.bodySmall?.copyWith(color: copyrightColor),
           ),
-          buildSpacing32(),
-        ],
+        ),
+        buildSpacing32(),
+      ],
     );
   }
 

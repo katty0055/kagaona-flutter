@@ -78,6 +78,9 @@ class AppTheme {
         disabledForegroundColor: AppColors.gray08,
         textStyle: AppTextStyles.bodyLgMedium.copyWith(color: AppColors.gray01),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)), // Esto quita completamente el redondeo
+        ),
       ),
     ),
     //pestañas
@@ -90,7 +93,7 @@ class AppTheme {
       unselectedLabelColor: AppColors.gray14,
       indicator: const BoxDecoration(
         color: AppColors.blue02,
-        borderRadius: BorderRadius.all(Radius.circular(80)),
+        borderRadius: BorderRadius.all(Radius.circular(10)),
       ),
     ),
     //botones de texto
@@ -143,7 +146,7 @@ class AppTheme {
   );
   //decoraciones reutilizables
   static final BoxDecoration sectionBorderGray05 = BoxDecoration(
-    borderRadius: BorderRadius.circular(5),
+    borderRadius: BorderRadius.circular(10),
     border: Border.all(color: AppColors.gray05),
     color: Colors.white, // Fondo blanco
     boxShadow: [
@@ -154,43 +157,20 @@ class AppTheme {
       ),
     ],
   );
-  // Añadir más decoraciones
-  static final BoxDecoration cardDecoration = BoxDecoration(
-    borderRadius: BorderRadius.circular(10),
-    color: AppColors.gray01,
-    border: Border.all(color: AppColors.gray05),
-  );
 
-  static BoxDecoration valueIconDecoration(BuildContext context) {
+  // Estilo para iconos con fondo pequeño
+  static BoxDecoration iconDecoration(BuildContext context) {
     return BoxDecoration(
       color: Theme.of(context).colorScheme.primary.withAlpha(51),
-      borderRadius: BorderRadius.circular(12),
-    );
-  }
-
-  static final BoxDecoration surfaceContainer = BoxDecoration(
-    color: AppColors.surface,
-    borderRadius: BorderRadius.circular(8),
-  );
-
-  // Colores semitransparentes comunes
-  static Color withEmphasis(Color color, {double alpha = 0.2}) {
-    return color.withAlpha((alpha * 255).toInt());
-  }
-  
-  // Estilo para iconos de valores
-  static IconThemeData valueIconTheme(BuildContext context) {
-    return IconThemeData(
-      color: Theme.of(context).colorScheme.primary,
-      size: 24,
+      borderRadius: BorderRadius.circular(10),
     );
   }
   
-  // Estilo para iconos de información
+  // Estilo para iconos sin fondo pequeños 
   static IconThemeData infoIconTheme(BuildContext context) {
     return IconThemeData(
       color: Theme.of(context).colorScheme.primary,
-      size: 20,
+      size: 24,
     );
   }
 
@@ -198,21 +178,6 @@ class AppTheme {
   static Color copyrightColor(BuildContext context) {
     return Theme.of(context).colorScheme.onSurface.withAlpha(51);
   }
-
-  // Constantes de espaciado
-  static const spacing = _Spacing();
-  static const EdgeInsets contentPadding = EdgeInsets.all(32);
-  static const EdgeInsets contentPaddingHorizontal = EdgeInsets.symmetric(horizontal: 32);
-  static const EdgeInsets itemSpacing = EdgeInsets.symmetric(vertical: 8);
 }
 
-// Clase separada para espaciado
-class _Spacing {
-  const _Spacing();
-  final double xs = 4;
-  final double sm = 8;
-  final double md = 16;
-  final double lg = 24;
-  final double xl = 32;
-  final double xxl = 48;
-}
+
