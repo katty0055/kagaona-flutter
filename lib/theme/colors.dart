@@ -13,6 +13,7 @@ class AppColors {
   static const Color surface = gray02;               // Usado en: fondos de tarjetas, diálogos, áreas de contenido
   static const Color background =white; // Usado en: fondo general de la aplicación
   static const Color disabled = gray07; // Para elementos UI desactivados
+  
 
   // Gray Scale
   static const Color gray01 = Color(0xFFFFFFFF); //Blanco puro

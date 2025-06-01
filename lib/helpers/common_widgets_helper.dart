@@ -61,7 +61,7 @@ class CommonWidgetsHelper {
     );
   }
 
-    static Widget seccionTitulo({required String title}) {
+  static Widget seccionTitulo({required String title}) {
     return Builder(
       builder: (context) {
         final theme = Theme.of(context);
@@ -88,19 +88,14 @@ class CommonWidgetsHelper {
   }
 
   // Nuevo método para iconos de estado de error
-  static Widget iconoTitulo({
-    required IconData icon}) {
+  static Widget iconoTitulo({required IconData icon}) {
     return Builder(
       builder: (context) {
         final theme = Theme.of(context);
         return Container(
           padding: padding16,
           decoration: AppTheme.iconDecoration(context),
-          child: Icon(
-            icon,
-            color: theme.colorScheme.primary,
-            size: 64,
-          ),
+          child: Icon(icon, color: theme.colorScheme.primary, size: 64),
         );
       },
     );
