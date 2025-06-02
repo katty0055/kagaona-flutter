@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/domain/categoria.dart';
 import 'package:kgaona/domain/noticia.dart';
+import 'package:kgaona/theme/theme.dart'; // Importar el tema
 
 class FormularioNoticia extends StatefulWidget {
   final Noticia? noticia; // Noticia existente para edición (null para creación)
@@ -113,153 +114,139 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-        left: 16,
-        right: 16,
-        top: 16,
+    return AlertDialog(
+      title: Text(
+        widget.noticia == null ? 'Agregar Noticia' : 'Editar Noticia',
       ),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Text(
-            //   widget.noticia == null ? 'Agregar Noticia' : 'Editar Noticia',
-            //   style: const TextStyle(
-            //     fontSize: 20,
-            //     fontWeight: FontWeight.bold,
-            //   ),
-            //   textAlign: TextAlign.center,
-            // ),
-            //const SizedBox(height: 16),
-            TextFormField(
-              controller: _tituloController,
-              decoration: const InputDecoration(
-                labelText: 'Título',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor ingrese un título';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _descripcionController,
-              decoration: const InputDecoration(
-                labelText: 'Descripción',
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 3,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor ingrese una descripción';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _fuenteController,
-              decoration: const InputDecoration(
-                labelText: 'Fuente',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor ingrese una fuente';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _imagenUrlController,
-              decoration: const InputDecoration(
-                labelText: 'URL de la imagen',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor ingrese la URL de una imagen';
-                }
-                // Podríamos validar que es una URL válida
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            // Campo de fecha
-            TextFormField(
-              controller: _fechaController,
-              decoration: const InputDecoration(
-                labelText: 'Fecha de publicación',
-                border: OutlineInputBorder(),
-                suffixIcon: Icon(Icons.calendar_today),
-              ),
-              readOnly: true,
-              onTap: _seleccionarFecha,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'La fecha es requerida';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            // Selector de categoría
-            DropdownButtonFormField<String>(
-              decoration: const InputDecoration(
-                labelText: 'Categoría',
-                border: OutlineInputBorder(),
-              ),
-              value: _selectedCategoriaId,
-              items: [
-                // Opción por defecto
-                const DropdownMenuItem<String>(
-                  value: CategoriaConstantes.defaultcategoriaId,
-                  child: Text('Sin categoría'),
-                ),                // Opciones de categorías cargadas
-                ...widget.categorias
-                    .where((categoria) => categoria.id != null && categoria.id!.isNotEmpty)
-                    .map((categoria) {
-                  return DropdownMenuItem<String>(
-                    value: categoria.id!,
-                    child: Text(categoria.nombre),
-                  );
-                }),
-              ],
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() {
-                    _selectedCategoriaId = value;
-                  });
-                }
-              },
-            ),
-            const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancelar'),
+      content: SingleChildScrollView(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextFormField(
+                controller: _tituloController,
+                decoration: const InputDecoration(
+                  labelText: 'Título',
                 ),
-                ElevatedButton(
-                  onPressed: _guardarNoticia,
-                  child: Text(
-                    widget.noticia == null ? 'Agregar' : 'Guardar',
-                  ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingrese un título';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _descripcionController,
+                decoration: const InputDecoration(
+                  labelText: 'Descripción',
                 ),
-              ],
-            ),
-          ],
+                maxLines: 3,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingrese una descripción';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _fuenteController,
+                decoration: const InputDecoration(
+                  labelText: 'Fuente',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingrese una fuente';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _imagenUrlController,
+                decoration: const InputDecoration(
+                  labelText: 'URL de la imagen',
+                  suffixIcon: Icon(Icons.image),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingrese la URL de una imagen';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              // Campo de fecha
+              TextFormField(
+                controller: _fechaController,
+                decoration: const InputDecoration(
+                  labelText: 'Fecha de publicación',
+                  suffixIcon: Icon(Icons.calendar_today),
+                ),
+                readOnly: true,
+                onTap: _seleccionarFecha,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'La fecha es requerida';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              // Selector de categoría
+              DropdownButtonFormField<String>(
+                decoration: const InputDecoration(
+                  labelText: 'Categoría',
+                ),
+                value: _selectedCategoriaId,
+                items: [
+                  // Opción por defecto
+                  const DropdownMenuItem<String>(
+                    value: CategoriaConstantes.defaultcategoriaId,
+                    child: Text('Sin categoría'),
+                  ),                
+                  // Opciones de categorías cargadas
+                  ...widget.categorias
+                      .where((categoria) => categoria.id != null && categoria.id!.isNotEmpty)
+                      .map((categoria) {
+                    return DropdownMenuItem<String>(
+                      value: categoria.id!,
+                      child: Text(categoria.nombre),
+                    );
+                  }),
+                ],
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() {
+                      _selectedCategoriaId = value;
+                    });
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          style: AppTheme.modalSecondaryButtonStyle(),
+          child: const Text('Cancelar'),
+        ),
+        ElevatedButton(
+          onPressed: _guardarNoticia,
+          style: AppTheme.modalActionButtonStyle(),
+          child: Text(
+            widget.noticia == null ? 'Agregar' : 'Guardar',
+          ),
+        ),
+      ],
     );
   }
 }
