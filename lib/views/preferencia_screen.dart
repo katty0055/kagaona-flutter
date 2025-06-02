@@ -49,7 +49,7 @@ class PreferenciaScreen extends StatelessWidget {
               context,
               mensaje: 'Preferencias guardadas correctamente',
             );
-            Future.delayed(const Duration(milliseconds: 800), () {
+            Future.delayed(const Duration(milliseconds: 1250), () {
               if (context.mounted) {
                 Navigator.pop(context, state.categoriasSeleccionadas);
               }

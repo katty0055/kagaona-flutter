@@ -105,7 +105,7 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
         // Verificar si estamos en estado de carga y obtener el motivo actual
         final bool isLoading = state is ReporteLoading;
         final motivoActual = isLoading ? (state).motivoActual : null;
-
+        final theme = Theme.of(context); // Obtener el tema actual
         
         if (state is ReporteEstadisticasLoaded && state.noticia.id == widget.noticiaId) {
           widget.estadisticas = {
@@ -116,33 +116,47 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
         }
         
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          backgroundColor: const Color(0xFFFCEAE8), // Color rosa suave
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          // Usamos el sistema de temas para los colores base
+          elevation: 4.0, // Elevación consistente con el tema
           insetPadding: const EdgeInsets.symmetric(
             horizontal: 70.0,
             vertical: 24.0,
           ),
-          child: Padding(
+          child: Container(
+            // Mantenemos el gradiente con los colores de reportes
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  const Color(0xFFFCEAE8), // Mantenemos el color rosa original
+                  const Color(0xFFFCEAE8).withAlpha(220), // Versión más suave del mismo color
+                ],
+              ),
+            ),
             padding: const EdgeInsets.all(16.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
+                Text(
                   'Reportar Noticia',
-                  style: TextStyle(
-                    fontSize: 16,
+                  style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 12),
-                const Text(
+                Text(
                   'Selecciona el motivo:',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14),
+                  style: theme.textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 16),
-                // Opciones de reporte con íconos y contadores
+                // Opciones de reporte con íconos y contadores (mantenemos estos componentes intactos)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -183,11 +197,13 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: isLoading ? null : () => Navigator.of(context).pop(),
-                    child: const Text(
+                    style: TextButton.styleFrom(
+                      foregroundColor: theme.colorScheme.primary, // Color desde el tema
+                    ),
+                    child: Text(
                       'Cerrar',
-                      style: TextStyle(
-                        color: Colors.brown,
-                        fontSize: 14,
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: isLoading ? theme.disabledColor : theme.colorScheme.primary,
                       ),
                     ),
                   ),
