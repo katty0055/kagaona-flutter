@@ -78,7 +78,7 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
       final nuevaTarea = await _tareaRepository.agregarTarea(event.tarea);
       if (state is TareaLoaded) {
         final currentState = state as TareaLoaded;
-        final tareas = [nuevaTarea, ...currentState.tareas];
+        final tareas = [...currentState.tareas, nuevaTarea];
 
         emit(
           TareaCreated(
