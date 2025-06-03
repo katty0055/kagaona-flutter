@@ -45,7 +45,7 @@ class _ReporteDialogContent extends StatefulWidget {
 }
 
 class _ReporteDialogContentState extends State<_ReporteDialogContent> {
-  bool get noticiaYaReportada => (widget.noticia.contadorReportes ?? 0) > 0;
+  bool get noticiaYaReportada => (widget.noticia.contadorReportes ?? 0) > 2;
 
   @override
   void initState() {
