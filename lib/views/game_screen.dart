@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kgaona/api/service/question_service.dart';
 import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/domain/question.dart';
+import 'package:kgaona/theme/colors.dart';
 import 'package:kgaona/views/result_screen.dart';
 
 class GameScreen extends StatefulWidget {
@@ -16,9 +17,8 @@ class GameScreenState extends State<GameScreen> {
   List<Question> questionsList = [];
   int currentQuestionIndex = 0;
   int userScore = 0;
-  int? selectedAnswerIndex; // Índice de la respuesta seleccionada
-  bool? isCorrectAnswer; // Estado para manejar si la respuesta es correcta
-
+  int? selectedAnswerIndex;
+  bool? isCorrectAnswer;
 
   @override
   void initState() {
@@ -36,47 +36,58 @@ class GameScreenState extends State<GameScreen> {
   void _onAnswerSelected(int selectedIndex) {
     setState(() {
       selectedAnswerIndex = selectedIndex;
-      isCorrectAnswer =
-          questionsList[currentQuestionIndex].isCorrect(selectedIndex);
+      isCorrectAnswer = questionsList[currentQuestionIndex].isCorrect(selectedIndex);
 
       if (isCorrectAnswer!) {
-        userScore++; // Incrementa el puntaje si es correcto
+        userScore++;
       }
     });
 
-    // Define el mensaje del SnackBar
+    // SnackBar con estilo del tema
+    final theme = Theme.of(context);
     final snackBarMessage = isCorrectAnswer == true
-        ? const SnackBar(
-            content: Text('¡Correcto!'),
-            backgroundColor: Colors.green,
+        ? SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.check_circle, color: theme.colorScheme.onPrimary),
+                const SizedBox(width: 8),
+                const Text('¡Correcto!'),
+              ],
+            ),
+            backgroundColor: AppColors.success,
           )
-        : const SnackBar(
-            content: Text('Incorrecto'),
-            backgroundColor: Colors.red,
+        : SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.cancel, color: theme.colorScheme.onPrimary),
+                const SizedBox(width: 8),
+                const Text('Incorrecto'),
+              ],
+            ),
+            backgroundColor: AppColors.error,
           );
 
-    // Muestra el SnackBar
     ScaffoldMessenger.of(context).showSnackBar(snackBarMessage);
 
-
-    // Retraso para mostrar el color antes de avanzar
     Future.delayed(const Duration(seconds: 1), () {
-      if (!mounted) return; // Verifica si el widget sigue montado
-
-      // Oculta el SnackBar antes de avanzar
+      if (!mounted) return;
+      
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
       if (currentQuestionIndex < questionsList.length - 1) {
         setState(() {
-          currentQuestionIndex++; // Avanza a la siguiente pregunta
-          selectedAnswerIndex = null; // Reinicia el índice seleccionado
-          isCorrectAnswer = null; // Reinicia el estado de la respuesta
+          currentQuestionIndex++;
+          selectedAnswerIndex = null;
+          isCorrectAnswer = null;
         });
       } else {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => ResultScreen(finalScoreGame: userScore, totalQuestions: questionsList.length,),
+            builder: (context) => ResultScreen(
+              finalScoreGame: userScore, 
+              totalQuestions: questionsList.length,
+            ),
           ),
         );
       }
@@ -85,103 +96,180 @@ class GameScreenState extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     if (questionsList.isEmpty) {
-      return const Scaffold(
+      return Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
         body: Center(
-          child: CircularProgressIndicator(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(color: theme.colorScheme.primary),
+              const SizedBox(height: 16),
+              Text(
+                'Cargando preguntas...',
+                style: theme.textTheme.bodyLarge,
+              ),
+            ],
+          ),
         ),
       );
     }
 
-    final questionCounterText =
-        'Pregunta ${currentQuestionIndex + 1} de ${questionsList.length}';
+    final questionCounterText = 'Pregunta ${currentQuestionIndex + 1} de ${questionsList.length}';
     final currentQuestion = questionsList[currentQuestionIndex];
-    const double spacingHeight = 16; // Variable para el espaciado entre la pregunta y las opciones
   
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Juego de Preguntas'),
-        centerTitle: true,
-        backgroundColor: Colors.blue,
+        title: const Text(
+          'Juego de Preguntas',
+        ),
       ),
       drawer: const SideMenu(),
-      backgroundColor: Colors.white,      
-      body: 
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child:Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              // mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  '¡Bienvenido al Juego!',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
+      backgroundColor: theme.scaffoldBackgroundColor,      
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Card(
+              elevation: 0,
+              shape: theme.cardTheme.shape,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Text(
+                      '¡A responder las preguntas!',
+                      style: theme.textTheme.headlineSmall,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primary.withAlpha(27),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Text(
+                            'Puntaje: $userScore',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.secondary.withAlpha(27),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Text(
+                            questionCounterText,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              color: theme.colorScheme.secondary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 20),
-                Text(
-                  'Puntaje: $userScore',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                Text(
-                  questionCounterText,
-                  style: const TextStyle(fontSize: 16, color: Colors.grey),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 20),
-                Text(
+              ),
+            ),
+            const SizedBox(height: 24),
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text(
                   currentQuestion.questionText,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                  style: theme.textTheme.titleLarge,
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: spacingHeight), // Espaciado entre la pregunta y las opciones
-                ...currentQuestion.answerOptions.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final option = entry.value;
-                   // Si la respuesta seleccionada es correcta, todos los botones serán verdes
-                  final buttonColor = isCorrectAnswer == true
-                      ? Colors.green
-                      : (selectedAnswerIndex == index ? Colors.red : Colors.blue);
-
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Opciones de respuesta
+            Expanded(
+              child: ListView.builder(
+                itemCount: currentQuestion.answerOptions.length,
+                itemBuilder: (context, index) {
+                  final option = currentQuestion.answerOptions[index];
+                  
+                  // Determinar el color del botón según el estado
+                  Color buttonColor;
+                  Color textColor = theme.colorScheme.onPrimary;
+                  
+                  if (selectedAnswerIndex != null) {
+                    if (isCorrectAnswer! && selectedAnswerIndex == index) {
+                      buttonColor = AppColors.success;
+                    } else if (!isCorrectAnswer! && selectedAnswerIndex == index) {
+                      buttonColor = AppColors.error;
+                    } else {
+                      buttonColor = theme.disabledColor;
+                      textColor = theme.colorScheme.onSurface.withAlpha(153);
+                    }
+                  } else {
+                    buttonColor = theme.colorScheme.primary;
+                  }
+                  
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: ElevatedButton(
-                       onPressed: selectedAnswerIndex == null
-                      ? () => _onAnswerSelected(index)
-                      : () {}, // Evita que el usuario seleccione otra opción
-                      style: ElevatedButton.styleFrom(
+                    child: FilledButton(
+                      onPressed: selectedAnswerIndex == null 
+                        ? () => _onAnswerSelected(index)
+                        : null,
+                      style: FilledButton.styleFrom(
                         backgroundColor: buttonColor,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        foregroundColor: textColor,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        disabledBackgroundColor: buttonColor,
+                        disabledForegroundColor: textColor,
                       ),
                       child: Text(
                         option,
-                        style: const TextStyle(fontSize: 16),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: textColor,
+                        ),
                       ),
                     ),
                   );
-                }),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Regresa a la pantalla anterior
-                  },
-                  child: const Text('Volver al Inicio'),
-                ),
-              ],
+                },
+              ),
             ),
-          ),
+            const SizedBox(height: 16),
+            FilledButton.tonal(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: theme.colorScheme.secondary.withAlpha(51),
+                foregroundColor: theme.colorScheme.secondary,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              child: Text(
+                'Volver al Inicio',
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: theme.colorScheme.secondary,
+                ),
+              ),
+            ),
+          ],
         ),
+      ),
     );
   }
 }
