@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:kgaona/components/picsum_image_selector.dart';
 import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/domain/categoria.dart';
 import 'package:kgaona/domain/noticia.dart';
@@ -112,6 +113,32 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
     }
   }
 
+  // En la clase _FormularioNoticiaState, añade este método para mostrar el selector de imágenes
+  void _mostrarSelectorImagenes() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            height: MediaQuery.of(context).size.height * 0.7,
+            padding: const EdgeInsets.all(8.0),
+            child: PicsumImageSelector(
+              onImageSelected: (imageUrl) {
+                setState(() {
+                  _imagenUrlController.text = imageUrl;
+                });
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -168,11 +195,16 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
                 },
               ),
               const SizedBox(height: 16),
+              // Campo de imagen modificado para incluir el selector de imágenes
               TextFormField(
                 controller: _imagenUrlController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'URL de la imagen',
-                  suffixIcon: Icon(Icons.image),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.image_search),
+                    tooltip: 'Buscar imágenes',
+                    onPressed: _mostrarSelectorImagenes,
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
