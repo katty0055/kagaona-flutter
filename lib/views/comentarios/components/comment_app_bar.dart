@@ -1,39 +1,26 @@
 import 'package:flutter/material.dart';
 
 class CommentAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final bool ordenAscendente;
-  final Function(bool) onOrdenChanged;
-  final String? titulo;
-
-  const CommentAppBar({
-    super.key,
-    required this.ordenAscendente,
-    required this.onOrdenChanged,
-    this.titulo,
-  });
+  const CommentAppBar({super.key});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return AppBar(
-      title: Text(titulo != null ? 'Comentarios: $titulo' : 'Comentarios'),
+      title: Text(
+        'Comentarios',
+        style: theme.textTheme.titleLarge?.copyWith(
+          color: theme.colorScheme.onPrimary,
+        ),
+      ),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
+        icon: Icon(Icons.arrow_back, color: theme.colorScheme.onPrimary),
         onPressed: () => Navigator.of(context).pop(),
       ),
-      actions: [
-        Tooltip(
-          message: ordenAscendente 
-              ? 'Ordenar por más recientes' 
-              : 'Ordenar por más antiguos',
-          child: IconButton(
-            onPressed: () => onOrdenChanged(!ordenAscendente),
-            icon: Icon(ordenAscendente ? Icons.arrow_upward : Icons.arrow_downward),
-          ),
-        ),
-      ],
     );
   }
 }

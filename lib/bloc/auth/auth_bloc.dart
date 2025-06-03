@@ -9,16 +9,17 @@ import 'package:watch_it/watch_it.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository= di<AuthRepository>(); // Obtenemos el repositorio del locator
 
-  AuthBloc(): super(AuthInitial()) {
+  AuthBloc(): super(const AuthInitial()) {
     on<AuthLoginRequested>(_onAuthLoginRequested);
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
+    on<TogglePasswordVisibility>(_onTogglePasswordVisibility);
   }
 
   Future<void> _onAuthLoginRequested(
     AuthLoginRequested event,
     Emitter<AuthState> emit,
   ) async {
-    emit(AuthLoading());
+    emit(const AuthLoading());
     try {
       if (event.email.isEmpty || event.password.isEmpty) {
         emit(AuthFailure(ApiException('El usuario y la contraseña son obligatorios')));
@@ -30,7 +31,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         event.password,
       );
       if (success) {
-        emit(AuthAuthenticated());
+        emit(const AuthAuthenticated());
       } else {
         emit(AuthFailure(ApiException('Credenciales inválidas')));
       }
@@ -43,13 +44,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthLogoutRequested event,
     Emitter<AuthState> emit,
   ) async {
-    emit(AuthLoading());
+    emit(const AuthLoading());
     try {
       await _authRepository.logout();
       di<PreferenciaRepository>().invalidarCache();      
-      emit(AuthInitial());
+      emit(const AuthInitial());
     } catch (e) {
       emit(AuthFailure(ApiException('Error al cerrar sesión')));
     }
+  }
+
+  void _onTogglePasswordVisibility(
+    TogglePasswordVisibility event,
+    Emitter<AuthState> emit,
+  ) {
+    // Cambiamos el estado actual manteniendo su tipo pero invirtiendo passwordVisible
+    emit(state.copyWithPasswordVisibility(!state.passwordVisible));
   }
 }

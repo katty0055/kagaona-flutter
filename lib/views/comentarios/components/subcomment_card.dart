@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:kgaona/bloc/comentario/comentario_bloc.dart';
 import 'package:kgaona/bloc/comentario/comentario_event.dart';
 import 'package:kgaona/domain/comentario.dart';
@@ -13,97 +14,96 @@ class SubcommentCard extends StatelessWidget {
     required this.subcomentario,
     required this.noticiaId,
   });
+  
   @override
   Widget build(BuildContext context) {
-    // La fecha ya viene formateada desde el backend
-    final fecha = subcomentario.fecha;
-
+    final theme = Theme.of(context);
+    String fechaHora = "Fecha no disponible";
+      final DateTime fechaObj = DateTime.parse(subcomentario.fecha);
+      fechaHora = DateFormat('dd/MM/yyyy HH:mm').format(fechaObj);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 12, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Text(
-                subcomentario.autor,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(subcomentario.texto, style: const TextStyle(fontSize: 13)),
-          const SizedBox(height: 4),
           Text(
-            fecha,
-            style: const TextStyle(
-              fontSize: 11,
-              color: Colors.grey,
-              fontStyle: FontStyle.italic,
+            subcomentario.autor,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: theme.colorScheme.primary,
             ),
           ),
           const SizedBox(height: 4),
-          // Botones de reacción (like/dislike)
+          Text(
+            subcomentario.texto, 
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: 13,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            fechaHora,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurface.withAlpha(153),
+              fontStyle: FontStyle.italic,
+              fontSize: 11,
+            ),
+          ),
+          const SizedBox(height: 4),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               IconButton(
-                icon: const Icon(
-                  Icons.thumb_up_sharp,
+                icon: Icon(
+                  Icons.thumb_up_outlined,
                   size: 16,
-                  color: Colors.green,
+                  color: theme.colorScheme.primary,
                 ),
                 onPressed: () => _handleReaction(context, 'like'),
+                style: IconButton.styleFrom(
+                  padding: const EdgeInsets.all(4),
+                ),
               ),
               Text(
                 subcomentario.likes.toString(),
-                style: const TextStyle(fontSize: 12),
+                style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
               ),
               const SizedBox(width: 8),
               IconButton(
-                icon: const Icon(
-                  Icons.thumb_down_sharp,
+                icon: Icon(
+                  Icons.thumb_down_outlined,
                   size: 16,
-                  color: Colors.red,
+                  color: theme.colorScheme.error,
                 ),
                 onPressed: () => _handleReaction(context, 'dislike'),
+                style: IconButton.styleFrom(
+                  padding: const EdgeInsets.all(4),
+                ),
               ),
               Text(
                 subcomentario.dislikes.toString(),
-                style: const TextStyle(fontSize: 12),
+                style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
               ),
             ],
           ),
         ],
       ),
     );
-  }  void _handleReaction(BuildContext context, String tipoReaccion) {
-    // Capturamos una referencia al bloc fuera del Future.delayed
+  }
+  
+  void _handleReaction(BuildContext context, String tipoReaccion) {
     final comentarioBloc = context.read<ComentarioBloc>();
-    final String currentNoticiaId = noticiaId;
-    
-    // Determinamos correctamente los IDs para la reacción
+    final String currentNoticiaId = noticiaId;    
     String comentarioId = '';
     String? padreId;
-    
-    // Si tiene ID propio, lo usamos directamente
     if (subcomentario.id != null && subcomentario.id!.isNotEmpty) {
       comentarioId = subcomentario.id!;
-      
-      // Si además tiene idSubComentario, ese es el padre
       if (subcomentario.idSubComentario != null && subcomentario.idSubComentario!.isNotEmpty) {
         padreId = subcomentario.idSubComentario;
       }
     } 
-    // Si no tiene ID propio pero tiene idSubComentario, usamos ese como su ID
     else if (subcomentario.idSubComentario != null && subcomentario.idSubComentario!.isNotEmpty) {
       comentarioId = subcomentario.idSubComentario!;
     }
-    
-    // Agregamos la reacción con los IDs correctos
     comentarioBloc.add(
       AddReaccion(
         comentarioId,
@@ -112,9 +112,6 @@ class SubcommentCard extends StatelessWidget {
         padreId,
       ),
     );
-    
-    // Luego forzamos la recarga de comentarios para actualizar la UI
-    // No usamos context dentro del Future.delayed
     Future.delayed(const Duration(milliseconds: 500), () {
       comentarioBloc.add(
         LoadComentarios(currentNoticiaId),
