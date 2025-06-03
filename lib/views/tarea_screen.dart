@@ -42,43 +42,14 @@ class _TareaScreenContent extends StatefulWidget {
 }
 
 class _TareaScreenContentState extends State<_TareaScreenContent> {
-  final ScrollController _scrollController = ScrollController();
-  static const int _limitePorPagina = 5;
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_onScroll);
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _onScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
-      final state = context.read<TareaBloc>().state;
-      if (state is TareaLoaded && state.hayMasTareas) {
-        context.read<TareaBloc>().add(
-          LoadMoreTareasEvent(
-            pagina: state.paginaActual + 1,
-            limite: _limitePorPagina,
-          ),
-        );
-      }
-    }
-  }
+  static const int _limiteTareas = 3;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return BlocConsumer<TareaBloc, TareaState>(
       listener: (context, state) {
-        // Listener sin cambios
         if (state is TareaError) {
           SnackBarHelper.manejarError(context, state.error);
         } else if (state is TareaCompletada) {
@@ -96,7 +67,8 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
             );
           }
         } else if (state is TareaLoaded) {
-          final totalCompletadas = state.tareas.where((t) => t.completado).length;
+          final totalCompletadas =
+              state.tareas.where((t) => t.completado).length;
           final tareaContadorBloc = context.read<TareaContadorBloc>();
           tareaContadorBloc.add(SetTotalTareas(state.tareas.length));
           tareaContadorBloc.add(SetCompletadas(totalCompletadas));
@@ -124,10 +96,8 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
                   context.read<TareaBloc>().add(
                     LoadTareasEvent(forzarRecarga: true),
                   );
-
-                  // Usar SnackBarHelper consistente con el tema
                   SnackBarHelper.mostrarInfo(
-                    context, 
+                    context,
                     mensaje: 'Recargando tareas...',
                   );
                 },
@@ -135,7 +105,6 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
             ],
           ),
           drawer: const SideMenu(),
-          // Usar el color de fondo definido en el tema
           backgroundColor: theme.scaffoldBackgroundColor,
           body: Column(
             children: [
@@ -158,7 +127,7 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
 
   Widget _construirCuerpoTareas(BuildContext context, TareaState state) {
     return RefreshIndicator(
-      color: Theme.of(context).colorScheme.primary, // Color primario para el indicador
+      color: Theme.of(context).colorScheme.primary,
       onRefresh: () async {
         context.read<TareaBloc>().add(LoadTareasEvent(forzarRecarga: true));
       },
@@ -168,20 +137,15 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
 
   Widget _construirContenidoTareas(BuildContext context, TareaState state) {
     final theme = Theme.of(context);
-    
+
     if (state is TareaInitial || state is TareaLoading) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(
-              color: theme.colorScheme.primary, // Usar color primario
-            ),
+            CircularProgressIndicator(color: theme.colorScheme.primary),
             const SizedBox(height: 16),
-            Text(
-              'Cargando tareas...',
-              style: theme.textTheme.bodyMedium, // Usar estilo de texto del tema
-            ),
+            Text('Cargando tareas...', style: theme.textTheme.bodyMedium),
           ],
         ),
       );
@@ -197,12 +161,13 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
               children: [
                 Text(
                   state.error.message,
-                  style: TextStyle(color: theme.colorScheme.error), // Usar color de error del tema
+                  style: TextStyle(color: theme.colorScheme.error),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                FilledButton( // Usar FilledButton para consistencia
-                  onPressed: () => context.read<TareaBloc>().add(LoadTareasEvent()),
+                FilledButton(
+                  onPressed:
+                      () => context.read<TareaBloc>().add(LoadTareasEvent()),
                   child: const Text('Reintentar'),
                 ),
               ],
@@ -213,68 +178,67 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
     }
 
     if (state is TareaLoaded) {
-      return state.tareas.isEmpty
+      final tareasLimitadas = state.tareas.take(_limiteTareas).toList();
+      return tareasLimitadas.isEmpty
           ? ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.6,
-                  child: Center(
-                    child: Text(
-                      TareasConstantes.listaVacia,
-                      style: theme.textTheme.bodyMedium, // Usar estilo de texto del tema
-                    ),
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: [
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.6,
+                child: Center(
+                  child: Text(
+                    TareasConstantes.listaVacia,
+                    style: theme.textTheme.bodyMedium,
                   ),
                 ),
-              ],
-            )
+              ),
+            ],
+          )
           : ListView.builder(
-              controller: _scrollController,
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: state.tareas.length + (state.hayMasTareas ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index == state.tareas.length) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: CircularProgressIndicator(
-                        color: theme.colorScheme.primary, // Usar color primario
-                      ),
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemCount: state.tareas.length,
+            itemBuilder: (context, index) {
+              if (index == state.tareas.length) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: CircularProgressIndicator(
+                      color: theme.colorScheme.primary,
                     ),
-                  );
-                }
-
-                final tarea = state.tareas[index];
-                return Dismissible(
-                  key: Key(tarea.id.toString()),
-                  background: Container(
-                    color: theme.colorScheme.error, // Usar color de error del tema
-                    alignment: Alignment.centerRight,
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Icon(Icons.delete, color: theme.colorScheme.onError), // Usar color de texto sobre error
-                  ),
-                  direction: DismissDirection.startToEnd,
-                  confirmDismiss: (direction) async {
-                    return await DialogHelper.mostrarConfirmacion(
-                      context: context,
-                      titulo: 'Confirmar eliminación',
-                      mensaje: '¿Estás seguro de que deseas eliminar esta tarea?',
-                      textoCancelar: 'Cancelar',
-                      textoConfirmar: 'Eliminar',
-                    );
-                  },
-                  onDismissed: (_) {
-                    context.read<TareaBloc>().add(DeleteTareaEvent(tarea.id!));
-                  },
-                  child: GestureDetector(
-                    onTap: () => _mostrarDetallesTarea(context, index, state.tareas),
-                    child: construirTarjetaDeportiva(tarea),
                   ),
                 );
-              },
-            );
+              }
+              final tarea = state.tareas[index];
+              return Dismissible(
+                key: Key(tarea.id.toString()),
+                background: Container(
+                  color: theme.colorScheme.error,
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Icon(Icons.delete, color: theme.colorScheme.surface),
+                ),
+                direction: DismissDirection.startToEnd,
+                confirmDismiss: (direction) async {
+                  return await DialogHelper.mostrarConfirmacion(
+                    context: context,
+                    titulo: 'Confirmar eliminación',
+                    mensaje: '¿Estás seguro de que deseas eliminar esta tarea?',
+                    textoCancelar: 'Cancelar',
+                    textoConfirmar: 'Eliminar',
+                  );
+                },
+                onDismissed: (_) {
+                  context.read<TareaBloc>().add(DeleteTareaEvent(tarea.id!));
+                },
+                child: GestureDetector(
+                  onTap:
+                      () => _mostrarDetallesTarea(context, index, state.tareas),
+                  child: construirTarjetaDeportiva(tarea),
+                ),
+              );
+            },
+          );
     }
-
     return const SizedBox.shrink();
   }
 
@@ -295,63 +259,64 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (dialogContext) => TareaModal(
-        taskToEdit: tarea,
-        onTaskAdded: (Tarea tareaEditada) {
-          context.read<TareaBloc>().add(UpdateTareaEvent(tareaEditada));
-        },
-      ),
+      builder:
+          (dialogContext) => TareaModal(
+            taskToEdit: tarea,
+            onTaskAdded: (Tarea tareaEditada) {
+              context.read<TareaBloc>().add(UpdateTareaEvent(tareaEditada));
+            },
+          ),
     );
   }
 
   void _mostrarModalAgregarTarea(BuildContext context) {
+    final state = context.read<TareaBloc>().state;
+    if (state is TareaLoaded && state.tareas.length >= _limiteTareas) {
+      SnackBarHelper.mostrarAdvertencia(
+        context,
+        mensaje:
+            'Solo puedes tener $_limiteTareas tareas. Elimina una tarea existente para crear una nueva.',
+      );
+      return;
+    }
+
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (dialogContext) => TareaModal(
-        onTaskAdded: (Tarea nuevaTarea) {
-          context.read<TareaBloc>().add(CreateTareaEvent(nuevaTarea));
-        },
-      ),
+      builder:
+          (dialogContext) => TareaModal(
+            onTaskAdded: (Tarea nuevaTarea) {
+              context.read<TareaBloc>().add(CreateTareaEvent(nuevaTarea));
+            },
+          ),
     );
   }
 
-  // Método simplificado para construir la tarjeta
   Widget construirTarjetaDeportiva(Tarea tarea) {
     final theme = Theme.of(context);
     final bool esUrgente = tarea.tipo != 'normal';
-    
-    // Usar card de tema con modificadores
     return Card(
-      // Mantener margin consistente
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      
-      // No establecer color aquí para usar el del tema
-      
-      // Usar el shape del tema pero con un borde más destacado para urgentes
       shape: esUrgente ? theme.cardTheme.shape : null,
-      
       child: Container(
-        // Para tareas urgentes, agregar gradiente
-        decoration: esUrgente 
-          ? BoxDecoration(
-              borderRadius: BorderRadius.circular(10), // Consistente con tema
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  theme.colorScheme.error.withAlpha(25),
-                  theme.colorScheme.error.withAlpha(77),
-                ],
-              ),
-            ) 
-          : null,
+        decoration:
+            esUrgente
+                ? BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      theme.colorScheme.error.withAlpha(25),
+                      theme.colorScheme.error.withAlpha(77),
+                    ],
+                  ),
+                )
+                : null,
         child: ListTile(
-          // Usar contentPadding definido en ListTileTheme
-          contentPadding: theme.listTileTheme.contentPadding ?? 
-                          const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          
-          // Checkbox con tema aplicado automáticamente
+          contentPadding:
+              theme.listTileTheme.contentPadding ??
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           leading: Checkbox(
             value: tarea.completado,
             onChanged: (bool? value) {
@@ -362,38 +327,30 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
               }
             },
           ),
-          
-          // Texto con estilo del tema
           title: Text(
             tarea.titulo,
             style: theme.textTheme.titleMedium?.copyWith(
               decoration: tarea.completado ? TextDecoration.lineThrough : null,
-              color: tarea.completado 
-                  ? theme.disabledColor
-                  : esUrgente ? theme.colorScheme.error : null, // null usa el color del tema
+              color:
+                  tarea.completado
+                      ? theme.disabledColor
+                      : esUrgente
+                      ? theme.colorScheme.error
+                      : null,
               fontWeight: esUrgente ? FontWeight.bold : null,
             ),
           ),
-          
-          // Descripción con estilo del tema
-          subtitle: tarea.descripcion != null && tarea.descripcion!.isNotEmpty
-            ? Text(
-                tarea.descripcion!,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: tarea.completado
-                      ? theme.disabledColor
-                      : null, // null usa el color del tema
-                ),
-              )
-            : null,
-            
-          // Icono de edición usando colores del tema
+          subtitle:
+              tarea.descripcion != null && tarea.descripcion!.isNotEmpty
+                  ? Text(
+                    tarea.descripcion!,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: tarea.completado ? theme.disabledColor : null,
+                    ),
+                  )
+                  : null,
           trailing: IconButton(
-            icon: Icon(
-              Icons.edit,
-              color: theme.colorScheme.primary,
-              size: 20,
-            ),
+            icon: Icon(Icons.edit, color: theme.colorScheme.primary, size: 20),
             onPressed: () => _mostrarModalEditarTarea(context, tarea),
           ),
         ),
