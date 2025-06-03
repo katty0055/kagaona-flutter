@@ -53,16 +53,15 @@ class LoginScreen extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           body: ResponsiveContainer(
-            child: SingleChildScrollView( // Añadimos ScrollView para evitar overflow en pantallas pequeñas
+            child: SingleChildScrollView( 
               child: CommonWidgetsHelper.paddingContainer32(
                 color: theme.colorScheme.surface,
                 child: Form(
                   key: _formKey,
                   child: Column(
-                    mainAxisSize: MainAxisSize.min, // Para que ocupe solo el espacio necesario
+                    mainAxisSize: MainAxisSize.min, 
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // CommonWidgetsHelper.iconoTitulo(icon: Icons.login),
                       const LoginAnimation(),
                       CommonWidgetsHelper.buildSpacing16(),
                       CommonWidgetsHelper.seccionSubTitulo(
@@ -93,22 +92,34 @@ class LoginScreen extends StatelessWidget {
                           }
                           return null;
                         },
-                        decoration: const InputDecoration(
+                        obscureText: !state.passwordVisible,
+                        decoration: InputDecoration(
                           labelText: 'Contraseña *',
-                          prefixIcon: Icon(Icons.key_outlined),
+                          prefixIcon: IconButton(
+                            icon: Icon(
+                              state.passwordVisible 
+                                  ? Icons.key_off_outlined
+                                  : Icons.key_outlined,
+                            ),
+                            onPressed: () {
+                              context.read<AuthBloc>().add(TogglePasswordVisibility());
+                            },
+                            tooltip: state.passwordVisible 
+                                ? 'Ocultar contraseña' 
+                                : 'Mostrar contraseña',
+                          ),
                         ),
-                        obscureText: true,
+
+                        
                       ),
                       CommonWidgetsHelper.buildSpacing16(),
                       SizedBox(
-                        width: double.infinity, // Para que el botón ocupe todo el ancho disponible
+                        width: double.infinity, 
                         child: FilledButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               final username = usernameController.text.trim();
                               final password = passwordController.text.trim();
-
-                              // Usar el BLoC para manejar la autenticación
                               context.read<AuthBloc>().add(
                                 AuthLoginRequested(
                                   email: username,

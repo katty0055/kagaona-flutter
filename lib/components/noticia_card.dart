@@ -53,16 +53,15 @@ class NoticiaCard extends StatelessWidget {
                   onTap: () async {
                     await Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => ComentariosScreen(
-                          noticiaId: noticia.id!,
-                          noticiaTitulo: noticia.titulo,
-                        ),
+                        builder:
+                            (context) => ComentariosScreen(
+                              noticia: noticia,
+                              categoriaNombre: categoriaNombre,
+                            ),
                       ),
                     );
                     if (context.mounted) {
-                      context.read<NoticiaBloc>().add(
-                        FetchNoticiasEvent(),
-                      );
+                      context.read<NoticiaBloc>().add(FetchNoticiasEvent());
                     }
                   },
                   child: Row(
@@ -83,7 +82,9 @@ class NoticiaCard extends StatelessWidget {
                             Text(
                               noticia.descripcion,
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurface.withAlpha(179),
+                                color: theme.colorScheme.onSurface.withAlpha(
+                                  179,
+                                ),
                               ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -104,18 +105,16 @@ class NoticiaCard extends StatelessWidget {
                                   height: 4,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: theme.colorScheme.onSurface.withAlpha(
-                                      77,
-                                    ),
+                                    color: theme.colorScheme.onSurface
+                                        .withAlpha(77),
                                   ),
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
                                   _formatDate(noticia.publicadaEl),
                                   style: theme.textTheme.bodySmall?.copyWith(
-                                    color: theme.colorScheme.onSurface.withAlpha(
-                                      128,
-                                    ),
+                                    color: theme.colorScheme.onSurface
+                                        .withAlpha(128),
                                   ),
                                 ),
                               ],
@@ -143,7 +142,9 @@ class NoticiaCard extends StatelessWidget {
                               ),
                               child: Icon(
                                 Icons.broken_image_outlined,
-                                color: theme.colorScheme.onSurface.withAlpha(77),
+                                color: theme.colorScheme.onSurface.withAlpha(
+                                  77,
+                                ),
                                 size: 32,
                               ),
                             );
@@ -168,8 +169,8 @@ class NoticiaCard extends StatelessWidget {
                             MaterialPageRoute(
                               builder:
                                   (context) => ComentariosScreen(
-                                    noticiaId: noticia.id!,
-                                    noticiaTitulo: noticia.titulo,
+                                    noticia: noticia,
+                                    categoriaNombre: categoriaNombre,
                                   ),
                             ),
                           );
@@ -180,7 +181,7 @@ class NoticiaCard extends StatelessWidget {
                           }
                         },
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 16),
                       _buildActionButton(
                         context: context,
                         icon: Icons.flag_outlined,
@@ -197,7 +198,7 @@ class NoticiaCard extends StatelessWidget {
                           }
                         },
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 16),
                       IconButton(
                         icon: Icon(
                           Icons.edit_outlined,
@@ -235,20 +236,20 @@ class NoticiaCard extends StatelessWidget {
         IconButton(icon: Icon(icon, color: color), onPressed: onPressed),
         if (count != null && count > 0)
           Positioned(
-            right: 8,
-            top: 8,
+            right: 6,
+            top: 6,
             child: Container(
-              padding: const EdgeInsets.all(4),
+              padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
                 color: color,
                 borderRadius: BorderRadius.circular(10),
               ),
-              constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+              constraints: const BoxConstraints(minWidth: 12, minHeight: 12),
               child: Text(
                 count > 99 ? '99+' : count.toString(),
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   color: Colors.white,
-                  fontSize: 10,
+                  fontSize: 8,
                 ),
                 textAlign: TextAlign.center,
               ),

@@ -7,7 +7,7 @@ import 'package:kgaona/domain/comentario.dart';
 import 'package:kgaona/helpers/snackbar_helper.dart';
 import 'package:kgaona/views/comentarios/components/comment_card.dart';
 
-class CommentList extends StatefulWidget{
+class CommentList extends StatefulWidget {
   final String noticiaId;
   final Function(String, String) onResponderComentario;
 
@@ -16,42 +16,45 @@ class CommentList extends StatefulWidget{
     required this.noticiaId,
     required this.onResponderComentario,
   });
-   @override
+
+  @override
   State<CommentList> createState() => _CommentListState();
 }
 
 class _CommentListState extends State<CommentList> {
-  // Track which comments have their subcomments expanded
+  // Control de comentarios expandidos
   final Map<String, bool> _expandedComments = {};
-
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ComentarioBloc, ComentarioState>(      
+    final theme = Theme.of(context);
+
+    return BlocConsumer<ComentarioBloc, ComentarioState>(
       listener: (context, state) {
         if (state is ComentarioError) {
-          SnackBarHelper.manejarError(
-            context,
-            state.error,
-          );
+          SnackBarHelper.manejarError(context, state.error);
         }
       },
       builder: (context, state) {
         if (state is ComentarioLoading) {
-          return const Center(child: CircularProgressIndicator());  
+          return Center(
+            child: CircularProgressIndicator(color: theme.colorScheme.primary),
+          );
         } else if (state is ReaccionLoading) {
           return Stack(
             children: [
               Positioned.fill(
                 child: Container(
-                  color: const Color(0x0D000000), // Negro con 20% opacidad
-                  child: const Center(
-                    child: CircularProgressIndicator(),
+                  color: theme.colorScheme.primary.withAlpha(13),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: theme.colorScheme.primary,
+                    ),
                   ),
                 ),
               ),
             ],
-          );      
+          );
         } else if (state is ComentarioLoaded) {
           return _buildList(context, state.comentarios);
         } else if (state is ComentarioError) {
@@ -62,18 +65,33 @@ class _CommentListState extends State<CommentList> {
     );
   }
 
-  Widget _buildList(BuildContext context, List<Comentario> comentarios) { // Recibir context
+  Widget _buildList(BuildContext context, List<Comentario> comentarios) {
+    final theme = Theme.of(context);
+
     if (comentarios.isEmpty) {
-      return const Center(
-        child: Text(
-          'No hay comentarios que coincidan con tu búsqueda',
-          textAlign: TextAlign.center,
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.chat_bubble_outline,
+              size: 48,
+              color: theme.colorScheme.primary.withAlpha(127),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No hay comentarios que coincidan con tu búsqueda',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: theme.colorScheme.onSurface.withAlpha(177),
+              ),
+            ),
+          ],
         ),
       );
     }
-
-       // Separate top-level comments and subcomments
-    final topLevelComments = comentarios.where((c) => c.idSubComentario == null).toList();
+    final topLevelComments =
+        comentarios.where((c) => c.idSubComentario == null).toList();
     final subComments = <String, List<Comentario>>{};
     for (var comment in comentarios.where((c) => c.idSubComentario != null)) {
       subComments.putIfAbsent(comment.idSubComentario!, () => []).add(comment);
@@ -83,14 +101,10 @@ class _CommentListState extends State<CommentList> {
       itemBuilder: (context, index) {
         final comentario = topLevelComments[index];
         final commentSubComments = subComments[comentario.id] ?? [];
-
-        // Toggle state for this comment's subcomments
         final isExpanded = _expandedComments[comentario.id] ?? false;
-
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Render the parent comment
             CommentCard(
               comentario: comentario,
               noticiaId: widget.noticiaId,
@@ -98,61 +112,92 @@ class _CommentListState extends State<CommentList> {
             ),
             if (commentSubComments.isNotEmpty) ...[
               const SizedBox(height: 4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _expandedComments[comentario.id!] = !isExpanded;
-                      });
-                    },
-                    child: Text(
-                      isExpanded ? 'Show Less' : 'Show More (${commentSubComments.length})',
-                      style: const TextStyle(color: Colors.blue),
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: TextButton.icon(
+                  onPressed: () {
+                    setState(() {
+                      _expandedComments[comentario.id!] = !isExpanded;
+                    });
+                  },
+                  icon: Icon(
+                    isExpanded
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    size: 18,
+                    color: theme.colorScheme.primary,
+                  ),
+                  label: Text(
+                    isExpanded
+                        ? 'Ocultar respuestas'
+                        : 'Ver ${commentSubComments.length} respuestas',
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.primary,
                     ),
                   ),
-                ],
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                ),
               ),
               if (isExpanded)
                 Padding(
                   padding: const EdgeInsets.only(left: 16.0, top: 8.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: commentSubComments.map((subComment) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 4.0),
-                        child: CommentCard(
-                          comentario: subComment,
-                          noticiaId: widget.noticiaId,
-                          onResponder: widget.onResponderComentario,
-                        ),
-                      );
-                    }).toList(),
+                    children:
+                        commentSubComments.map((subComment) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 4.0),
+                            child: CommentCard(
+                              comentario: subComment,
+                              noticiaId: widget.noticiaId,
+                              onResponder: widget.onResponderComentario,
+                            ),
+                          );
+                        }).toList(),
                   ),
                 ),
             ],
           ],
         );
       },
-      separatorBuilder: (_, __) => const Divider(),
+      separatorBuilder:
+          (_, __) =>
+              Divider(color: theme.dividerColor.withAlpha(127), height: 16),
     );
   }
 
   Widget _buildErrorState(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline, color: Colors.red, size: 48),
+          Icon(Icons.error_outline, color: theme.colorScheme.error, size: 48),
           const SizedBox(height: 16),
           Text(
             'Error al cargar comentarios',
-            style: TextStyle(color: Colors.red[700]),
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: theme.colorScheme.error,
+            ),
           ),
           const SizedBox(height: 8),
-          ElevatedButton(
-            onPressed: () => context.read<ComentarioBloc>().add(LoadComentarios(widget.noticiaId)),
+          FilledButton(
+            onPressed:
+                () => context.read<ComentarioBloc>().add(
+                  LoadComentarios(widget.noticiaId),
+                ),
+            style: FilledButton.styleFrom(
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: theme.colorScheme.onPrimary,
+            ),
             child: const Text('Reintentar'),
           ),
         ],
