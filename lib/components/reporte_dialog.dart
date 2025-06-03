@@ -8,6 +8,7 @@ import 'package:kgaona/bloc/reporte/reporte_state.dart';
 import 'package:kgaona/domain/reporte.dart';
 import 'package:kgaona/domain/noticia.dart';
 import 'package:kgaona/helpers/snackbar_helper.dart';
+import 'package:kgaona/theme/theme.dart';
 import 'package:watch_it/watch_it.dart';
 
 /// Clase para mostrar el diálogo de reportes de noticias
@@ -119,35 +120,32 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
         }
         
         return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          elevation: 4.0,
+          shape: theme.dialogTheme.shape,
+          elevation: theme.dialogTheme.elevation ?? 8.0,
+          backgroundColor: theme.dialogTheme.backgroundColor,
           insetPadding: const EdgeInsets.symmetric(
             horizontal: 70.0,
             vertical: 24.0,
           ),
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(12),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  const Color(0xFFFCEAE8),
-                  const Color(0xFFFCEAE8).withAlpha(220),
+                  theme.colorScheme.error.withAlpha(20),
+                  theme.colorScheme.error.withAlpha(50),
                 ],
               ),
             ),
-            padding: const EdgeInsets.all(16.0),
+            padding: AppTheme.cardContentPadding(),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   noticiaYaReportada ? 'Noticia Reportada' : 'Reportar Noticia',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: theme.dialogTheme.titleTextStyle,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 12),
@@ -156,7 +154,7 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                     ? 'Esta noticia ya ha sido reportada'
                     : 'Selecciona el motivo:',
                   textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyMedium,
+                  style: theme.dialogTheme.contentTextStyle,
                 ),
                 const SizedBox(height: 16),
                 
@@ -175,13 +173,13 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                         Text(
                           'Gracias por tu interés en reportar contenido. Esta noticia ya ha sido marcada para revisión.',
                           textAlign: TextAlign.center,
-                          style: theme.textTheme.bodyMedium,
+                          style: theme.dialogTheme.contentTextStyle,
                         ),
                       ],
                     ),
                   )
                 else
-                  // Opciones de reporte con íconos y contadores
+                  // Opciones de reporte con íconos y contadores adaptados al tema
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -189,7 +187,7 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                         context: context,
                         motivo: MotivoReporte.noticiaInapropiada,
                         icon: Icons.warning,
-                        color: Colors.red,
+                        color: theme.colorScheme.error,
                         label: 'Inapropiada',
                         iconNumber: '${estadisticas['NoticiaInapropiada']}',
                         isLoading: isLoading && motivoActual == MotivoReporte.noticiaInapropiada,
@@ -200,7 +198,7 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                         context: context,
                         motivo: MotivoReporte.informacionFalsa,
                         icon: Icons.info,
-                        color: Colors.amber,
+                        color: theme.colorScheme.onError, // Color de warning definido en AppTheme
                         label: 'Falsa',
                         iconNumber: '${estadisticas['InformacionFalsa']}',
                         isLoading: isLoading && motivoActual == MotivoReporte.informacionFalsa,
@@ -211,7 +209,7 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                         context: context,
                         motivo: MotivoReporte.otro,
                         icon: Icons.flag,
-                        color: Colors.blue,
+                        color: theme.colorScheme.secondary,
                         label: 'Otro',
                         iconNumber: '${estadisticas['Otro']}',
                         isLoading: isLoading && motivoActual == MotivoReporte.otro,
@@ -225,12 +223,10 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: isLoading ? null : () => Navigator.of(context).pop(),
-                    style: TextButton.styleFrom(
-                      foregroundColor: theme.colorScheme.primary,
-                    ),
+                    style: AppTheme.modalSecondaryButtonStyle(),
                     child: Text(
                       'Cerrar',
-                      style: theme.textTheme.labelLarge?.copyWith(
+                      style: theme.textTheme.labelMedium?.copyWith(
                         color: isLoading ? theme.disabledColor : theme.colorScheme.primary,
                       ),
                     ),
@@ -255,6 +251,7 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
     bool smallSize = false,
     bool disabled = false,
   }) {
+    final theme = Theme.of(context);
     // Definir tamaños según el parámetro smallSize
     final buttonSize = smallSize ? 50.0 : 60.0;
     final iconSize = smallSize ? 24.0 : 30.0;
@@ -262,20 +259,32 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
     final fontSize = smallSize ? 10.0 : 12.0;
 
     // Si está deshabilitado, aplicar un color grisáceo
-    final buttonColor = disabled ? Colors.grey.shade300 : Colors.white;
-    final iconColor = disabled ? Colors.grey.shade500 : color;
+    final buttonColor = disabled ? theme.disabledColor.withAlpha(51) : Colors.white;
+    final iconColor = disabled ? theme.disabledColor : color;
+    final badgeColor = disabled ? theme.disabledColor : color;
 
     return Column(
       children: [
         InkWell(
           onTap: (isLoading || disabled) ? null : () => _enviarReporte(context, motivo),
+          borderRadius: BorderRadius.circular(buttonSize / 2),
           child: Container(
             width: buttonSize,
             height: buttonSize,
             decoration: BoxDecoration(
               color: buttonColor,
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.grey.shade300),
+              border: Border.all(
+                color: disabled ? theme.disabledColor.withAlpha(77) : theme.colorScheme.surface,
+              ),
+              // Sutiles sombras para profundidad
+              boxShadow: disabled ? [] : [
+                BoxShadow(
+                  color: Colors.black.withAlpha(26),
+                  blurRadius: 3,
+                  offset: const Offset(0, 1),
+                ),
+              ],
             ),
             child: Stack(
               alignment: Alignment.center,
@@ -299,8 +308,12 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                     width: badgeSize,
                     height: badgeSize,
                     decoration: BoxDecoration(
-                      color: disabled ? Colors.grey.shade500 : color,
+                      color: badgeColor,
                       shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 1.5,
+                      ),
                     ),
                     child: Center(
                       child: Text(
@@ -321,14 +334,13 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
         SizedBox(height: smallSize ? 6.0 : 8.0),
         Text(
           label, 
-          style: TextStyle(
-            fontSize: fontSize,
-            color: disabled ? Colors.grey.shade500 : null,
-          )
+          style: (smallSize ? theme.textTheme.bodySmall : theme.textTheme.bodyMedium)?.copyWith(
+            color: disabled ? theme.disabledColor : theme.colorScheme.onSurface,
+          ),
         ),
       ],
     );
-  }  
+  }
   void _enviarReporte(BuildContext context, MotivoReporte motivo) {
     // Enviar el reporte usando el bloc directamente
     context.read<ReporteBloc>().add(
