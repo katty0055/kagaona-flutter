@@ -94,11 +94,9 @@ class QuoteScreenState extends State<QuoteScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           CotizacionConstantes.titleApp,
-          style: theme.textTheme.headlineMedium,
         ),
-        centerTitle: true,
       ),
       drawer: const SideMenu(),
       backgroundColor: theme.colorScheme.surface,
