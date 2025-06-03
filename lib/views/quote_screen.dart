@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:kgaona/api/service/quote_service.dart';
+import 'package:kgaona/data/quote_repository.dart';
 import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/domain/quote.dart';
 import 'package:kgaona/constants/constantes.dart';
-import 'package:intl/intl.dart'; // Importa el paquete intl
+import 'package:intl/intl.dart';
 
 class QuoteScreen extends StatefulWidget {
   const QuoteScreen({super.key});
@@ -13,7 +13,7 @@ class QuoteScreen extends StatefulWidget {
 }
 
 class QuoteScreenState extends State<QuoteScreen> {
-  final QuoteService _quoteService = QuoteService();
+  final QuoteRepository _quoteService = QuoteRepository();
   final ScrollController _scrollController = ScrollController();
 
   List<Quote> _quotes = [];
@@ -21,12 +21,10 @@ class QuoteScreenState extends State<QuoteScreen> {
   bool _isLoading = false;
   bool _hasMore = true;
 
-  static const double spacingHeight = 10; // Espaciado entre Cards
-
   @override
   void initState() {
     super.initState();
-    _loadInitialQuotes(); // Carga las cotizaciones iniciales
+    _loadInitialQuotes();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent && !_isLoading && _hasMore) {
         _loadQuotes();
@@ -40,11 +38,10 @@ class QuoteScreenState extends State<QuoteScreen> {
     });
 
     try {
-      // Carga todas las cotizaciones disponibles
       final allQuotes = await _quoteService.getAllQuotes();
       setState(() {
         _quotes = allQuotes;
-        _pageNumber = 1; // Configura la paginación para el scroll infinito
+        _pageNumber = 1;
         _hasMore = allQuotes.isNotEmpty;
       });
     } catch (e) {
@@ -93,66 +90,146 @@ class QuoteScreenState extends State<QuoteScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(CotizacionConstantes.titleApp),
+        title: Text(
+          CotizacionConstantes.titleApp,
+          style: theme.textTheme.headlineMedium,
+        ),
         centerTitle: true,
-        backgroundColor: Colors.blue,
       ),
       drawer: const SideMenu(),
-      backgroundColor: Colors.grey[200], // Fondo gris claro
-      body: _quotes.isEmpty && _isLoading
-          ? const Center(
-              child: Text(CotizacionConstantes.loadingMessage),
-            )
-          : ListView.builder(
-              controller: _scrollController,
-              itemCount: _quotes.length + (_hasMore ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index == _quotes.length) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                final quote = _quotes[index];
-                return Column(
+      backgroundColor: theme.colorScheme.surface,
+      body: RefreshIndicator(
+        onRefresh: _loadInitialQuotes,
+        child: _quotes.isEmpty && _isLoading
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                quote.companyName,
-                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 8.0),
-                              Text('Precio: \$${quote.stockPrice.toStringAsFixed(2)}'),
-                              Text(
-                                'Cambio: ${quote.changePercentage.toStringAsFixed(2)}%',
-                                style: TextStyle(
-                                  color: quote.changePercentage >= 0 ? Colors.green : Colors.red,
+                    CircularProgressIndicator(color: theme.colorScheme.primary),
+                    const SizedBox(height: 16),
+                    Text(
+                      CotizacionConstantes.loadingMessage,
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              )
+            : _quotes.isEmpty
+                ? Center(
+                    child: Text(
+                      'No hay cotizaciones disponibles',
+                      style: theme.textTheme.bodyLarge,
+                    ),
+                  )
+                : ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.all(16.0),
+                    itemCount: _quotes.length + (_hasMore ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index == _quotes.length) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 16.0),
+                            child: CircularProgressIndicator(color: theme.colorScheme.primary),
+                          ),
+                        );
+                      }
+
+                      final quote = _quotes[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12.0),
+                        child: Card(
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            side: BorderSide(color: theme.dividerColor),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        quote.companyName,
+                                        style: theme.textTheme.titleLarge,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: quote.changePercentage >= 0 
+                                            ? Colors.green.withAlpha(27) 
+                                            : Colors.red.withAlpha(27),
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      child: Text(
+                                        '${quote.changePercentage >= 0 ? '+' : ''}${quote.changePercentage.toStringAsFixed(2)}%',
+                                        style: theme.textTheme.labelMedium?.copyWith(
+                                          color: quote.changePercentage >= 0 ? Colors.green : Colors.red,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              Text(
-                                'Última actualización: ${_formatDate(quote.lastUpdated)}',
-                                style: const TextStyle(fontSize: 12, color: Colors.grey),
-                              ),
-                            ],
+                                const SizedBox(height: 12.0),
+                                Divider(color: theme.dividerColor),
+                                const SizedBox(height: 8.0),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Precio actual',
+                                          style: theme.textTheme.bodySmall?.copyWith(
+                                            color: theme.colorScheme.onSurface.withAlpha(154),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '\$${quote.stockPrice.toStringAsFixed(2)}',
+                                          style: theme.textTheme.titleMedium?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          'Última actualización',
+                                          style: theme.textTheme.bodySmall?.copyWith(
+                                            color: theme.colorScheme.onSurface.withAlpha(154),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          _formatDate(quote.lastUpdated),
+                                          style: theme.textTheme.bodySmall,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: spacingHeight), // Espaciado entre Cards
-                  ],
-                );
-              },
-            ),
+                      );
+                    },
+                  ),
+      ),
     );
   }
 
