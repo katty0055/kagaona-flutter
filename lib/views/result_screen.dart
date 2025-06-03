@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/constants/constantes.dart';
+import 'package:kgaona/theme/colors.dart';
 import 'package:kgaona/views/start_screen.dart';
 
 class ResultScreen extends StatelessWidget {
@@ -10,90 +12,138 @@ class ResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    const double spacingHeight = 16;
-
-    // Variable para mostrar el puntaje final
-    final String scoreText = '$PreguntasConstantes.finalScore: $finalScoreGame/$totalQuestions';
-
-    // Mensaje de retroalimentación
-    final String feedbackMessage = finalScoreGame > (totalQuestions / 2)
-        ? '¡Buen trabajo!'
-        : '¡Sigue practicando!';
-
-    // Estilo del texto del puntaje
-    const TextStyle scoreTextStyle = TextStyle(
-      fontSize: 24,
-      fontWeight: FontWeight.bold,
-      color: Colors.black,
-    );
-
-    // Estilo del mensaje de retroalimentación
-    const TextStyle feedbackTextStyle = TextStyle(
-      fontSize: 18,
-      color: Colors.grey,
-    );
-
-    // Determina el color del botón
-    final Color buttonColor = finalScoreGame > (totalQuestions / 2)
-        ? Colors.blue // Azul si el puntaje es mayor a la mitad
-        : Colors.green; // Verde en caso contrario
-
+    final theme = Theme.of(context);
+    
+    // Puntaje y mensaje
+    final String scoreText = 'Puntuación: $finalScoreGame/$totalQuestions';
+    
+    // Mensaje según el resultado
+    final String feedbackMessage;
+    final IconData feedbackIcon;
+    final Color feedbackColor;
+    
+    final double percentage = finalScoreGame / totalQuestions;
+    
+    if (percentage >= 0.8) {
+      feedbackMessage = '¡Excelente trabajo!';
+      feedbackIcon = Icons.emoji_events;
+      feedbackColor = AppColors.success;
+    } else if (percentage >= 0.6) {
+      feedbackMessage = '¡Muy bien!';
+      feedbackIcon = Icons.thumb_up;
+      feedbackColor = AppColors.primaryDarkBlue;
+    } else if (percentage >= 0.4) {
+      feedbackMessage = '¡Buen intento!';
+      feedbackIcon = Icons.sentiment_satisfied;
+      feedbackColor = AppColors.primaryLightBlue;
+    } else {
+      feedbackMessage = '¡Sigue practicando!';
+      feedbackIcon = Icons.sentiment_dissatisfied;
+      feedbackColor = AppColors.warning;
+    }
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Resultados'),
-        centerTitle: true,
-        backgroundColor: Colors.blue,
+        title: const Text(
+          'Resultados',
+        ),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor,
+      drawer: const SideMenu(),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                '¡Juego Terminado!',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      feedbackIcon,
+                      size: 72,
+                      color: feedbackColor,
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      '¡Juego Terminado!',
+                      style: theme.textTheme.headlineMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surface,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: theme.colorScheme.primary.withAlpha(77),
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Text(
+                            scoreText,
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.primary,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          LinearProgressIndicator(
+                            value: finalScoreGame / totalQuestions,
+                            backgroundColor: theme.colorScheme.primary.withAlpha(27),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              percentage >= 0.6 ? AppColors.success : 
+                              percentage >= 0.4 ? AppColors.primaryLightBlue : AppColors.warning
+                            ),
+                            minHeight: 8,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      feedbackMessage,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: feedbackColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
-                textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 10),
-              Text(
-                scoreText,
-                style: scoreTextStyle,
-                textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            FilledButton(
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const StartScreen()),
+                  (route) => false,
+                );
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: theme.colorScheme.primary,
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               ),
-              const SizedBox(height: spacingHeight),
-              Text(
-                feedbackMessage,
-                style: feedbackTextStyle,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => const StartScreen()),
-                    (route) => false, // Elimina todas las rutas anteriores
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: buttonColor,// Usa la variable buttonColor
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                ),
-                child: const Text(
-                  PreguntasConstantes.playAgain,
-                  style: TextStyle(fontSize: 16),
+              child: Text(
+                PreguntasConstantes.playAgain,
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: theme.colorScheme.onPrimary,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
