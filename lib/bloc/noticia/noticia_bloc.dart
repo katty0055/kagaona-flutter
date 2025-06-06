@@ -20,6 +20,8 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
     on<ActualizarContadorComentariosEvent>(_onActualizarContadorComentarios);
   }
 
+  // Modificar el método _onFetchNoticias para incluir información de filtro
+
   Future<void> _onFetchNoticias(
     FetchNoticiasEvent event,
     Emitter<NoticiaState> emit,
@@ -53,18 +55,32 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
     AddNoticiaEvent event,
     Emitter<NoticiaState> emit,
   ) async {
-    List<Noticia> noticiasActuales = [];
-    if (state is NoticiaLoaded) {
-      noticiasActuales = [...(state as NoticiaLoaded).noticias];
-    }
-    emit(NoticiaLoading());
-
     try {
-      final noticiaCreada = await _noticiaRepository.crearNoticia(
-        event.noticia,
-      );
-      final noticiasActualizadas = [...noticiasActuales, noticiaCreada];
-      emit(NoticiaCreated(noticiasActualizadas, DateTime.now()));
+      final noticia = await _noticiaRepository.crearNoticia(event.noticia);
+      
+      if (state is NoticiaLoaded) {
+        final currentState = state as NoticiaLoaded;
+        final updatedNoticias = List<Noticia>.from(currentState.noticias);
+        
+        // Si hay filtros activos, solo añadir la noticia a la lista visible si coincide con el filtro
+        if (currentState.estaFiltrado) {
+          if (noticia.categoriaId != null && 
+              noticia.categoriaId!.isNotEmpty && 
+              currentState.categoriasFiltradas!.contains(noticia.categoriaId)) {
+            updatedNoticias.add(noticia);
+          }
+          // No añadimos la noticia a la lista visible si no coincide con el filtro actual
+        } else {
+          // Si no hay filtros activos, añadir la noticia normalmente
+          updatedNoticias.add(noticia);
+        }
+        
+        emit(NoticiaCreated(
+          updatedNoticias, 
+          DateTime.now(),
+          categoriasFiltradas: currentState.categoriasFiltradas,
+        ));
+      }
     } catch (e) {
       if (e is ApiException) {
         emit(NoticiaError(e, TipoOperacionNoticia.crear));
@@ -131,6 +147,7 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
     }
   }
 
+  // Modificar también _onFilterNoticiasByPreferencias
   Future<void> _onFilterNoticiasByPreferencias(
     FilterNoticiasByPreferenciasEvent event,
     Emitter<NoticiaState> emit,
@@ -248,26 +265,24 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
     }
   }
 
+  // Modificar o agregar este método de filtrado
   List<Noticia> _filtrarNoticiasPorCategorias(
     List<Noticia> noticias,
-    List<String> categoriasIds,
+    List<String> categoriaIds,
   ) {
-    List<Noticia> noticiasRetornadas;
-    if (categoriasIds.isEmpty) {
-      // Si no hay categorías seleccionadas, devolver todas las noticias
-      noticiasRetornadas = noticias;
-    } else {
-      noticiasRetornadas =
-          noticias
-              .where(
-                (noticia) =>
-                    // Solo incluir noticias que tienen categoría y esa categoría está seleccionada
-                    noticia.categoriaId != null &&
-                    noticia.categoriaId!.isNotEmpty &&
-                    categoriasIds.contains(noticia.categoriaId),
-              )
-              .toList();
+    // Si no hay categorías seleccionadas para filtrar, devolver todas las noticias
+    if (categoriaIds.isEmpty) {
+      return noticias;
     }
-    return noticiasRetornadas;
+
+    // Filtrar solo las noticias que tienen una categoría que coincide con las seleccionadas
+    return noticias.where((noticia) {
+      // Si la noticia no tiene categoría (categoriaId es null o vacío), no debe mostrarse cuando hay filtros activos
+      if (noticia.categoriaId == null || noticia.categoriaId!.isEmpty) {
+        return false;
+      }
+      
+      return categoriaIds.contains(noticia.categoriaId);
+    }).toList();
   }
 }

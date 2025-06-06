@@ -191,10 +191,10 @@ class _NoticiaScreenContent extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
           side: BorderSide(
-            color: theme.colorScheme.primary.withAlpha(77),
+            color: theme.colorScheme.primary.withOpacity(0.3),
           ),
         ),
-        color: theme.colorScheme.primary.withAlpha(20),
+        color: theme.colorScheme.primary.withOpacity(0.08),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
@@ -213,35 +213,7 @@ class _NoticiaScreenContent extends StatelessWidget {
                   ),
                 ),
               ),
-              InkWell(
-                onTap: () {
-                  // Limpiar filtros
-                  context.read<NoticiaBloc>().add(
-                    FilterNoticiasByPreferenciasEvent([]),
-                  );
-                },
-                borderRadius: BorderRadius.circular(16),
-                child: Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        "Limpiar",
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.primary,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Icon(
-                        Icons.close,
-                        size: 16,
-                        color: theme.colorScheme.primary,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              
             ],
           ),
         ),
