@@ -288,4 +288,13 @@ class AuthConstantes {
   // static const String successLogout = 'Cierre de sesión exitoso';
   static const String errorVacio = 'Usuario o contraseña no pueden estar vacíos';
   static const String sessionToken = 'session_token';
+  static const String iniciarSesion = 'Iniciar Sesión';
+  //static const String cerrarSesion = 'Cerrar Sesión';
+  static const String mostrarContrasena = 'Mostrar contraseña';
+  static const String ocultarContrasena = 'Ocultar contraseña';
+  static const String appTitle = 'Inicio de Sesión';
+  static const String usuarioObligatorio = 'El usuario es obligatorio';
+  static const String contrasenaObligatoria = 'La contraseña es obligatoria';
+  static const String usuario = 'Usuario *';
+  static const String contrasena = 'Contraseña *';
 }

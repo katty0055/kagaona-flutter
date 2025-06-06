@@ -63,6 +63,4 @@ class NoticiaFiltered extends NoticiaLoaded {
     required List<String> categoriasFiltradas,
   }) : super(categoriasFiltradas: categoriasFiltradas);
 
-  @override
-  List<Object> get props => super.props;
 }

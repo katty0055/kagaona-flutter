@@ -128,7 +128,9 @@ class _NoticiaScreenContent extends StatelessWidget {
                   if (categoriaState is! CategoriaLoaded) {
                     context.read<CategoriaBloc>().add(CategoriaInitEvent());
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Cargando categorías...')),
+                      const SnackBar(
+                        content: Text(CategoriaConstantes.mensajeCargando),
+                      ),
                     );
                     return;
                   }
@@ -150,51 +152,49 @@ class _NoticiaScreenContent extends StatelessWidget {
     );
   }
 
-  // Agregar este widget para mostrar el indicador de filtrado
   Widget _construirIndicadorFiltro(BuildContext context, NoticiaState state) {
     if (state is! NoticiaLoaded || !state.estaFiltrado) {
-      return const SizedBox.shrink(); // No mostrar nada si no hay filtro
+      return const SizedBox.shrink();
     }
 
     final theme = Theme.of(context);
     final categoriaBloc = context.watch<CategoriaBloc>();
     final categoriaState = categoriaBloc.state;
-    
-    // Obtener nombres de categorías filtradas
+
     List<String> nombresCategorias = [];
-    if (categoriaState is CategoriaLoaded && state.categoriasFiltradas != null) {
+    if (categoriaState is CategoriaLoaded &&
+        state.categoriasFiltradas != null) {
       for (String categoriaId in state.categoriasFiltradas!) {
-        final categoria = categoriaState.categorias
-            .firstWhere(
-              (cat) => cat.id == categoriaId, 
-              orElse: () => Categoria(
+        final categoria = categoriaState.categorias.firstWhere(
+          (cat) => cat.id == categoriaId,
+          orElse:
+              () => Categoria(
                 id: categoriaId,
                 nombre: 'Desconocida',
                 descripcion: '',
                 imagenUrl: '',
               ),
-            );
+        );
         nombresCategorias.add(categoria.nombre);
       }
     } else {
       nombresCategorias = ['categorías seleccionadas'];
     }
-    
-    final textoFiltro = nombresCategorias.length > 1
-        ? '${nombresCategorias.length} categorías'
-        : nombresCategorias.first;
-    
+
+    final textoFiltro =
+        nombresCategorias.length > 1
+            ? '${nombresCategorias.length} categorías'
+            : nombresCategorias.first;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 8, left: 16, right: 16),
       child: Card(
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
-          side: BorderSide(
-            color: theme.colorScheme.primary.withOpacity(0.3),
-          ),
+          side: BorderSide(color: theme.colorScheme.primary.withAlpha(77)),
         ),
-        color: theme.colorScheme.primary.withOpacity(0.08),
+        color: theme.colorScheme.primary.withAlpha(20),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
@@ -213,7 +213,6 @@ class _NoticiaScreenContent extends StatelessWidget {
                   ),
                 ),
               ),
-              
             ],
           ),
         ),
@@ -250,11 +249,11 @@ class _NoticiaScreenContent extends StatelessWidget {
       if (categoriaState is CategoriaLoaded) {
         categorias = categoriaState.categorias;
       }
-      
+
       if (state.noticias.isNotEmpty) {
         return Column(
           children: [
-            _construirIndicadorFiltro(context, state), // Agregar el indicador aquí
+            _construirIndicadorFiltro(context, state),
             Expanded(
               child: RefreshIndicator(
                 onRefresh: () async {
@@ -305,7 +304,9 @@ class _NoticiaScreenContent extends StatelessWidget {
                               context,
                               mensaje: CategoriaConstantes.mensajeCargando,
                             );
-                            context.read<CategoriaBloc>().add(CategoriaInitEvent());
+                            context.read<CategoriaBloc>().add(
+                              CategoriaInitEvent(),
+                            );
                             return;
                           }
 
@@ -343,7 +344,7 @@ class _NoticiaScreenContent extends StatelessWidget {
       } else {
         return Column(
           children: [
-            _construirIndicadorFiltro(context, state), // Agregar el indicador aquí también
+            _construirIndicadorFiltro(context, state),
             Expanded(
               child: RefreshIndicator(
                 onRefresh: () async {
@@ -357,7 +358,9 @@ class _NoticiaScreenContent extends StatelessWidget {
                   children: [
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.6,
-                      child: const Center(child: Text(NoticiasConstantes.listaVacia)),
+                      child: const Center(
+                        child: Text(NoticiasConstantes.listaVacia),
+                      ),
                     ),
                   ],
                 ),

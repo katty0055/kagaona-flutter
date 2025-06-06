@@ -43,7 +43,6 @@ class GameScreenState extends State<GameScreen> {
       }
     });
 
-    // SnackBar con estilo del tema
     final theme = Theme.of(context);
     final snackBarMessage = isCorrectAnswer == true
         ? SnackBar(
@@ -199,17 +198,13 @@ class GameScreenState extends State<GameScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            // Opciones de respuesta
             Expanded(
               child: ListView.builder(
                 itemCount: currentQuestion.answerOptions.length,
                 itemBuilder: (context, index) {
                   final option = currentQuestion.answerOptions[index];
-                  
-                  // Determinar el color del botón según el estado
                   Color buttonColor;
-                  Color textColor = theme.colorScheme.onPrimary;
-                  
+                  Color textColor = theme.colorScheme.onPrimary;                  
                   if (selectedAnswerIndex != null) {
                     if (isCorrectAnswer! && selectedAnswerIndex == index) {
                       buttonColor = AppColors.success;
@@ -221,8 +216,7 @@ class GameScreenState extends State<GameScreen> {
                     }
                   } else {
                     buttonColor = theme.colorScheme.primary;
-                  }
-                  
+                  }                  
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: FilledButton(

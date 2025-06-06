@@ -7,6 +7,7 @@ import 'package:kgaona/bloc/noticia/noticia_bloc.dart';
 import 'package:kgaona/bloc/noticia/noticia_event.dart';
 import 'package:kgaona/components/login_animation.dart';
 import 'package:kgaona/components/responsive_container.dart';
+import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/helpers/common_widgets_helper.dart';
 import 'package:kgaona/helpers/snackbar_helper.dart';
 import 'package:kgaona/views/welcome_screen.dart';
@@ -53,19 +54,19 @@ class LoginScreen extends StatelessWidget {
       builder: (context, state) {
         return Scaffold(
           body: ResponsiveContainer(
-            child: SingleChildScrollView( 
+            child: SingleChildScrollView(
               child: CommonWidgetsHelper.paddingContainer32(
                 color: theme.colorScheme.surface,
                 child: Form(
                   key: _formKey,
                   child: Column(
-                    mainAxisSize: MainAxisSize.min, 
+                    mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const LoginAnimation(),
                       CommonWidgetsHelper.buildSpacing16(),
                       CommonWidgetsHelper.seccionSubTitulo(
-                        title: 'Inicio de Sesión',
+                        title: AuthConstantes.appTitle,
                       ),
                       CommonWidgetsHelper.buildSpacing32(),
                       TextFormField(
@@ -73,12 +74,12 @@ class LoginScreen extends StatelessWidget {
                         keyboardType: TextInputType.emailAddress,
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'El usuario es obligatorio';
+                            return AuthConstantes.usuarioObligatorio;
                           }
                           return null;
                         },
                         decoration: const InputDecoration(
-                          labelText: 'Usuario *',
+                          labelText: AuthConstantes.usuario,
                           prefixIcon: Icon(Icons.email_outlined),
                         ),
                       ),
@@ -88,33 +89,34 @@ class LoginScreen extends StatelessWidget {
                         keyboardType: TextInputType.visiblePassword,
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'La contraseña es obligatoria';
+                            return AuthConstantes.contrasenaObligatoria;
                           }
                           return null;
                         },
                         obscureText: !state.passwordVisible,
                         decoration: InputDecoration(
-                          labelText: 'Contraseña *',
+                          labelText: AuthConstantes.contrasena,
                           prefixIcon: IconButton(
                             icon: Icon(
-                              state.passwordVisible 
+                              state.passwordVisible
                                   ? Icons.key_off_outlined
                                   : Icons.key_outlined,
                             ),
                             onPressed: () {
-                              context.read<AuthBloc>().add(TogglePasswordVisibility());
+                              context.read<AuthBloc>().add(
+                                TogglePasswordVisibility(),
+                              );
                             },
-                            tooltip: state.passwordVisible 
-                                ? 'Ocultar contraseña' 
-                                : 'Mostrar contraseña',
+                            tooltip:
+                                state.passwordVisible
+                                    ? AuthConstantes.ocultarContrasena
+                                    : AuthConstantes.mostrarContrasena,
                           ),
                         ),
-
-                        
                       ),
                       CommonWidgetsHelper.buildSpacing16(),
                       SizedBox(
-                        width: double.infinity, 
+                        width: double.infinity,
                         child: FilledButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
@@ -128,7 +130,7 @@ class LoginScreen extends StatelessWidget {
                               );
                             }
                           },
-                          child: const Text('Iniciar Sesión'),
+                          child: const Text(AuthConstantes.iniciarSesion),
                         ),
                       ),
                     ],
