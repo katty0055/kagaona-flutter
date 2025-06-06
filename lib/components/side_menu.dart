@@ -14,17 +14,15 @@ class SideMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
+    final theme = Theme.of(context);    
     return Drawer(
       backgroundColor: theme.colorScheme.primary,
             child: Column(
         children: [
-          // Header que simula el AppBar
           Container(
             height: AppBar().preferredSize.height + MediaQuery.of(context).padding.top,
             width: double.infinity,
-            color: theme.colorScheme.primary,  // Mismo color que el AppBar
+            color: theme.colorScheme.primary,  
             padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
             child: Align(
               alignment: Alignment.centerLeft,
@@ -33,7 +31,7 @@ class SideMenu extends StatelessWidget {
                 child: Text(
                   'Menú',
                   style: TextStyle(
-                    color: theme.colorScheme.onPrimary, // Color del texto
+                    color: theme.colorScheme.onPrimary, 
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Inter',
@@ -43,10 +41,9 @@ class SideMenu extends StatelessWidget {
             ),
           ),
           
-          // Lista de opciones del menú
           Expanded(
       child: ListView(
-        padding: EdgeInsets.zero, // Elimina el padding predeterminado
+        padding: EdgeInsets.zero, 
         children: [
           ListTile(
             leading: const Icon(Icons.home),
@@ -79,31 +76,31 @@ class SideMenu extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.newspaper), // Ícono para la nueva opción
+            leading: const Icon(Icons.newspaper), 
             title: const Text('Noticias'),
             onTap: () {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const NoticiaScreen(),
-                ), // Navega a MiAppScreen
+                ), 
               );
             },
           ),
           ListTile(
-            leading: const Icon(Icons.apps), // Ícono para la nueva opción
+            leading: const Icon(Icons.apps), 
             title: const Text('Mi App'),
             onTap: () {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const MiAppScreen(),
-                ), // Navega a MiAppScreen
+                ), 
               );
             },
           ),
           ListTile(
-            leading: const Icon(Icons.numbers), // Ícono para el contador
+            leading: const Icon(Icons.numbers), 
             title: const Text('Contador'),
             onTap: () {
               Navigator.pushReplacement(
@@ -115,7 +112,7 @@ class SideMenu extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.stars), // Ícono para el contador
+            leading: const Icon(Icons.stars), 
             title: const Text('Juego'),
             onTap: () {
               Navigator.pushReplacement(
@@ -125,7 +122,7 @@ class SideMenu extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.info), // Ícono para el contador
+            leading: const Icon(Icons.info), 
             title: const Text('Acerca de'),
             onTap: () {
               Navigator.pushReplacement(

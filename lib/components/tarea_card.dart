@@ -22,15 +22,12 @@ class TaskCard extends StatelessWidget {
     final theme = Theme.of(context);
     final bool esUrgente = tarea.tipo != TareasConstantes.tareaTipoNormal;
     return Card(
-      // No necesitamos especificar nada aquí, se usará imageCardTheme
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Cabecera con imagen y estado de la tarea
           Stack(
             children: [
-              // Imagen sin caché, con fondo gris por defecto
               ClipRRect(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(12),
@@ -41,7 +38,6 @@ class TaskCard extends StatelessWidget {
                   height: 200,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  // En caso de error, mostrar contenedor gris
                   errorBuilder: (context, error, stackTrace) => Container(
                     height: 200,
                     color: theme.colorScheme.surface,
@@ -53,7 +49,6 @@ class TaskCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Mientras carga, mostrar contenedor gris
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
                     return Container(
@@ -73,7 +68,6 @@ class TaskCard extends StatelessWidget {
                 ),
               ),
               
-              // Indicador de urgencia
               if (esUrgente)
                 Positioned(
                   top: 12,
@@ -107,22 +101,18 @@ class TaskCard extends StatelessWidget {
             ],
           ),
           
-          // Contenido de la tarjeta
           Padding(
             padding: AppTheme.cardContentPadding(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Título de la tarea
                 Text(
                   tarea.titulo,
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: esUrgente ? theme.colorScheme.error : null,
                   ),
-                ),
-                
-                // Descripción si existe
+                ),                
                 if (tarea.descripcion != null && tarea.descripcion!.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
@@ -130,11 +120,8 @@ class TaskCard extends StatelessWidget {
                       tarea.descripcion!,
                       style: theme.textTheme.bodyMedium,
                     ),
-                  ),
-                
-                const SizedBox(height: 16),
-                
-                // Fecha límite
+                  ),                
+                const SizedBox(height: 16),                
                 Row(
                   children: [
                     Icon(
@@ -150,15 +137,11 @@ class TaskCard extends StatelessWidget {
                       ),
                     ),
                   ],
-                ),
-                
-                const SizedBox(height: 16),
-                
-                // Barra de acciones
+                ),                
+                const SizedBox(height: 16),                
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Estado de la tarea
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
@@ -189,8 +172,6 @@ class TaskCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    
-                    // Botón volver
                     FilledButton.icon(
                       onPressed: onBackPressed,
                       icon: const Icon(Icons.arrow_back, size: 16),

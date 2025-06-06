@@ -23,10 +23,8 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
     emit(PreferenciaLoading());
 
     try {
-      // Obtener las categorías seleccionadas del repositorio
       final categoriasSeleccionadas =
           await _preferenciaRepository.obtenerCategoriasSeleccionadas();
-
       emit(
         PreferenciasLoaded(
           categoriasSeleccionadas: categoriasSeleccionadas,
@@ -45,18 +43,11 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
     Emitter<PreferenciaState> emit,
   ) async {
     try {
-      // Emitir un estado de carga para mostrar al usuario que está procesando
       emit(PreferenciaLoading());
-
-      // Primero guardamos en la caché local (si es necesario)
       await _preferenciaRepository.guardarCategoriasSeleccionadas(
         event.selectedCategories,
       );
-
-      // Luego sincronizamos con la API (esto es lo importante)
       await _preferenciaRepository.guardarCambiosEnAPI();
-
-      // Emitir estado de éxito
       emit(
         PreferenciasSaved(
           categoriasSeleccionadas: event.selectedCategories,
@@ -74,17 +65,14 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
     ChangeCategory event,
     Emitter<PreferenciaState> emit,
   ) async {
-    // Obtener el estado actual
     if (state is! PreferenciasLoaded) {
       return;
     }
-
     final currentState = state as PreferenciasLoaded;
     List<String> updatedCategories = List.from(
       currentState.categoriasSeleccionadas,
     );
 
-    // Primero emitir el cambio local (inmediato)
     if (event.selected) {
       if (!updatedCategories.contains(event.category)) {
         updatedCategories.add(event.category);
@@ -93,7 +81,6 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
       updatedCategories.remove(event.category);
     }
 
-    // Emitir el nuevo estado inmediatamente
     emit(
       PreferenciasLoaded(
         categoriasSeleccionadas: updatedCategories,
@@ -101,7 +88,6 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
       ),
     );
 
-    // Luego realizar la operación de persistencia en segundo plano
     try {
       if (event.selected) {
         await _preferenciaRepository.agregarCategoriaFiltro(event.category);
@@ -109,7 +95,6 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
         await _preferenciaRepository.eliminarCategoriaFiltro(event.category);
       }
     } catch (e) {
-      // Solo emitir error si es realmente grave, para no interrumpir la experiencia
       if (e is ApiException && e.statusCode! >= 500) {
         emit(PreferenciaError(e, TipoOperacionPreferencia.cambiarCategoria));
       }
@@ -123,16 +108,11 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
     emit(PreferenciaLoading());
 
     try {
-      // Limpiar todas las categorías seleccionadas (solo modifica la caché)
       await _preferenciaRepository.limpiarFiltrosCategorias();
-
-      // Guardar los cambios en la API inmediatamente
       await _preferenciaRepository.guardarCambiosEnAPI();
-
-      // Emitir estado de reseteo con lista vacía para asegurar una UI consistente
       emit(
         PreferenciasSaved(
-          categoriasSeleccionadas: [],
+          categoriasSeleccionadas:const [],
           lastUpdated: DateTime.now(),
         ),
       );

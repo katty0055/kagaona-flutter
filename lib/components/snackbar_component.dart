@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Componente que proporciona la configuración visual del SnackBar
 class SnackBarComponent {
-  /// Crea y retorna un SnackBar con un estilo consistente para toda la aplicación
   static SnackBar crear({
     required BuildContext context,
     required String mensaje,
@@ -30,7 +28,7 @@ class SnackBarComponent {
       behavior: SnackBarBehavior.fixed,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-      elevation: 0, // Sin sombra
+      elevation: 0, 
     );
   }
 }
