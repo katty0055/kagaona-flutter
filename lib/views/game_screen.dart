@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kgaona/api/service/question_service.dart';
+import 'package:kgaona/data/question_repository.dart';
 import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/domain/question.dart';
 import 'package:kgaona/theme/colors.dart';
@@ -13,7 +13,7 @@ class GameScreen extends StatefulWidget {
 }
 
 class GameScreenState extends State<GameScreen> {
-  final QuestionService _questionService = QuestionService();
+  final QuestionRepository _questionService = QuestionRepository();
   List<Question> questionsList = [];
   int currentQuestionIndex = 0;
   int userScore = 0;

@@ -1,41 +1,37 @@
 import 'package:kgaona/api/service/comentario_service.dart';
+import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/data/base_repository.dart';
 import 'package:kgaona/domain/comentario.dart';
 import 'package:kgaona/helpers/secure_storage_service.dart';
 import 'package:watch_it/watch_it.dart';
 
-/// Repositorio para gestionar operaciones relacionadas con los comentarios.
-/// Utiliza caché para mejorar la eficiencia al obtener comentarios.
 class ComentarioRepository extends BaseRepository<Comentario> {
   final _comentarioService = di<ComentarioService>();
   final _secureStorageService = di<SecureStorageService>();
 
   @override
   void validarEntidad(Comentario comentario) {
-    validarNoVacio(comentario.texto, 'texto del comentario');
-    validarNoVacio(comentario.autor, 'autor del comentario');
-    validarNoVacio(comentario.noticiaId, 'ID de la noticia');
+    validarNoVacio(comentario.texto, ValidacionConstantes.comentarioTexto);
+    validarNoVacio(comentario.autor, ValidacionConstantes.comentarioAutor);
+    validarNoVacio(comentario.noticiaId, ValidacionConstantes.noticiaId);
   }
 
-  /// Método para validar un subcomentario
   void validarSubcomentario(Comentario subcomentario) {
     validarEntidad(subcomentario);
   }
 
-  /// Obtiene todos los comentarios de una noticia específica
   Future<List<Comentario>> obtenerComentariosPorNoticia(
     String noticiaId,
   ) async {
     return manejarExcepcion(() async {
-      validarNoVacio(noticiaId, 'ID de la noticia');
+      validarNoVacio(noticiaId, ValidacionConstantes.noticiaId);
       final comentarios = await _comentarioService.obtenerComentariosPorNoticia(
         noticiaId,
       );
       return comentarios;
-    }, mensajeError: 'Error al obtener comentarios');
+    }, mensajeError: ComentarioConstantes.mensajeError);
   }
 
-  /// Agrega un nuevo comentario a una noticia
   Future<Comentario> agregarComentario(Comentario comentario) async {
     return manejarExcepcion(() async {
       validarEntidad(comentario);
@@ -44,16 +40,15 @@ class ComentarioRepository extends BaseRepository<Comentario> {
       );
       final response = await _comentarioService.agregarComentario(comentario);
       return response;
-    }, mensajeError: 'Error al agregar comentario');
+    }, mensajeError: ComentarioConstantes.errorCreated);
   }
 
-  /// Registra una reacción (like o dislike) a un comentario
   Future<Comentario> reaccionarComentario(
     String comentarioId,
     String tipo,
   ) async {
     return manejarExcepcion(() async {
-      validarNoVacio(comentarioId, 'ID del comentario');
+      validarNoVacio(comentarioId, ValidacionConstantes.comentarioId);
       Comentario response;
       if (comentarioId.contains('sub_')) {
         response = await _comentarioService.reaccionarSubComentario(
@@ -67,33 +62,30 @@ class ComentarioRepository extends BaseRepository<Comentario> {
         );
       }
       return response;
-    }, mensajeError: 'Error al registrar reacción');
+    }, mensajeError: ComentarioConstantes.errorReaccionarComentario);
   }
 
-  /// Agrega un subcomentario a un comentario existente
-  /// Los subcomentarios no pueden tener a su vez subcomentarios
   Future<Comentario> agregarSubcomentario(Comentario subcomentario) async {
     return manejarExcepcion(() async {
       validarSubcomentario(subcomentario);
       final comentarioPadreId = subcomentario.idSubComentario!;
-      //Asignar un ID único al subcomentario y autor al comentario
       subcomentario = subcomentario.copyWith(
-        id: 'sub_${DateTime.now().millisecondsSinceEpoch}_${subcomentario.texto.hashCode}',
-        autor: await _secureStorageService.getUserEmail(),      
+        id:
+            'sub_${DateTime.now().millisecondsSinceEpoch}_${subcomentario.texto.hashCode}',
+        autor: await _secureStorageService.getUserEmail(),
       );
       final response = await _comentarioService.agregarSubcomentario(
         comentarioId: comentarioPadreId,
-        subComentario: subcomentario,          
+        subComentario: subcomentario,
       );
       return response;
-    }, mensajeError: 'Error al agregar subcomentario');
+    }, mensajeError: ComentarioConstantes.errorCreatedSub);
   }
 
-  /// Elimina todos los reportes asociados a una noticia
   Future<void> eliminarComentariosPorNoticia(String noticiaId) async {
     return manejarExcepcion(() async {
-      validarNoVacio(noticiaId, 'ID de la noticia');
+      validarNoVacio(noticiaId, ValidacionConstantes.noticiaId);
       await _comentarioService.eliminarComentariosPorNoticia(noticiaId);
-    }, mensajeError: "Error al eliminar comentarios");
+    }, mensajeError: ComentarioConstantes.errorEliminarComentarios);
   }
 }

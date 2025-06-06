@@ -231,20 +231,7 @@ class AppTheme {
     // Agregar tema de diálogo
     dialogTheme: dialogTheme(),
   );
-  //decoraciones reutilizables
-  // static final BoxDecoration sectionBorderGray05 = BoxDecoration(
-  //   borderRadius: BorderRadius.circular(10),
-  //   border: Border.all(color: AppColors.gray05),
-  //   color: Colors.white, // Fondo blanco
-  //   boxShadow: [
-  //     BoxShadow(
-  //       color: Colors.black.withAlpha(51), // Sombra suave
-  //       blurRadius: 4,
-  //       offset: const Offset(0, 2),
-  //     ),
-  //   ],
-  // );
-
+  
   // Estilo para iconos con fondo pequeño
   static BoxDecoration iconDecoration(BuildContext context) {
     return BoxDecoration(

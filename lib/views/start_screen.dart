@@ -9,13 +9,13 @@ class StartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
           PreguntasConstantes.titleApp,
           style: theme.appBarTheme.titleTextStyle,
-        ), 
+        ),
         centerTitle: true,
       ),
       drawer: const SideMenu(),
@@ -36,14 +36,10 @@ class StartScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.quiz,
-                  size: 80,
-                  color: theme.colorScheme.primary,
-                ),
+                Icon(Icons.quiz, size: 80, color: theme.colorScheme.primary),
                 const SizedBox(height: 24),
                 Text(
-                  PreguntasConstantes.welcomeMessage, 
+                  PreguntasConstantes.welcomeMessage,
                   style: theme.textTheme.headlineMedium,
                   textAlign: TextAlign.center,
                 ),
@@ -52,12 +48,17 @@ class StartScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const GameScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => const GameScreen(),
+                      ),
                     );
                   },
                   style: theme.filledButtonTheme.style,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                     child: Text(
                       PreguntasConstantes.startGame,
                       style: theme.textTheme.labelLarge?.copyWith(

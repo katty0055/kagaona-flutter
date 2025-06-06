@@ -100,7 +100,6 @@ class CommonWidgetsHelper {
     );
   }
 
-  // Nuevo método para mensajes de error
   static Widget mensaje({required String titulo, required String mensaje}) {
     return Builder(
       builder: (context) {
@@ -144,7 +143,7 @@ class CommonWidgetsHelper {
               decoration: AppTheme.iconDecoration(context),
               child: Icon(icon, color: theme.colorScheme.primary, size: 24),
             ),
-            horizontalSpace(16), // Espacio horizontal en lugar de vertical
+            horizontalSpace(16), 
             Expanded(child: Text(title, style: theme.textTheme.bodyMedium)),
           ],
         );
@@ -154,13 +153,11 @@ class CommonWidgetsHelper {
 
   static Widget copyrightFooter(BuildContext context) {
     final theme = Theme.of(context);
-    // Color con transparencia para texto de copyright
     final Color copyrightColor = theme.colorScheme.onSurface.withAlpha(51);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Fila de copyright
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/core/api_config.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
@@ -7,12 +6,10 @@ import 'package:kgaona/helpers/connectivity_service.dart';
 import 'package:kgaona/helpers/secure_storage_service.dart';
 import 'package:watch_it/watch_it.dart' show di;
 
-/// Clase base para servicios API que proporciona funcionalidad común
 class BaseService {
   late final Dio _dio;
   final _secureStorage = di<SecureStorageService>();
 
-  /// Constructor que inicializa la configuración de Dio con los parámetros base
   BaseService() {
     _dio = Dio(
       BaseOptions(
@@ -32,13 +29,11 @@ class BaseService {
   }
 
   static ApiException handleError(DioException e, String endpoint) {
-    // Manejo de errores de timeout
     if (e.type == DioExceptionType.connectionTimeout ||
         e.type == DioExceptionType.receiveTimeout) {
       throw ApiException(AppConstantes.errorTimeOut);
     }
 
-    // Personalización de errores según el endpoint
     String errorNotFound = '';
     String errorUnauthorized = '';
     String errorBadRequest = '';
@@ -69,32 +64,31 @@ class BaseService {
       errorUnauthorized = ComentarioConstantes.errorUnauthorized;
       errorBadRequest = ComentarioConstantes.errorInvalidData;
       errorServer = ComentarioConstantes.errorServer;
+    } else if (ApiConstantes.tareasEndpoint.contains(endpoint)) {
+      errorNotFound = TareasConstantes.errorNotFound;
+      errorUnauthorized = TareasConstantes.errorUnauthorized;
+      errorBadRequest = TareasConstantes.errorInvalidData;
+      errorServer = TareasConstantes.errorServer;
     }
-    // falta los otros endpoints
+
     final statusCode = e.response?.statusCode;
 
-    // Aplicar código de estado al tipo de recurso
     switch (statusCode) {
       case 400:
         return ApiException(errorBadRequest, statusCode: 400);
       case 401:
         return ApiException(errorUnauthorized, statusCode: 401);
       case 403:
-        // Error de autorización - Problemas con API key o IP no autorizada
         return ApiException(AppConstantes.errorAccesoDenegado, statusCode: 403);
       case 404:
-        // Personalización para recurso no encontrado
         return ApiException(errorNotFound, statusCode: 404);
       case 429:
-        // Límite de tasa alcanzado en Beeceptor
         return ApiException(AppConstantes.limiteAlcanzado, statusCode: 429);
       case 500:
         return ApiException(errorServer, statusCode: 500);
       case 561:
-        // Error en la plantilla de respuesta de Beeceptor
         return ApiException(AppConstantes.errorServidorMock, statusCode: 561);
       case 562:
-        // Necesita autorización en Beeceptor (x-beeceptor-auth)
         return ApiException(AppConstantes.errorUnauthorized, statusCode: 562);
       case 571:
       case 572:
@@ -104,50 +98,41 @@ class BaseService {
       case 576:
       case 577:
       case 578:
-        // Errores de conexión proxy de Beeceptor
         return ApiException(
           AppConstantes.errorConexionProxy,
           statusCode: statusCode,
         );
       case 580:
-        // Cliente desconectado (socket hang up)
         return ApiException(
           AppConstantes.conexionInterrumpida,
           statusCode: 580,
         );
       case 581:
-        // Error al recuperar archivo en Beeceptor
         return ApiException(
           AppConstantes.errorRecuperarRecursos,
           statusCode: 581,
         );
       case 599:
-        // Error crítico en Beeceptor
         return ApiException(
           AppConstantes.errorCriticoServidor,
           statusCode: 599,
         );
       default:
         return ApiException(
-          'Error desconocido en $endpoint',
+          '${AppConstantes.errorDesconocido} $endpoint',
           statusCode: statusCode,
         );
     }
   }
 
-  /// Método privado que ejecuta una petición HTTP y maneja los errores de forma centralizada
   Future<T> _executeRequest<T>(
     Future<Response<dynamic>> Function() requestFn,
     String errorMessage,
   ) async {
     try {
       final connectivityService = di<ConnectivityService>();
-      // Verificar la conectividad antes de realizar la solicitud HTTP
       await connectivityService.checkConnectivity();
-
-      // Proceder con la solicitud HTTP si hay conectividad
       final response = await requestFn();
-
       if (response.statusCode == 200) {
         return response.data as T;
       } else {
@@ -155,18 +140,15 @@ class BaseService {
       }
     } on DioException catch (e) {
       final endpoint = e.requestOptions.path;
-      debugPrint('Error en la solicitud: ${e.message}');
       throw handleError(e, endpoint);
     } catch (e) {
       if (e is ApiException) {
         rethrow;
       }
-      // Manejo de cualquier otro tipo de error
-      throw ApiException('Error inesperado: ${e.toString()}');
+      throw ApiException('${AppConstantes.errorInesperado} ${e.toString()}');
     }
   }
 
-  /// Método genérico para realizar solicitudes GET
   Future<T> get<T>(
     String endpoint, {
     Map<String, dynamic>? queryParameters,
@@ -186,7 +168,6 @@ class BaseService {
     );
   }
 
-  /// Método genérico para realizar solicitudes POST
   Future<dynamic> post(
     String endpoint, {
     required dynamic data,
@@ -208,7 +189,6 @@ class BaseService {
     );
   }
 
-  /// Método genérico para realizar solicitudes PUT
   Future<dynamic> put(
     String endpoint, {
     required dynamic data,
@@ -230,7 +210,6 @@ class BaseService {
     );
   }
 
-  /// Método genérico para realizar solicitudes DELETE
   Future<dynamic> delete(
     String endpoint, {
     Map<String, dynamic>? queryParameters,
@@ -250,7 +229,6 @@ class BaseService {
     );
   }
 
-  /// Método genérico para realizar solicitudes PATCH (actualización parcial)
   Future<dynamic> patch(
     String endpoint, {
     required dynamic data,
@@ -272,10 +250,8 @@ class BaseService {
     );
   }
 
-  /// Obtiene opciones de solicitud con token de autenticación si es requerido
   Future<Options> _getRequestOptions({bool requireAuthToken = true}) async {
     final options = Options();
-
     if (requireAuthToken) {
       final jwt = await _secureStorage.getJwt();
       if (jwt != null && jwt.isNotEmpty) {
@@ -284,11 +260,9 @@ class BaseService {
         throw ApiException(AppConstantes.tokenNoEncontrado, statusCode: 401);
       }
     }
-
     return options;
   }
 
-  /// Método genérico para realizar solicitudes POST sin token de autorización
   Future<dynamic> postUnauthorized(
     String endpoint, {
     required dynamic data,

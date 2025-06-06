@@ -79,7 +79,7 @@ class AppTextStyles {
   static TextStyle get bodyLgMedium {
     return GoogleFonts.inter(
       fontSize: 14,
-      fontWeight: FontWeight.w500, // Medium weight
+      fontWeight: FontWeight.w500, 
       color: Colors.black,
     );
   }

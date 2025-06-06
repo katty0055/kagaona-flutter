@@ -1,4 +1,5 @@
 import 'package:kgaona/api/service/auth_service.dart';
+import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/data/preferencia_repository.dart';
 import 'package:kgaona/data/tarea_repository.dart';
 import 'package:kgaona/domain/login_request.dart';
@@ -7,14 +8,14 @@ import 'package:kgaona/helpers/secure_storage_service.dart';
 import 'package:watch_it/watch_it.dart';
 
 class AuthRepository {
-  final AuthService _authService = AuthService();
+  final _authService = di<AuthService>();
   final _secureStorage = di<SecureStorageService>();
-  final _tareaRepository = di<TareasRepository>();
+  final _tareaRepository = di<TareaRepository>();
   final preferenciaRepository = di<PreferenciaRepository>();
   Future<bool> login(String email, String password) async {
     try {
       if (email.isEmpty || password.isEmpty) {
-        throw ArgumentError('Error: Email and password cannot be empty.');
+        throw ArgumentError(AuthConstantes.errorVacio);
       }
       preferenciaRepository.invalidarCache();
       final loginRequest = LoginRequest(username: email, password: password);

@@ -1,13 +1,6 @@
-/*
-¿Cómo controla el estado los cambios de color? ¿Qué hace Column en este layout?
-Con una lista de colores y el setState() dentro de la funcion cambiarColor()> Se le suma 1 al indice actual y 
-se obtiene el resto de la division con el tamaño de la lista de colores,el rersultado 
-es el nuevo indice del color a mostrar. 
-Column alinea a los widgets hijos uno detras de otro.
-*/
-
 import 'package:flutter/material.dart';
 import 'package:kgaona/components/side_menu.dart';
+import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/theme/colors.dart';
 
 class MiAppScreen extends StatefulWidget {
@@ -18,48 +11,42 @@ class MiAppScreen extends StatefulWidget {
 }
 
 class MiAppScreenState extends State<MiAppScreen> {
-  Color _colorActual = AppColors.primaryDarkBlue; // Color inicial del Container
+  Color _colorActual = AppColors.primaryDarkBlue;
   final List<Color> _colores = [
-    AppColors.primaryDarkBlue, 
-    AppColors.error, 
-    AppColors.success
+    AppColors.primaryDarkBlue,
+    AppColors.error,
+    AppColors.success,
   ];
   int _indiceColor = 0;
 
   void _cambiarColor() {
     setState(() {
-      _indiceColor = (_indiceColor + 1) % _colores.length; // Cambia al siguiente color
+      _indiceColor = (_indiceColor + 1) % _colores.length;
       _colorActual = _colores[_indiceColor];
     });
   }
-  
+
   void _resetColor() {
     setState(() {
       _colorActual = Colors.white;
     });
   }
 
-  // Determina si el texto debería ser oscuro basado en el color de fondo
   Color _getTextColor() {
-    // Si el color es blanco, el texto será negro
     if (_colorActual == Colors.white) {
       return Colors.black;
     }
-    // Para otros colores, el texto será blanco
     return Colors.white;
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mi App'),
-      ),
+      appBar: AppBar(title: const Text(AppConstantes.titleMyApp)),
       drawer: const SideMenu(),
       body: Center(
-        child: Column(          
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
@@ -82,7 +69,7 @@ class MiAppScreenState extends State<MiAppScreen> {
               ),
               alignment: Alignment.center,
               child: Text(
-                '¡Cambio de color!',
+                AppConstantes.cambioColor,
                 style: theme.textTheme.titleLarge?.copyWith(
                   color: _getTextColor(),
                   fontWeight: FontWeight.bold,
@@ -103,7 +90,7 @@ class MiAppScreenState extends State<MiAppScreen> {
                         backgroundColor: theme.colorScheme.primary,
                       ),
                       child: Text(
-                        'Cambiar Color',
+                        AppConstantes.cambiarColor,
                         style: theme.textTheme.labelMedium?.copyWith(
                           color: theme.colorScheme.onPrimary,
                         ),
@@ -118,7 +105,7 @@ class MiAppScreenState extends State<MiAppScreen> {
                         backgroundColor: theme.colorScheme.secondary,
                       ),
                       child: Text(
-                        'Resetear Color',
+                        AppConstantes.resetColor,
                         style: theme.textTheme.labelMedium?.copyWith(
                           color: theme.colorScheme.onPrimary,
                         ),

@@ -8,6 +8,7 @@ import 'package:kgaona/bloc/noticia/noticia_event.dart';
 import 'package:kgaona/bloc/preferencia/preferencia_bloc.dart';
 import 'package:kgaona/bloc/preferencia/preferencia_event.dart';
 import 'package:kgaona/bloc/preferencia/preferencia_state.dart';
+import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/domain/categoria.dart';
 import 'package:kgaona/helpers/common_widgets_helper.dart';
 import 'package:kgaona/helpers/snackbar_helper.dart';
@@ -47,7 +48,7 @@ class PreferenciaScreen extends StatelessWidget {
             );
             SnackBarHelper.mostrarExito(
               context,
-              mensaje: 'Preferencias guardadas correctamente',
+              mensaje: PreferenciaConstantes.preferenciasSaved,
             );
             Future.delayed(const Duration(milliseconds: 1250), () {
               if (context.mounted) {
@@ -58,7 +59,10 @@ class PreferenciaScreen extends StatelessWidget {
         },
         builder: (context, prefState) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Mis Preferencias'), elevation: 0),
+            appBar: AppBar(
+              title: const Text(PreferenciaConstantes.titleApp),
+              elevation: 0,
+            ),
             backgroundColor: theme.scaffoldBackgroundColor,
             body: Column(
               children: [
@@ -89,20 +93,20 @@ class PreferenciaScreen extends StatelessWidget {
         } else if (catState is CategoriaError) {
           return _construirWidgetError(
             context,
-            'Error al cargar categorías: ${catState.error.message}',
+            catState.error.message,
             () => context.read<CategoriaBloc>().add(CategoriaInitEvent()),
           );
         } else if (prefState is PreferenciaError) {
           return _construirWidgetError(
             context,
-            'Error de preferencias: ${prefState.error.message}',
+            prefState.error.message,
             () => context.read<PreferenciaBloc>().add(LoadPreferences()),
           );
         } else if (catState is CategoriaLoaded) {
           final categorias = catState.categorias;
           return _construirListaCategorias(context, prefState, categorias);
         }
-        return const Center(child: Text('Estado desconocido'));
+        return const Center(child: Text(AppConstantes.errorDesconocido));
       },
     );
   }
@@ -117,8 +121,8 @@ class PreferenciaScreen extends StatelessWidget {
     if (categorias.isEmpty) {
       return Center(
         child: CommonWidgetsHelper.mensaje(
-          titulo: 'Sin categorías',
-          mensaje: 'No hay categorías disponibles en este momento',
+          titulo: CategoriaConstantes.defaultcategoriaId,
+          mensaje: PreferenciaConstantes.noCategoria,
         ),
       );
     }
@@ -128,7 +132,6 @@ class PreferenciaScreen extends StatelessWidget {
       itemCount: categorias.length,
       itemBuilder: (context, index) {
         final categoria = categorias[index];
-
         return BlocBuilder<PreferenciaBloc, PreferenciaState>(
           buildWhen: (previous, current) {
             if (previous is PreferenciasLoaded &&
@@ -176,25 +179,23 @@ class PreferenciaScreen extends StatelessWidget {
     return BlocBuilder<PreferenciaBloc, PreferenciaState>(
       builder: (context, state) {
         final theme = Theme.of(context);
-        final isEnabled = state is! PreferenciaError && state is! PreferenciaLoading;
-        final numCategorias = state is PreferenciasLoaded 
-            ? state.categoriasSeleccionadas.length 
-            : 0;
-
+        final isEnabled =
+            state is! PreferenciaError && state is! PreferenciaLoading;
+        final numCategorias =
+            state is PreferenciasLoaded
+                ? state.categoriasSeleccionadas.length
+                : 0;
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: theme.cardColor,
-          ),
+          decoration: BoxDecoration(color: theme.cardColor),
           child: Row(
-             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  
                   Text(
-                    'Seleccionadas: ',
+                    ValidacionConstantes.seleccionadas,
                     style: theme.textTheme.headlineMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withAlpha(178),
                     ),
@@ -212,20 +213,25 @@ class PreferenciaScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: () => context.read<PreferenciaBloc>().add(ResetFilters()),
+                    onPressed:
+                        () =>
+                            context.read<PreferenciaBloc>().add(ResetFilters()),
                     style: AppTheme.modalSecondaryButtonStyle(),
-                    child: const Text('Limpiar'),
+                    child: const Text(ValidacionConstantes.limpiar),
                   ),
                   const SizedBox(width: 8),
                   ElevatedButton(
-                    onPressed: isEnabled ? () => _aplicarFiltros(context, state) : null,
+                    onPressed:
+                        isEnabled
+                            ? () => _aplicarFiltros(context, state)
+                            : null,
                     style: AppTheme.modalActionButtonStyle(),
-                    child: const Text('Aplicar'),
+                    child: const Text(ValidacionConstantes.aplicar),
                   ),
                 ],
-                ),
-                ],
               ),
+            ],
+          ),
         );
       },
     );
@@ -251,7 +257,7 @@ class PreferenciaScreen extends StatelessWidget {
           ElevatedButton.icon(
             onPressed: onRetry,
             icon: const Icon(Icons.refresh),
-            label: const Text('Reintentar'),
+            label: const Text(ValidacionConstantes.reintentar),
           ),
         ],
       ),
@@ -275,7 +281,7 @@ class PreferenciaScreen extends StatelessWidget {
     if (state is PreferenciaError) {
       SnackBarHelper.mostrarAdvertencia(
         context,
-        mensaje: 'No se pueden aplicar los filtros debido a un error',
+        mensaje: PreferenciaConstantes.errorNoFiltro,
       );
       return;
     }
@@ -287,7 +293,7 @@ class PreferenciaScreen extends StatelessWidget {
     } else {
       SnackBarHelper.mostrarAdvertencia(
         context,
-        mensaje: 'Estado de preferencias inválido',
+        mensaje: PreferenciaConstantes.preferenciaInvalida,
       );
     }
   }

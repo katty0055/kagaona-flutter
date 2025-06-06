@@ -6,7 +6,6 @@ import 'package:kgaona/domain/comentario.dart';
 class ComentarioService extends BaseService {
   final _url = ApiConstantes.comentariosEndpoint;
 
-  /// Obtiene todos los comentarios de una noticia específica
   Future<List<Comentario>> obtenerComentariosPorNoticia(
     String noticiaId,
   ) async {
@@ -21,18 +20,15 @@ class ComentarioService extends BaseService {
         .toList();
   }
 
-  /// Agrega un nuevo comentario a una noticia
   Future<Comentario> agregarComentario(Comentario comentario) async {
     final response = await post(
       _url,
       data: comentario.toMap(),
-      errorMessage: 'Error al agregar el comentario',
+      errorMessage: ComentarioConstantes.errorCreated,
     );
     return ComentarioMapper.fromMap(response);
   }
 
-  /// Calcula el número de comentarios para una noticia específica
-  /// Suma también los subcomentarios
   Future<int> obtenerNumeroComentarios(String noticiaId) async {
     final comentarios = await obtenerComentariosPorNoticia(noticiaId);
     int contador = comentarios.length;
@@ -49,7 +45,7 @@ class ComentarioService extends BaseService {
   }) async {
     final response = await get(
       '$_url/$comentarioId',
-      errorMessage: "Error al obtener el comentario",
+      errorMessage: ComentarioConstantes.errorNotFound,
     );
     return MapperContainer.globals.fromMap<Comentario>(response);
   }
@@ -59,30 +55,25 @@ class ComentarioService extends BaseService {
     required String tipoReaccion,
   }) async {
     final comentario = await obtenerComentarioPorId(comentarioId: comentarioId);
-
     final comentarioActualizado = _actualizarContadores(
       tipoReaccion: tipoReaccion,
       comentario: comentario,
     );
-
-      final response = await put(
+    final response = await put(
       '$_url/$comentarioId',
       data: comentarioActualizado.toMap(),
-      errorMessage: "Error al reaccionar al comentario",
+      errorMessage: ComentarioConstantes.errorReaccionarComentario,
     );
     return ComentarioMapper.fromMap(response);
   }
 
-  /// Busca un subcomentario específico por su ID
-  /// Retorna el subcomentario encontrado o null si no existe
   Future<Comentario?> buscarPorSubComentarioId({
     required String subcomentarioId,
   }) async {
     final response = await get(
       '$_url?subcomentarios.id=$subcomentarioId',
-      errorMessage: "Error al buscar el subcomentario",
+      errorMessage: ComentarioConstantes.errorGetComentario,
     );
-
     return ComentarioMapper.fromMap(response[0] as Map<String, dynamic>);
   }
 
@@ -93,9 +84,7 @@ class ComentarioService extends BaseService {
     Comentario? comentario = await buscarPorSubComentarioId(
       subcomentarioId: subComentarioId,
     );
-
     Comentario subComentario;
-
     if (comentario?.subcomentarios != null) {
       subComentario = (comentario?.subcomentarios)!.firstWhere(
         (sub) => sub.id == subComentarioId,
@@ -104,7 +93,6 @@ class ComentarioService extends BaseService {
         tipoReaccion: tipoReaccion,
         comentario: subComentario,
       );
-
       comentario = comentario?.copyWith(
         subcomentarios: [
           ...comentario.subcomentarios!.map((sub) {
@@ -119,7 +107,7 @@ class ComentarioService extends BaseService {
     final response = await put(
       '$_url/${comentario?.id}',
       data: comentario?.toMap(),
-      errorMessage: "Error al reaccionar al subcomentario",
+      errorMessage: ComentarioConstantes.errorReaccionarSubComentario,
     );
     return ComentarioMapper.fromMap(response);
   }
@@ -141,37 +129,33 @@ class ComentarioService extends BaseService {
     );
   }
 
-  /// Agrega un subcomentario a un comentario existente
-  /// Los subcomentarios no pueden tener a su vez subcomentarios
   Future<Comentario> agregarSubcomentario({
-    required String comentarioId, // ID del comentario principal
-    required Comentario subComentario, // Datos del comentario principal
+    required String comentarioId,
+    required Comentario subComentario,
   }) async {
     final comentario = await obtenerComentarioPorId(comentarioId: comentarioId);
     final subComentariosActualizados = [
       ...?comentario.subcomentarios,
       subComentario,
     ];
-    final comentarioActualizado =comentario.copyWith(subcomentarios: subComentariosActualizados);
-
+    final comentarioActualizado = comentario.copyWith(
+      subcomentarios: subComentariosActualizados,
+    );
     final response = await put(
-     '$_url/$comentarioId',
+      '$_url/$comentarioId',
       data: comentarioActualizado.toMap(),
-      errorMessage: "Error al agregar el subcomentario",
+      errorMessage: ComentarioConstantes.errorCreatedSub,
     );
     return ComentarioMapper.fromMap(response);
   }
 
   Future<void> eliminarComentariosPorNoticia(String noticiaId) async {
-    // 1. Primero obtenemos todos los reportes de la noticia
     final comentarios = await obtenerComentariosPorNoticia(noticiaId);
-    
-    // 2. Eliminamos cada reporte individualmente
     for (final comentario in comentarios) {
       if (comentario.id != null) {
         await delete(
           '$_url/${comentario.id}',
-          errorMessage: ReporteConstantes.errorEliminarReportes,
+          errorMessage: ComentarioConstantes.errorDeleteComentario,
         );
       }
     }

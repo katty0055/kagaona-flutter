@@ -1,15 +1,28 @@
-import 'package:kgaona/data/question_repository.dart';
 import 'package:kgaona/domain/question.dart';
 
 class QuestionService {
-  final QuestionRepository _questionRepository = QuestionRepository();
-
-  // Método para obtener las preguntas desde el repositorio
-  Future<List<Question>> getQuestions() async {
-    // Simula un retraso para imitar una llamada a una API
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    // Obtiene las preguntas iniciales del repositorio
-    return _questionRepository.getInitialQuestions();
+  List<Question> getInitialQuestions() {
+    return [
+      Question(
+        questionText: '¿Cuál es la capital de Francia?',
+        answerOptions: ['Madrid', 'París', 'Roma'],
+        correctAnswerIndex: 1, 
+      ),
+      Question(
+        questionText: '¿Cuál es el lenguaje utilizado en Flutter?',
+        answerOptions: ['Java', 'Dart', 'Python'],
+        correctAnswerIndex: 1, 
+      ),
+      Question(
+        questionText: '¿Cuántos continentes hay en el mundo?',
+        answerOptions: ['5', '6', '7'],
+        correctAnswerIndex: 2, 
+      ),
+      Question(
+        questionText: '¿Qué planeta es conocido como el planeta rojo?',
+        answerOptions: ['Júpiter', 'Marte', 'Venus'],
+        correctAnswerIndex: 1, 
+      ),
+    ];
   }
 }

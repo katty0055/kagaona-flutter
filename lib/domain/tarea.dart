@@ -1,4 +1,5 @@
 import 'package:dart_mappable/dart_mappable.dart';
+import 'package:kgaona/constants/constantes.dart';
 part 'tarea.mapper.dart';
 
 @MappableClass()
@@ -16,7 +17,7 @@ class Tarea with TareaMappable{
     this.id,
     required this.usuario,
     required this.titulo,
-    this.tipo = 'normal', 
+    this.tipo = TareasConstantes.tareaTipoNormal, 
     this.descripcion,
     this.fecha,
     this.fechaLimite,

@@ -2,6 +2,7 @@ import 'package:kgaona/api/service/base_service.dart';
 import 'package:kgaona/domain/login_request.dart';
 import 'package:kgaona/domain/login_response.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
+import 'package:kgaona/constants/constantes.dart';
 
 class AuthService extends BaseService {
   AuthService() : super();
@@ -15,27 +16,28 @@ class AuthService extends BaseService {
         const LoginRequest(username: 'sodep', password: 'sodep'),
         const LoginRequest(username: 'gricequeen', password: 'sodep'),
       ];
-
-      // Verificar si las credenciales coinciden con algún usuario de prueba
       bool credencialesValidas = usuariosTest.any(
         (usuario) =>
             usuario.username == request.username &&
             usuario.password == request.password,
       );
-       if (credencialesValidas) {
-        data = await postUnauthorized('/login', data: request.toJson());
+      if (credencialesValidas) {
+        data = await postUnauthorized(
+          ApiConstantes.cotizacionesEndpoint,
+          data: request.toJson(),
+        );
       }
 
       if (data != null) {
         return LoginResponseMapper.fromMap(data);
       } else {
-        throw ApiException('Error de autenticación: respuesta vacía');
+        throw ApiException(AuthConstantes.errorServer);
       }
     } catch (e) {
       if (e is ApiException) {
         rethrow;
       } else {
-        throw ApiException('Error en login');
+        throw ApiException(AuthConstantes.errorLogin);
       }
     }
   }

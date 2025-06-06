@@ -2,49 +2,41 @@ import 'package:kgaona/api/service/base_service.dart';
 import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/domain/tarea.dart';
 
-
 class TareaService extends BaseService {
   final String _endpoint = ApiConstantes.tareasEndpoint;
 
-  /// Obtiene la lista de tareas de un usuario
   Future<List<Tarea>> obtenerTareasUsuario(usuario) async {
     final List<dynamic> tareasJson = await get<List<dynamic>>(
       '$_endpoint?usuario=$usuario',
-      errorMessage: 'Error al obtener las tareas',
+      errorMessage: TareasConstantes.mensajeError,
     );
-
     return tareasJson
         .map<Tarea>((json) => TareaMapper.fromMap(json as Map<String, dynamic>))
         .toList();
   }
 
-  /// Crea una nueva tarea
   Future<Tarea> crearTarea(Tarea tarea) async {
     final json = await post(
       _endpoint,
       data: tarea.toMap(),
-      errorMessage: 'Error al crear la tarea',
+      errorMessage: TareasConstantes.errorCrear,
     );
-
     return TareaMapper.fromMap(json);
   }
 
-  /// Elimina una tarea existente
   Future<void> eliminarTarea(String tareaId) async {
     final url = '$_endpoint/$tareaId';
-    await delete(url, errorMessage: 'Error al eliminar la tarea');
+    await delete(url, errorMessage: TareasConstantes.errorEliminar);
   }
 
-  /// Actualiza una tarea existente
   Future<Tarea> actualizarTarea(Tarea tarea) async {
     final taskId = tarea.id;
     final url = '$_endpoint/$taskId';
     final json = await put(
       url,
       data: tarea.toMap(),
-      errorMessage: 'Error al actualizar la tarea',
+      errorMessage: TareasConstantes.errorActualizar,
     );
-
     return TareaMapper.fromMap(json);
   }
 }

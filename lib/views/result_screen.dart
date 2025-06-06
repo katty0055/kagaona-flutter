@@ -7,47 +7,40 @@ import 'package:kgaona/views/start_screen.dart';
 class ResultScreen extends StatelessWidget {
   final int finalScoreGame;
   final int totalQuestions;
-
-  const ResultScreen({super.key, required this.finalScoreGame, required this.totalQuestions});
+  const ResultScreen({
+    super.key,
+    required this.finalScoreGame,
+    required this.totalQuestions,
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    // Puntaje y mensaje
-    final String scoreText = 'Puntuación: $finalScoreGame/$totalQuestions';
-    
-    // Mensaje según el resultado
+    final String scoreText =
+        '${PreguntasConstantes.puntuacion} $finalScoreGame/$totalQuestions';
     final String feedbackMessage;
     final IconData feedbackIcon;
     final Color feedbackColor;
-    
     final double percentage = finalScoreGame / totalQuestions;
-    
     if (percentage >= 0.8) {
-      feedbackMessage = '¡Excelente trabajo!';
+      feedbackMessage = PreguntasConstantes.excellent;
       feedbackIcon = Icons.emoji_events;
       feedbackColor = AppColors.success;
     } else if (percentage >= 0.6) {
-      feedbackMessage = '¡Muy bien!';
+      feedbackMessage = PreguntasConstantes.wellDone;
       feedbackIcon = Icons.thumb_up;
       feedbackColor = AppColors.primaryDarkBlue;
     } else if (percentage >= 0.4) {
-      feedbackMessage = '¡Buen intento!';
+      feedbackMessage = PreguntasConstantes.goodJob;
       feedbackIcon = Icons.sentiment_satisfied;
       feedbackColor = AppColors.primaryLightBlue;
     } else {
-      feedbackMessage = '¡Sigue practicando!';
+      feedbackMessage = PreguntasConstantes.keepTrying;
       feedbackIcon = Icons.sentiment_dissatisfied;
       feedbackColor = AppColors.warning;
     }
-    
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Resultados',
-        ),
-      ),
+      appBar: AppBar(title: const Text(PreguntasConstantes.results)),
       backgroundColor: theme.scaffoldBackgroundColor,
       drawer: const SideMenu(),
       body: Padding(
@@ -65,14 +58,10 @@ class ResultScreen extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      feedbackIcon,
-                      size: 72,
-                      color: feedbackColor,
-                    ),
+                    Icon(feedbackIcon, size: 72, color: feedbackColor),
                     const SizedBox(height: 24),
                     Text(
-                      '¡Juego Terminado!',
+                      PreguntasConstantes.gameEnded,
                       style: theme.textTheme.headlineMedium,
                       textAlign: TextAlign.center,
                     ),
@@ -99,10 +88,14 @@ class ResultScreen extends StatelessWidget {
                           const SizedBox(height: 8),
                           LinearProgressIndicator(
                             value: finalScoreGame / totalQuestions,
-                            backgroundColor: theme.colorScheme.primary.withAlpha(27),
+                            backgroundColor: theme.colorScheme.primary
+                                .withAlpha(27),
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              percentage >= 0.6 ? AppColors.success : 
-                              percentage >= 0.4 ? AppColors.primaryLightBlue : AppColors.warning
+                              percentage >= 0.6
+                                  ? AppColors.success
+                                  : percentage >= 0.4
+                                  ? AppColors.primaryLightBlue
+                                  : AppColors.warning,
                             ),
                             minHeight: 8,
                             borderRadius: BorderRadius.circular(4),
@@ -134,7 +127,10 @@ class ResultScreen extends StatelessWidget {
               },
               style: FilledButton.styleFrom(
                 backgroundColor: theme.colorScheme.primary,
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
               ),
               child: Text(
                 PreguntasConstantes.playAgain,

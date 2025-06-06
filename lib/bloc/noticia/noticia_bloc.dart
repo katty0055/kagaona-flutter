@@ -35,7 +35,13 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
         noticias,
         categoriasIds,
       );
-      emit(NoticiaLoaded(noticiasFiltradas, DateTime.now()));
+      
+      // Pasar categorías filtradas solo si realmente hay filtro
+      emit(NoticiaLoaded(
+        noticiasFiltradas, 
+        DateTime.now(),
+        categoriasFiltradas: categoriasIds.isEmpty ? null : categoriasIds,
+      ));
     } catch (e) {
       if (e is ApiException) {
         emit(NoticiaError(e, TipoOperacionNoticia.cargar));
@@ -141,7 +147,7 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
           NoticiaFiltered(
             noticiasFiltradas,
             DateTime.now(),
-            event.categoriasIds,
+            categoriasFiltradas: event.categoriasIds.isEmpty ? [] : event.categoriasIds,
           ),
         );
       } catch (e) {

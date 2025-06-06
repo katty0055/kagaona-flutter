@@ -57,13 +57,13 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
             context.read<TareaContadorBloc>().add(IncrementarContador());
             SnackBarHelper.mostrarExito(
               context,
-              mensaje: 'Tarea completada exitosamente',
+              mensaje: TareasConstantes.tareaCompletadaExito,
             );
           } else {
             context.read<TareaContadorBloc>().add(DecrementarContador());
             SnackBarHelper.mostrarAdvertencia(
               context,
-              mensaje: 'Tarea marcada como pendiente',
+              mensaje: TareasConstantes.tareaPendiente,
             );
           }
         } else if (state is TareaLoaded) {
@@ -91,14 +91,14 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
             actions: [
               IconButton(
                 icon: const Icon(Icons.refresh),
-                tooltip: 'Recargar tareas',
+                tooltip: TareasConstantes.recargarTareas,
                 onPressed: () {
                   context.read<TareaBloc>().add(
                     LoadTareasEvent(forzarRecarga: true),
                   );
                   SnackBarHelper.mostrarInfo(
                     context,
-                    mensaje: 'Recargando tareas...',
+                    mensaje: TareasConstantes.recargandoTareas,
                   );
                 },
               ),
@@ -115,7 +115,7 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () => _mostrarModalAgregarTarea(context),
-            tooltip: 'Agregar Tarea',
+            tooltip: TareasConstantes.agregarTarea,
             backgroundColor: theme.colorScheme.primary,
             foregroundColor: theme.colorScheme.onPrimary,
             child: const Icon(Icons.add),
@@ -145,7 +145,7 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
           children: [
             CircularProgressIndicator(color: theme.colorScheme.primary),
             const SizedBox(height: 16),
-            Text('Cargando tareas...', style: theme.textTheme.bodyMedium),
+            Text(TareasConstantes.cargar, style: theme.textTheme.bodyMedium),
           ],
         ),
       );
@@ -168,7 +168,7 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
                 FilledButton(
                   onPressed:
                       () => context.read<TareaBloc>().add(LoadTareasEvent()),
-                  child: const Text('Reintentar'),
+                  child: const Text(ValidacionConstantes.reintentar),
                 ),
               ],
             ),
@@ -221,10 +221,10 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
                 confirmDismiss: (direction) async {
                   return await DialogHelper.mostrarConfirmacion(
                     context: context,
-                    titulo: 'Confirmar eliminación',
-                    mensaje: '¿Estás seguro de que deseas eliminar esta tarea?',
-                    textoCancelar: 'Cancelar',
-                    textoConfirmar: 'Eliminar',
+                    titulo: ValidacionConstantes.confirmarEliminar,
+                    mensaje: TareasConstantes.mensajeEliminar,
+                    textoCancelar: ValidacionConstantes.cancelar,
+                    textoConfirmar: ValidacionConstantes.eliminar,
                   );
                 },
                 onDismissed: (_) {
@@ -250,7 +250,7 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => TaskDetailsScreen(tareas: tareas, indice: indice),
+        builder: (context) => TareaDetallesScreen(tareas: tareas, indice: indice),
       ),
     );
   }
@@ -274,8 +274,7 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
     if (state is TareaLoaded && state.tareas.length >= _limiteTareas) {
       SnackBarHelper.mostrarAdvertencia(
         context,
-        mensaje:
-            'Solo puedes tener $_limiteTareas tareas. Elimina una tarea existente para crear una nueva.',
+        mensaje: TareasConstantes.limiteTareasAlcanzado(_limiteTareas),
       );
       return;
     }
@@ -294,7 +293,7 @@ class _TareaScreenContentState extends State<_TareaScreenContent> {
 
   Widget construirTarjetaDeportiva(Tarea tarea) {
     final theme = Theme.of(context);
-    final bool esUrgente = tarea.tipo != 'normal';
+    final bool esUrgente = tarea.tipo != TareasConstantes.tareaTipoNormal;
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       shape: esUrgente ? theme.cardTheme.shape : null,

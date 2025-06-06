@@ -3,13 +3,13 @@ part 'categoria.mapper.dart';
 
 @MappableClass()
 class Categoria with CategoriaMappable {
-  final String? id; 
-  final String nombre; 
-  final String descripcion; 
-  final String imagenUrl; 
+  final String? id;
+  final String nombre;
+  final String descripcion;
+  final String imagenUrl;
 
   const Categoria({
-    this.id, 
+    this.id,
     required this.nombre,
     required this.descripcion,
     required this.imagenUrl,

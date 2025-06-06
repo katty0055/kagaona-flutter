@@ -6,7 +6,7 @@ import 'package:kgaona/exceptions/api_exception.dart';
 import 'package:watch_it/watch_it.dart';
 
 class TareaBloc extends Bloc<TareaEvent, TareaState> {
-  final TareasRepository _tareaRepository = di<TareasRepository>();
+  final TareaRepository _tareaRepository = di<TareaRepository>();
   static const int _limitePorPagina = 5;
 
   TareaBloc() : super(TareaInitial()) {

@@ -14,11 +14,22 @@ class NoticiaLoading extends NoticiaState {}
 class NoticiaLoaded extends NoticiaState {
   final List<Noticia> noticias;
   final DateTime lastUpdated;
+  final List<String>? categoriasFiltradas;
 
-  NoticiaLoaded(this.noticias, this.lastUpdated);
+  NoticiaLoaded(
+    this.noticias, 
+    this.lastUpdated, {
+    this.categoriasFiltradas,
+  });
 
   @override
-  List<Object> get props => [noticias, lastUpdated];
+  List<Object> get props => [
+    noticias, 
+    lastUpdated, 
+    if (categoriasFiltradas != null) categoriasFiltradas!,
+  ];
+  
+  bool get estaFiltrado => categoriasFiltradas != null && categoriasFiltradas!.isNotEmpty;
 }
 
 enum TipoOperacionNoticia { cargar, crear, actualizar, eliminar, filtrar }
@@ -34,22 +45,24 @@ class NoticiaError extends NoticiaState {
 }
 
 class NoticiaCreated extends NoticiaLoaded {
-  NoticiaCreated(super.noticias, super.lastUpdated);
+  NoticiaCreated(super.noticias, super.lastUpdated, {super.categoriasFiltradas});
 }
 
 class NoticiaUpdated extends NoticiaLoaded {
-  NoticiaUpdated(super.noticias, super.lastUpdated);
+  NoticiaUpdated(super.noticias, super.lastUpdated, {super.categoriasFiltradas});
 }
 
 class NoticiaDeleted extends NoticiaLoaded {
-  NoticiaDeleted(super.noticias, super.lastUpdated);
+  NoticiaDeleted(super.noticias, super.lastUpdated, {super.categoriasFiltradas});
 }
 
 class NoticiaFiltered extends NoticiaLoaded {
-  final List<String> appliedFilters;
-
-  NoticiaFiltered(super.noticias, super.lastUpdated, this.appliedFilters);
+  NoticiaFiltered(
+    super.noticias, 
+    super.lastUpdated, {
+    required List<String> categoriasFiltradas,
+  }) : super(categoriasFiltradas: categoriasFiltradas);
 
   @override
-  List<Object> get props => [...super.props, appliedFilters];
+  List<Object> get props => super.props;
 }

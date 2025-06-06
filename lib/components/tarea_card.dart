@@ -20,8 +20,7 @@ class TaskCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final bool esUrgente = tarea.tipo != 'normal';
-
+    final bool esUrgente = tarea.tipo != TareasConstantes.tareaTipoNormal;
     return Card(
       // No necesitamos especificar nada aquí, se usará imageCardTheme
       child: Column(

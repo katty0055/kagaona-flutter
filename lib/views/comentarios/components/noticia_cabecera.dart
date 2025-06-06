@@ -16,6 +16,10 @@ class NoticiaCabecera extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    // Asegurar que los contadores nunca sean nulos
+    final contadorComentarios = noticia.contadorComentarios ?? 0;
+    final contadorReportes = noticia.contadorReportes ?? 0;
+    
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 2,
@@ -115,7 +119,7 @@ class NoticiaCabecera extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    '${noticia.contadorComentarios} comentarios',
+                    '$contadorComentarios comentarios',
                     style: theme.textTheme.bodySmall,
                   ),
                   const SizedBox(width: 16),
@@ -126,7 +130,7 @@ class NoticiaCabecera extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    '${noticia.contadorReportes} reportes',
+                    '$contadorReportes reportes',
                     style: theme.textTheme.bodySmall,
                   ),
                 ],

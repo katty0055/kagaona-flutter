@@ -5,6 +5,7 @@ import 'package:kgaona/bloc/auth/auth_bloc.dart';
 import 'package:kgaona/bloc/comentario/comentario_bloc.dart';
 import 'package:kgaona/bloc/reporte/reporte_bloc.dart';
 import 'package:kgaona/bloc/tarea/tarea_bloc.dart';
+import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/di/locator.dart';
 import 'package:kgaona/bloc/contador/contador_bloc.dart';
 import 'package:kgaona/bloc/connectivity/connectivity_bloc.dart';
@@ -55,24 +56,21 @@ class MyApp extends StatelessWidget {
         BlocProvider<ConnectivityBloc>(create: (context) => ConnectivityBloc()),
         BlocProvider(create: (context) => ComentarioBloc()),
         BlocProvider(create: (context) => ReporteBloc()),
-        BlocProvider(create: (context) => AuthBloc()),
-        // Agregamos NoticiaBloc como un provider global para mantener el estado entre navegaciones
+        BlocProvider(create: (context) => AuthBloc()),       
         BlocProvider<NoticiaBloc>(create: (context) => NoticiaBloc()),
                 BlocProvider<TareaBloc>(
           create: (context) => TareaBloc(),
-          lazy: false, // Esto asegura que el bloc se cree inmediatamente
+          lazy: false, 
         ),
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: ValidacionConstantes.inicioApp,
         theme:  AppTheme.bootcampTheme,
-
         debugShowCheckedModeBanner: false,
         builder: (context, child) {
-          // Envolvemos con nuestro ConnectivityWrapper
           return ConnectivityWrapper(child: child ?? const SizedBox.shrink());
         },
-        home: LoginScreen(), // Pantalla inicial
+        home: LoginScreen(), 
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kgaona/components/side_menu.dart';
 import 'package:kgaona/components/welcome_animation.dart';
+import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/helpers/secure_storage_service.dart';
 import 'package:kgaona/views/login_screen.dart'; 
 import 'package:watch_it/watch_it.dart';
@@ -32,7 +33,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
       }
       return;
     }
-    final email = await secureStorage.getUserEmail() ?? 'Usuario';
+    final email = await secureStorage.getUserEmail() ?? ValidacionConstantes.textoUser;
     if (mounted) {
       setState(() {
         _userEmail = email;
@@ -43,13 +44,12 @@ class WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Inicio')),
+      appBar: AppBar(title: const Text(AppConstantes.inicioApp)),
       drawer: const SideMenu(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-              // Reemplazamos el texto con nuestra animación
               Expanded(
                 child: WelcomeAnimation(username: _userEmail),
               ),

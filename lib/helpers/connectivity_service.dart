@@ -2,10 +2,9 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:kgaona/constants/constantes.dart';
 import 'package:kgaona/exceptions/api_exception.dart';
 
-/// Servicio para verificar la conectividad a Internet
 class ConnectivityService {
   final Connectivity _connectivity = Connectivity();
-  /// Verifica si el dispositivo tiene conectividad a Internet
+
   /// Retorna true si hay conexión, false en caso contrario
   Future<bool> hasInternetConnection() async {
     try {
@@ -15,12 +14,13 @@ class ConnectivityService {
       return false;
     }
   }
+
   /// Verifica la conectividad y lanza una excepción si no hay conexión
   Future<void> checkConnectivity() async {
     if (!await hasInternetConnection()) {
-      //pasar a constante
-      throw ApiException(ConectividadConstantes.mensajeSinConexion,
-        statusCode: 503
+      throw ApiException(
+        ConectividadConstantes.mensajeSinConexion,
+        statusCode: 503,
       );
     }
   }

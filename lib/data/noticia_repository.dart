@@ -6,10 +6,8 @@ import 'package:kgaona/data/reporte_repository.dart';
 import 'package:kgaona/domain/noticia.dart';
 import 'package:watch_it/watch_it.dart';
 
-/// Repositorio para gestionar operaciones relacionadas con las noticias.
-/// Extiende BaseRepository para aprovechar la gestión de errores estandarizada.
 class NoticiaRepository extends BaseRepository<Noticia> {
-  final NoticiaService _noticiaService = di<NoticiaService>();
+  final _noticiaService = di<NoticiaService>();
   final reporteRepo = di<ReporteRepository>();
   final _comentarioRepositorio = di<ComentarioRepository>();
 
@@ -22,14 +20,12 @@ class NoticiaRepository extends BaseRepository<Noticia> {
     );
     validarNoVacio(noticia.fuente, ValidacionConstantes.fuenteNoticia);
 
-    // Validación adicional para la fecha usando el método genérico
     validarFechaNoFutura(
       noticia.publicadaEl,
       ValidacionConstantes.fechaNoticia,
     );
   }
 
-  /// Obtiene todas las noticias desde el repositorio
   Future<List<Noticia>> obtenerNoticias() async {
     return manejarExcepcion(
       () => _noticiaService.obtenerNoticias(),
@@ -37,7 +33,6 @@ class NoticiaRepository extends BaseRepository<Noticia> {
     );
   }
 
-  /// Crea una nueva noticia
   Future<Noticia> crearNoticia(Noticia noticia) async {
     return manejarExcepcion(() {
       validarEntidad(noticia);
@@ -45,7 +40,6 @@ class NoticiaRepository extends BaseRepository<Noticia> {
     }, mensajeError: NoticiasConstantes.errorCreated);
   }
 
-  /// Edita una noticia existente
   Future<Noticia> editarNoticia(Noticia noticia) async {
     return manejarExcepcion(() {
       validarEntidad(noticia);
@@ -53,7 +47,6 @@ class NoticiaRepository extends BaseRepository<Noticia> {
     }, mensajeError: NoticiasConstantes.errorUpdated);
   }
 
-  /// Elimina una noticia y sus reportes asociados
   Future<void> eliminarNoticia(String id) async {
     return manejarExcepcion(() async {
       validarId(id);
@@ -63,7 +56,6 @@ class NoticiaRepository extends BaseRepository<Noticia> {
     }, mensajeError: NoticiasConstantes.errorDelete);
   }
 
-  /// Incrementa el contador de reportes de una noticia y devuelve solo los campos actualizados
   Future<Map<String, dynamic>> incrementarContadorReportes(
     String noticiaId,
     int valor,
@@ -74,7 +66,6 @@ class NoticiaRepository extends BaseRepository<Noticia> {
     }, mensajeError: NoticiasConstantes.errorActualizarContadorReportes);
   }
 
-  /// Incrementa el contador de comentarios de una noticia y devuelve solo los campos actualizados
   Future<Map<String, dynamic>> incrementarContadorComentarios(
     String noticiaId,
     int valor,

@@ -96,7 +96,7 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
     }
   }
 
-  void _guardarNoticia() {
+   void _guardarNoticia() {
     if (_formKey.currentState!.validate()) {
       final noticia = Noticia(
         id: widget.noticia?.id,
@@ -104,10 +104,12 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
         descripcion: _descripcionController.text,
         fuente: _fuenteController.text,
         publicadaEl: _fechaSeleccionada,
-        urlImagen: _imagenUrlController.text.isEmpty 
-            ? "https://picsum.photos/200/300" 
+        urlImagen: _imagenUrlController.text.isEmpty
+            ? "https://picsum.photos/200/300"
             : _imagenUrlController.text,
         categoriaId: _selectedCategoriaId,
+        contadorReportes: widget.noticia?.contadorReportes ?? 0,
+        contadorComentarios: widget.noticia?.contadorComentarios ?? 0,
       );
       Navigator.of(context).pop(noticia);
     }
